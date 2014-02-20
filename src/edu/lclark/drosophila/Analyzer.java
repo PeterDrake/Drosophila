@@ -16,7 +16,6 @@ public class Analyzer {
 	
 	public void sizeThresholdUpdate(int input){
 		sizeThreshold= input;
-		System.out.println(sizeThreshold);
 	}
 	
 	public static void main(String[] args) {
