@@ -33,5 +33,10 @@ public class Analyzer {
 			e.printStackTrace();
 		}
 	}
-	
+	public int averageVelFly(Fly fly, int start, int end){ 
+		int avgVel=0;
+		
+		
+		return avgVel;
+	}
 }
