@@ -9,6 +9,10 @@ public class AnalyzerGui extends JFrame{
 	
 	private Analyzer a;
 	
+	public void sizeThresholdUpdate(int input) {
+		a.sizeThresholdUpdate(input);
+	}
+
 	public AnalyzerGui(Analyzer a) {
 		this.a = a;
 	}

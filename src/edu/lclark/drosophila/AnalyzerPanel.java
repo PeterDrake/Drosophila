@@ -9,6 +9,10 @@ public class AnalyzerPanel extends JPanel {
 	
 	private AnalyzerGui gui;
 	
+	public void sizeThresholdUpdate(int input) {
+		gui.sizeThresholdUpdate(input);
+	}
+
 	AnalyzerPanel(AnalyzerGui gui) {
 		this.gui = gui;
 		ButtonPanel bpanel = new ButtonPanel(this);
