@@ -9,10 +9,15 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 public class Analyzer {
-	
+	private int sizeThreshold;
 	private static AnalyzerGui gui;
 	
 	private File currentImage;
+	
+	public void sizeThresholdUpdate(int input){
+		sizeThreshold= input;
+		System.out.println("working");
+	}
 	
 	public static void main(String[] args) {
 		gui = new AnalyzerGui(new Analyzer());
