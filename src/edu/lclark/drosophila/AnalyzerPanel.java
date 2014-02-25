@@ -21,7 +21,7 @@ public class AnalyzerPanel extends JPanel {
 		gui.passImage(file);		
 	}
 	public String passdownImage(){
-		if(gui.passDownImage()!=null)return gui.passDownImage().getName();
+		if(gui.passDownImage()!=null)return gui.passDownImage().getPath();
 		return null;
 	}
 }

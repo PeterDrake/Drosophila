@@ -54,6 +54,7 @@ public class ButtonPanel extends JPanel{
 			if(returnVal == JFileChooser.APPROVE_OPTION) {
 				File file = fc.getSelectedFile();
 				bpanel.passImage(file);
+				a.repaint();
 			}
 		}	
 

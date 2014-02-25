@@ -21,16 +21,13 @@ public class Analyzer {
 	public File getImage(){
 		return currentImage;
 	}
-	public void askRepaint(){
-		gui.repaint();
-	}
+	
 
 	public void passImage(File file) {
 		currentImage = file;
 		try {
 			BufferedImage image = ImageIO.read(file);
-			System.out.println(image.toString());
-			askRepaint();
+			//System.out.println(image.toString());
 		} catch (IOException e) {
 			System.err.println("EVERYTHING IS HORRIBLE");
 			e.printStackTrace();
