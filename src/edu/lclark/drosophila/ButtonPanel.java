@@ -52,7 +52,13 @@ public class ButtonPanel extends JPanel {
 	private class SetThresholdAction implements ActionListener {
 		
 		public void actionPerformed(ActionEvent e){
-			a.sizeThresholdUpdate(Integer.parseInt(thresholdText.getText()));
+			try {
+				int testText= Integer.parseInt(thresholdText.getText());
+			a.sizeThresholdUpdate(testText);
+			}
+			catch(NumberFormatException error){
+				
+			}
 		}
 	}
 	
