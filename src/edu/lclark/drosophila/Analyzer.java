@@ -38,5 +38,14 @@ public class Analyzer {
 			e.printStackTrace();
 		}
 	}
-	
+	public double averageVelFly(Fly fly, int start, int end){ 
+		double avgVel=0;
+		double [] vx= fly.getVx(); 
+		double [] vy= fly.getVy();
+		for (int i = start; i <= end; i++) {
+			avgVel+= vx[i]+vy[i];
+		}
+		avgVel = avgVel/ (end-(start-1)); 
+		return avgVel;
+	}
 }

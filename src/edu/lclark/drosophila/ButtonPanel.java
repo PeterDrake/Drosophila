@@ -56,9 +56,9 @@ public class ButtonPanel extends JPanel {
 				int testText= Integer.parseInt(thresholdText.getText());
 			a.sizeThresholdUpdate(testText);
 			}
-			catch(NumberFormatException error){
-				
+			catch(NumberFormatException error){		
 			}
+
 		}
 	}
 	
