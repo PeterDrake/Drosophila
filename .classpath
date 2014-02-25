@@ -3,5 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="/Network/Servers/maccsserver.lclark.edu/Users/slevenick/Documents/workspace/Drosophila/jfreechart-1.0.17/lib/jcommon-1.0.21.jar"/>
+	<classpathentry kind="lib" path="/Network/Servers/maccsserver.lclark.edu/Users/slevenick/Documents/workspace/Drosophila/jfreechart-1.0.17/lib/jfreechart-1.0.17.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
