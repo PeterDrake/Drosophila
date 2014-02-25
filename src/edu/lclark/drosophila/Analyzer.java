@@ -10,13 +10,12 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 public class Analyzer {
-	
+	private int sizeThreshold;
 	private static AnalyzerGui gui;
 	
 	private File currentImage;
 	
 	private static final int CONTRAST_THRESHOLD = 150;
-	private static final int SIZE_THRESHOLD = 50;
 	
 	private int totalX;
 	private int totalY;
@@ -25,7 +24,11 @@ public class Analyzer {
 	private LinkedList<Fly> flies;
 
 	private int totalFrames;
-	
+
+	public void sizeThresholdUpdate(int input){
+		sizeThreshold= input;
+		System.out.println("working");
+	}
 	
 	public static void main(String[] args) {
 		gui = new AnalyzerGui(new Analyzer());
@@ -36,12 +39,16 @@ public class Analyzer {
 	public Analyzer() {
 		flies = new LinkedList<Fly>();
 	}
+	public File getImage(){
+		return currentImage;
+	}
+	
 
 	public void passImage(File file) {
 		currentImage = file;
 		try {
 			BufferedImage image = ImageIO.read(file);
-			System.out.println(image.toString());
+			//System.out.println(image.toString());
 			flydentify(image);
 		} catch (IOException e) {
 			System.err.println("EVERYTHING IS HORRIBLE");
@@ -127,7 +134,7 @@ public class Analyzer {
 					if((int)(Math.round(avg)) <= CONTRAST_THRESHOLD) { // if the color is dark enough
 						totalX = 0; totalY = 0; numPixels = 0; // initialize values to find center of mass of fly
 						searchPixel(i, j, searchArray, image); // depth first search on surrounding pixels to find area of fly
-						if(numPixels >= SIZE_THRESHOLD) // if the blob is large enough to be a fly
+						if(numPixels >= sizeThreshold) // if the blob is large enough to be a fly
 						{
 							// create a new temporary fly object
 							double tempLocation[] = new double[2];
@@ -184,5 +191,15 @@ public class Analyzer {
 		totalFrames = 1;
 		flydentify(image, 0);
 	}
-	
+
+	public double averageVelFly(Fly fly, int start, int end){ 
+		double avgVel=0;
+		double [] vx= fly.getVx(); 
+		double [] vy= fly.getVy();
+		for (int i = start; i <= end; i++) {
+			avgVel+= vx[i]+vy[i];
+		}
+		avgVel = avgVel/ (end-(start-1)); 
+		return avgVel;
+	}
 }
