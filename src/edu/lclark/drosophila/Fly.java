@@ -15,6 +15,9 @@ public class Fly {
 		x[0] = initialX;
 		y[0] = initialY;
 	}
+	
+	
+
 
 	public double[] getX() {
 		return x;
