@@ -12,7 +12,7 @@ public class ButtonPanel extends JPanel {
 
 	private JFileChooser fc;
 	private JButton getImage;
-	private JButton setThreshold; 
+	private JButton setThreshold;
 	private JTextField thresholdText;
 
 	private static final int DEFAULT_WIDTH = 500;
@@ -28,7 +28,7 @@ public class ButtonPanel extends JPanel {
 		add(getImage);
 		thresholdText = new JTextField();
 		thresholdText.setPreferredSize(new Dimension(100, 50));
-		add(setThreshold); 
+		add(setThreshold);
 		add(thresholdText);
 		GetImageAction getImageAction = new GetImageAction(this);
 		SetThresholdAction setThresholdAction = new SetThresholdAction();
@@ -50,18 +50,17 @@ public class ButtonPanel extends JPanel {
 	}
 
 	private class SetThresholdAction implements ActionListener {
-		
-		public void actionPerformed(ActionEvent e){
+
+		public void actionPerformed(ActionEvent e) {
 			try {
-				int testText= Integer.parseInt(thresholdText.getText());
-			a.sizeThresholdUpdate(testText);
-			}
-			catch(NumberFormatException error){		
+				int testText = Integer.parseInt(thresholdText.getText());
+				a.sizeThresholdUpdate(testText);
+			} catch (NumberFormatException error) {
 			}
 
 		}
 	}
-	
+
 	private class GetImageAction implements ActionListener {
 
 		private ButtonPanel bpanel;
@@ -79,8 +78,7 @@ public class ButtonPanel extends JPanel {
 				a.repaint();
 			}
 
-		}	
+		}
 
 	}
 }
-

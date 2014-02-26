@@ -5,6 +5,14 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
@@ -48,4 +56,51 @@ public class Analyzer {
 		avgVel = avgVel/ (end-(start-1)); 
 		return avgVel;
 	}
+	
+	public double totalDistance(Fly fly, int start, int end){
+		double dist=0;
+		double [] x= fly.getX(); 
+		double [] y= fly.getY();
+		for (int i = start; i < end; i++) {
+			dist+= java.lang.Math.pow((java.lang.Math.pow((x[i]-x[i+1]),2) + (java.lang.Math.pow((y[i]-y[i+1]),2))),.5);
+		}
+		return dist;
+	}
+	public void plotVel(Fly [] flies, int start , int end){
+	XYSeries series = new XYSeries("XYGraph");
+	double [] avgVel= new double [end-start];
+	
+	for (int i = start; i < end; i++) {
+		for (int j = 0; j < flies.length; j++) {
+//do this later, this is where i will average that shit out
+		}
+	}
+	 series.add(1, 1);
+	 series.add(1, 2);
+	 series.add(2, 1);
+	 series.add(3, 9);
+	 series.add(4, 10);
+	 // Add the series to your data set
+	 XYSeriesCollection dataset = new XYSeriesCollection();
+	 dataset.addSeries(series);
+	 // Generate the graph
+	 JFreeChart chart = ChartFactory.createXYLineChart(
+	 "XY Chart", // Title
+	 "x-axis", // x-axis Label
+	 "y-axis", // y-axis Label
+	 dataset, // Dataset
+	 PlotOrientation.VERTICAL, // Plot Orientation
+	 true, // Show Legend
+	 true, // Use tooltips
+	 false // Configure chart to generate URLs?
+	 );
+	 try {
+	 ChartUtilities.saveChartAsJPEG(new File("C:\\chart.jpg"), chart, 500, 300);
+	 } catch (IOException e) {
+	 System.err.println("Problem occurred creating chart.");
+	 }
+	 }
+
+
+	
 }
