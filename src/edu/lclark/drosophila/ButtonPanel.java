@@ -14,6 +14,7 @@ public class ButtonPanel extends JPanel {
 	private JButton getImage;
 	private JButton setThreshold; 
 	private JTextField thresholdText;
+	private JButton drawFlydentifiers;
 
 	private static final int DEFAULT_WIDTH = 500;
 	private static final int DEFAULT_HEIGHT = 500;
@@ -25,16 +26,21 @@ public class ButtonPanel extends JPanel {
 		fc = new JFileChooser();
 		getImage = new JButton("Open an Image");
 		setThreshold = new JButton("Set fly size threshold (in pixels)");
+		drawFlydentifiers = new JButton("Draw fly locations");
 		add(getImage);
 		thresholdText = new JTextField();
 		thresholdText.setPreferredSize(new Dimension(100, 50));
 		add(setThreshold); 
 		add(thresholdText);
+		add(drawFlydentifiers);
+		
 		GetImageAction getImageAction = new GetImageAction(this);
 		SetThresholdAction setThresholdAction = new SetThresholdAction();
+		DrawFlydentifiersAction drawFlydentifiersAction = new DrawFlydentifiersAction();
+		
 		setThreshold.addActionListener(setThresholdAction);
 		getImage.addActionListener(getImageAction);
-
+		drawFlydentifiers.addActionListener(drawFlydentifiersAction);
 	}
 
 	public void passImage(File file) {
@@ -59,6 +65,13 @@ public class ButtonPanel extends JPanel {
 			catch(NumberFormatException error){		
 			}
 
+		}
+	}
+	
+	private class DrawFlydentifiersAction implements ActionListener {
+		
+		public void actionPerformed(ActionEvent e){
+			a.setFlydentifiers();
 		}
 	}
 	

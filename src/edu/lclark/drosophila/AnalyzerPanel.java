@@ -2,6 +2,7 @@ package edu.lclark.drosophila;
 
 import java.awt.Dimension;
 import java.io.File;
+import java.util.LinkedList;
 
 import javax.swing.*;
 
@@ -27,5 +28,13 @@ public class AnalyzerPanel extends JPanel {
 	public String passdownImage(){
 		if(gui.passDownImage()!=null)return gui.passDownImage().getPath();
 		return null;
+	}
+
+	public void setFlydentifiers() {
+		ipanel.setFlydentifiers();
+	}
+
+	public LinkedList<Fly> getFlyList() {
+		return gui.getFlies();
 	}
 }

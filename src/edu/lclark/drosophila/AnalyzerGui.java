@@ -2,6 +2,7 @@ package edu.lclark.drosophila;
 
 import java.awt.EventQueue;
 import java.io.File;
+import java.util.LinkedList;
 
 import javax.swing.JFrame;
 
@@ -39,6 +40,10 @@ public class AnalyzerGui extends JFrame{
 	public void passImage(File file) {
 		a.passImage(file);
 		
+	}
+
+	public LinkedList<Fly> getFlies() {
+		return a.getFlies();
 	}
 	
 }

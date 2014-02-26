@@ -15,7 +15,7 @@ public class Analyzer {
 	
 	private File currentImage;
 	
-	private static final int CONTRAST_THRESHOLD = 150;
+	private static final int CONTRAST_THRESHOLD = 75;
 	
 	private int totalX;
 	private int totalY;
@@ -27,6 +27,10 @@ public class Analyzer {
 
 	public void sizeThresholdUpdate(int input){
 		sizeThreshold= input;
+		if(currentImage != null)
+		{
+			passImage(currentImage);
+		}
 		System.out.println("working");
 	}
 	
@@ -106,7 +110,6 @@ public class Analyzer {
 				searchPixel(x, y + 1, searchArray, image);
 			}
 		}
-			
 	}
 	
 	/**
@@ -141,6 +144,7 @@ public class Analyzer {
 							tempLocation[0] = (double) totalX / numPixels;
 							tempLocation[1] = (double) totalY / numPixels;
 							tempFlies.add(tempLocation);
+							System.out.println("size: " + numPixels);
 						}
 					} else {
 						// we searched this already!
@@ -188,8 +192,11 @@ public class Analyzer {
 	public void flydentify(BufferedImage image)
 	{
 		// just for a single image
+		flies = new LinkedList<Fly>();
 		totalFrames = 1;
 		flydentify(image, 0);
+		
+		System.out.println("number of flies: " + flies.size());
 	}
 
 	public double averageVelFly(Fly fly, int start, int end){ 
@@ -201,5 +208,9 @@ public class Analyzer {
 		}
 		avgVel = avgVel/ (end-(start-1)); 
 		return avgVel;
+	}
+
+	public LinkedList<Fly> getFlies() {
+		return flies;
 	}
 }
