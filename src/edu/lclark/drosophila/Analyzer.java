@@ -15,7 +15,7 @@ public class Analyzer {
 	
 	private File currentImage;
 	
-	private static final int CONTRAST_THRESHOLD = 75;
+	private static final int CONTRAST_THRESHOLD = 250;
 	
 	private int totalX;
 	private int totalY;
@@ -64,6 +64,7 @@ public class Analyzer {
 		// adding to totalX and totalY so we can find the center of mass later
 		// numPixels because we need to check it to see whether the blob is big enough to be a fly
 		totalX += x; totalY += y; numPixels += 1;
+		//System.out.println(numPixels);
 		
 		// we're searching here now
 		searchArray[x][y] = true;
