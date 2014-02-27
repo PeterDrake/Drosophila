@@ -126,6 +126,8 @@ public class Analyzer {
 		LinkedList<double[]> tempFlies = new LinkedList<double[]>();
 		// an array of which pixels have been searched
 		boolean searchArray[][] = new boolean[imgWidth][imgHeight];
+		int stack[][] = new int[imgWidth * imgHeight][2];
+		int curIdx;
 		for(int i = 0; i < imgWidth; i++) {
 			for(int j = 0; j < imgHeight; j++) {
 				if(!searchArray[i][j]) { // if pixel hasn't been searched
@@ -137,7 +139,68 @@ public class Analyzer {
 					double avg = red * 0.2989 + green * .587 + blue * .114;
 					if((int)(Math.round(avg)) <= CONTRAST_THRESHOLD) { // if the color is dark enough
 						totalX = 0; totalY = 0; numPixels = 0; // initialize values to find center of mass of fly
-						searchPixel(i, j, searchArray, image); // depth first search on surrounding pixels to find area of fly
+						//searchPixel(i, j, searchArray, image); 
+						curIdx = 0;
+						stack[curIdx][0] = i;
+						stack[curIdx][1] = j;
+						curIdx++;
+						while(curIdx > 0) {
+							curIdx--;
+							int tempx = stack[curIdx][0];
+							int tempy = stack[curIdx][1];
+							searchArray[tempx][tempy] = true;
+							totalX += tempx;
+							totalY += tempy;
+							numPixels ++;
+							if((tempx > 0) && !searchArray[tempx - 1][tempy]) {
+								rgb = image.getRGB(tempx - 1, tempy);
+								red = (rgb >> 16) & 0xFF;
+								green = (rgb >> 8) & 0xFF;
+								blue = rgb & 0xFF;
+								avg = red * 0.2989 + green * .587 + blue * .114;
+								if((int)(Math.round(avg)) <= CONTRAST_THRESHOLD) {
+									stack[curIdx][0] = tempx - 1;
+									stack[curIdx][1] = tempy;
+									curIdx++;
+								}
+							}
+							if((tempy > 0) && !searchArray[tempx][tempy - 1]) {
+								rgb = image.getRGB(tempx, tempy - 1);
+								red = (rgb >> 16) & 0xFF;
+								green = (rgb >> 8) & 0xFF;
+								blue = rgb & 0xFF;
+								avg = red * 0.2989 + green * .587 + blue * .114;
+								if((int)(Math.round(avg)) <= CONTRAST_THRESHOLD) {
+									stack[curIdx][0] = tempx;
+									stack[curIdx][1] = tempy - 1;
+									curIdx++;
+								}
+							}
+							if((tempx < imgWidth - 1) && !searchArray[tempx + 1][tempy]) {
+								rgb = image.getRGB(tempx + 1, tempy);
+								red = (rgb >> 16) & 0xFF;
+								green = (rgb >> 8) & 0xFF;
+								blue = rgb & 0xFF;
+								avg = red * 0.2989 + green * .587 + blue * .114;
+								if((int)(Math.round(avg)) <= CONTRAST_THRESHOLD) {
+									stack[curIdx][0] = tempx + 1;
+									stack[curIdx][1] = tempy;
+									curIdx++;
+								}
+							}
+							if((tempy < imgHeight - 1) && !searchArray[tempx][tempy + 1]) {
+								rgb = image.getRGB(tempx, tempy + 1);
+								red = (rgb >> 16) & 0xFF;
+								green = (rgb >> 8) & 0xFF;
+								blue = rgb & 0xFF;
+								avg = red * 0.2989 + green * .587 + blue * .114;
+								if((int)(Math.round(avg)) <= CONTRAST_THRESHOLD) {
+									stack[curIdx][0] = tempx;
+									stack[curIdx][1] = tempy + 1;
+									curIdx++;
+								}
+							}
+						}
 						if(numPixels >= sizeThreshold) // if the blob is large enough to be a fly
 						{
 							// create a new temporary fly object
