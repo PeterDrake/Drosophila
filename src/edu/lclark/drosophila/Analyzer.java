@@ -27,8 +27,11 @@ public class Analyzer {
 	private int numImages;
 
 	public Analyzer() {
+		totalFrames = 5;
 		flies = new LinkedList<Fly>();
-		images = new File[5];
+		images = new File[totalFrames];
+		
+		numImages = 0;
 	}
 
 	public void sizeThresholdUpdate(int input) {
@@ -67,7 +70,7 @@ public class Analyzer {
 		numImages++;
 		try {
 			BufferedImage image = ImageIO.read(file);
-			flydentify(image);
+			flydentify(image, numImages - 1);
 		} catch (IOException e) {
 			System.err.println("EVERYTHING IS HORRIBLE");
 			e.printStackTrace();
@@ -80,6 +83,9 @@ public class Analyzer {
 	 * Brandon Christian
 	 */
 	public void flydentify(BufferedImage image, int frameNumber) {
+		if(frameNumber == 0) {
+			flies = new LinkedList<Fly>();
+		}
 		int imgHeight = image.getHeight();
 		int imgWidth = image.getWidth();
 		// a temporary array of the flies found in this image. It just stores
