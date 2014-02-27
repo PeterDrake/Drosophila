@@ -51,7 +51,7 @@ public class Analyzer {
 		double [] vx= fly.getVx(); 
 		double [] vy= fly.getVy();
 		for (int i = start; i <= end; i++) {
-			avgVel+= vx[i]+vy[i];
+			avgVel+= java.lang.Math.pow(java.lang.Math.pow(vx[i], 2)+ java.lang.Math.pow(vy[i], 2), .5);
 		}
 		avgVel = avgVel/ (end-(start-1)); 
 		return avgVel;
@@ -66,40 +66,50 @@ public class Analyzer {
 		}
 		return dist;
 	}
-	public void plotVel(Fly [] flies, int start , int end){
-	XYSeries series = new XYSeries("XYGraph");
-	double [] avgVel= new double [end-start];
 	
-	for (int i = start; i < end; i++) {
-		for (int j = 0; j < flies.length; j++) {
-//do this later, this is where i will average that shit out
+	
+	public double[] averageVelMultFlies(Fly [] flies, int start, int end){
+		double [] avgVel= new double [end-start];
+		double tempAvg;
+		for (int i = start; i < end; i++) {
+			tempAvg =0;
+			for (int j = 0; j < flies.length; j++) {
+				tempAvg += averageVelFly(flies[j], i, i);
+			}
+			avgVel[i-start] = tempAvg/flies.length;
 		}
+		
+		return avgVel;
 	}
-	 series.add(1, 1);
-	 series.add(1, 2);
-	 series.add(2, 1);
-	 series.add(3, 9);
-	 series.add(4, 10);
-	 // Add the series to your data set
-	 XYSeriesCollection dataset = new XYSeriesCollection();
-	 dataset.addSeries(series);
-	 // Generate the graph
-	 JFreeChart chart = ChartFactory.createXYLineChart(
-	 "XY Chart", // Title
-	 "x-axis", // x-axis Label
-	 "y-axis", // y-axis Label
-	 dataset, // Dataset
-	 PlotOrientation.VERTICAL, // Plot Orientation
-	 true, // Show Legend
-	 true, // Use tooltips
-	 false // Configure chart to generate URLs?
-	 );
-	 try {
-	 ChartUtilities.saveChartAsJPEG(new File("C:\\chart.jpg"), chart, 500, 300);
-	 } catch (IOException e) {
-	 System.err.println("Problem occurred creating chart.");
-	 }
-	 }
+	
+//	public void plotVel(Fly [] flies, int start , int end){
+//	XYSeries series = new XYSeries("XYGraph");
+//
+//	 series.add(1, 1);
+//	 series.add(1, 2);
+//	 series.add(2, 1);
+//	 series.add(3, 9);
+//	 series.add(4, 10);
+//	 // Add the series to your data set
+//	 XYSeriesCollection dataset = new XYSeriesCollection();
+//	 dataset.addSeries(series);
+//	 // Generate the graph
+//	 JFreeChart chart = ChartFactory.createXYLineChart(
+//	 "XY Chart", // Title
+//	 "x-axis", // x-axis Label
+//	 "y-axis", // y-axis Label
+//	 dataset, // Dataset
+//	 PlotOrientation.VERTICAL, // Plot Orientation
+//	 true, // Show Legend
+//	 true, // Use tooltips
+//	 false // Configure chart to generate URLs?
+//	 );
+//	 try {
+//	 ChartUtilities.saveChartAsJPEG(new File("C:\\chart.jpg"), chart, 500, 300);
+//	 } catch (IOException e) {
+//	 System.err.println("Problem occurred creating chart.");
+//	 }
+//	 }
 
 
 	

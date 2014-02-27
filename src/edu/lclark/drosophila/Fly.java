@@ -22,6 +22,14 @@ public class Fly {
 	public double[] getX() {
 		return x;
 	}
+	
+	public double getVx(int index){
+		return vx[index];
+	}
+	
+	public double getVy(int index){
+		return vy[index];
+	}
 
 	public void setX(double[] x) {
 		this.x = x;
