@@ -15,7 +15,7 @@ public class Analyzer {
 	
 	private File currentImage;
 	
-	private static final int CONTRAST_THRESHOLD = 100;
+	private static final int CONTRAST_THRESHOLD = 200;
 	
 	private int totalX;
 	private int totalY;
