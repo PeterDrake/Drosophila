@@ -23,10 +23,8 @@ public class ImagePanel extends JPanel {
 	public void paintComponent(Graphics g) {
 		int index = 0;
 		while (a.passdownImage(index) != null) {
-			System.err.println("I am index" + index);
-			Image image = new ImageIcon(a.passdownImage(index))
-					.getImage();
-			g.drawImage(image,(index * image.getWidth(null))+10, 0, null);
+			Image image = new ImageIcon(a.passdownImage(index)).getImage();
+			g.drawImage(image, (index * image.getWidth(null)) + 10, 0, null);
 			index++;
 		}
 	}
