@@ -10,6 +10,7 @@ public class AnalyzerPanel extends JPanel {
 	private AnalyzerGui gui;
 	private ImagePanel ipanel;
 	
+	
 	public void sizeThresholdUpdate(int input) {
 		gui.sizeThresholdUpdate(input);
 	}
@@ -24,8 +25,11 @@ public class AnalyzerPanel extends JPanel {
 	public void passImage(File file) {
 		gui.passImage(file);		
 	}
-	public String passdownImage(){
-		if(gui.passDownImage()!=null)return gui.passDownImage().getPath();
+	public String passdownImage(int index){
+		if(gui.passDownImage(index)!=null){
+			System.out.println("passing down index "+index);
+			return gui.passDownImage(index).getPath();
+		}
 		return null;
 	}
 }

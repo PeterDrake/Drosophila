@@ -32,8 +32,8 @@ public class AnalyzerGui extends JFrame{
 		});
 		analyzerpanel.repaint();
 	}
-	public File passDownImage(){
-		return a.getImage();
+	public File passDownImage(int index){
+		return a.getImage(index);
 	}
 	
 	public void passImage(File file) {
