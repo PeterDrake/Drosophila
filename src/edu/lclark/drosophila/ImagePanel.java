@@ -41,8 +41,8 @@ public class ImagePanel extends JPanel {
 				int sizeFlies = flies.size();
 				for (int i = 0; i < sizeFlies; i++) {
 					g.setColor(Color.RED);
-					g.drawOval(imageOffset + ((int) flies.get(i).getX()[index] - 3),
-							(int) flies.get(i).getY()[index] - 3, 6, 6);
+					g.drawOval(imageOffset + ((int) flies.get(i).getX(index) - 3),
+							(int) flies.get(i).getY(index) - 3, 6, 6);
 				}
 			}
 			index++;
