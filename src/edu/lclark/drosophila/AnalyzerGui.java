@@ -8,16 +8,19 @@ import javax.swing.JFrame;
 
 public class AnalyzerGui extends JFrame {
 
-	private Analyzer a;
-	private AnalyzerPanel analyzerpanel;
+	private static final long serialVersionUID = 1L;
+	
+	private Analyzer analyzer;
+	
+	private AnalyzerPanel analyzerPanel;
 
 	public void sizeThresholdUpdate(int input) {
-		a.sizeThresholdUpdate(input);
+		analyzer.sizeThresholdUpdate(input);
 	}
 
 	public AnalyzerGui(Analyzer a) {
-		this.a = a;
-		this.analyzerpanel = new AnalyzerPanel(this);
+		this.analyzer = a;
+		this.analyzerPanel = new AnalyzerPanel(this);
 	}
 
 	public void run() {
@@ -27,24 +30,24 @@ public class AnalyzerGui extends JFrame {
 				frame.setTitle("Flydentifier");
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				frame.setVisible(true);
-				frame.add(analyzerpanel);
+				frame.add(analyzerPanel);
 				frame.pack();
 			}
 		});
-		analyzerpanel.repaint();
+		analyzerPanel.repaint();
 	}
 
 	public File passDownImage(int index) {
-		return a.getImage(index);
+		return analyzer.getImage(index);
 	}
 
 	public void passImage(File file) {
-		a.flydentify(file);
+		analyzer.flydentify(file);
 
 	}
 
 	public List<Fly> getFlies() {
-		return a.getFlies();
+		return analyzer.getFlies();
 	}
 
 }

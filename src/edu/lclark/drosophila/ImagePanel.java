@@ -11,7 +11,7 @@ public class ImagePanel extends JPanel {
 	private static final int DEFAULT_WIDTH = 800;
 	private static final int DEFAULT_HEIGHT = 600;
 
-	private boolean flydentifiers = false;
+	private boolean flydentifiers;
 
 	private int numberOfImages;
 
@@ -19,6 +19,7 @@ public class ImagePanel extends JPanel {
 
 	public ImagePanel(AnalyzerPanel a) {
 		this.a = a;
+		flydentifiers = false;
 	}
 
 	public Dimension getPreferredSize() {
