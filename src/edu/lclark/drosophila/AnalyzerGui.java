@@ -2,7 +2,7 @@ package edu.lclark.drosophila;
 
 import java.awt.EventQueue;
 import java.io.File;
-import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.JFrame;
 
@@ -43,7 +43,7 @@ public class AnalyzerGui extends JFrame {
 
 	}
 
-	public LinkedList<Fly> getFlies() {
+	public List<Fly> getFlies() {
 		return a.getFlies();
 	}
 

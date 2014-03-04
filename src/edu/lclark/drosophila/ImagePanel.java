@@ -2,7 +2,7 @@ package edu.lclark.drosophila;
 
 import java.awt.*;
 import java.util.EventListener;
-import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -37,7 +37,7 @@ public class ImagePanel extends JPanel {
 			Image image = new ImageIcon(a.passdownImage(index)).getImage();
 			g.drawImage(image, imageOffset, 0, null);
 			if (flydentifiers) {
-				LinkedList<Fly> flies = a.getFlyList();
+				List<Fly> flies = a.getFlyList();
 				int sizeFlies = flies.size();
 				for (int i = 0; i < sizeFlies; i++) {
 					g.setColor(Color.RED);
