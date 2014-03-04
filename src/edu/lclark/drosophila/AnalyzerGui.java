@@ -39,7 +39,7 @@ public class AnalyzerGui extends JFrame {
 	}
 
 	public void passImage(File file) {
-		a.passImage(file);
+		a.flydentify(file);
 
 	}
 

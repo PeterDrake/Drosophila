@@ -1,36 +1,32 @@
 package edu.lclark.drosophila;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
-
+import java.util.List;
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 
 public class Analyzer {
+
 	private int sizeThreshold;
+
 	private static AnalyzerGui gui;
 
 	private static final int CONTRAST_THRESHOLD = 200;
 
-	private int totalX;
-	private int totalY;
-	private int numPixels;
-
-	private LinkedList<Fly> flies;
+	private List<Fly> flies;
 
 	private int totalFrames;
 
 	private File[] images;
+
 	private int numImages;
 
 	public Analyzer() {
 		totalFrames = 5;
 		flies = new LinkedList<Fly>();
 		images = new File[totalFrames];
-		
 		numImages = 0;
 	}
 
@@ -44,31 +40,28 @@ public class Analyzer {
 	public static void main(String[] args) {
 		gui = new AnalyzerGui(new Analyzer());
 		gui.run();
-
 	}
 
 	public File getImage(int index) {
-		if (index >= 0 && index < images.length)
-			return images[index];
-		throw new ArrayIndexOutOfBoundsException();
+		return images[index];
 	}
 
 	public void updateImages() {
-		for (int i = 0; i < numImages; i++) {
-			try {
+		try {
+			for (int i = 0; i < numImages; i++) {
 				BufferedImage image = ImageIO.read(images[i]);
 				flydentify(image, i);
-			} catch (IOException e) {
-				System.err.println("EVERYTHING IS HORRIBLE");
-				e.printStackTrace();
 			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
 		}
 	}
 
-	public void passImage(File file) {
-		images[numImages] = file;
-		numImages++;
+	public void flydentify(File file) {
 		try {
+			images[numImages] = file;
+			numImages++;
 			BufferedImage image = ImageIO.read(file);
 			flydentify(image, numImages - 1);
 		} catch (IOException e) {
@@ -83,7 +76,7 @@ public class Analyzer {
 	 * Brandon Christian
 	 */
 	public void flydentify(BufferedImage image, int frameNumber) {
-		if(frameNumber == 0) {
+		if (frameNumber == 0) {
 			flies = new LinkedList<Fly>();
 		}
 		int imgHeight = image.getHeight();
@@ -111,10 +104,11 @@ public class Analyzer {
 																			// is
 																			// dark
 																			// enough
-						totalX = 0;
-						totalY = 0;
-						numPixels = 0; // initialize values to find center of
-										// mass of fly
+						int totalX = 0;
+						int totalY = 0;
+						int numPixels = 0; // initialize values to find center
+											// of
+											// mass of fly
 						// searchPixel(i, j, searchArray, image);
 						curIdx = 0;
 						stack[curIdx][0] = i;
@@ -129,24 +123,14 @@ public class Analyzer {
 							totalY += tempy;
 							numPixels++;
 							if ((tempx > 0) && !searchArray[tempx - 1][tempy]) {
-								rgb = image.getRGB(tempx - 1, tempy);
-								red = (rgb >> 16) & 0xFF;
-								green = (rgb >> 8) & 0xFF;
-								blue = rgb & 0xFF;
-								avg = red * 0.2989 + green * .587 + blue * .114;
-								if ((int) (Math.round(avg)) <= CONTRAST_THRESHOLD) {
+								if (isDarkEnough(image.getRGB(tempx - 1, tempy))) {
 									stack[curIdx][0] = tempx - 1;
 									stack[curIdx][1] = tempy;
 									curIdx++;
 								}
 							}
 							if ((tempy > 0) && !searchArray[tempx][tempy - 1]) {
-								rgb = image.getRGB(tempx, tempy - 1);
-								red = (rgb >> 16) & 0xFF;
-								green = (rgb >> 8) & 0xFF;
-								blue = rgb & 0xFF;
-								avg = red * 0.2989 + green * .587 + blue * .114;
-								if ((int) (Math.round(avg)) <= CONTRAST_THRESHOLD) {
+								if (isDarkEnough(image.getRGB(tempx, tempy - 1))) {
 									stack[curIdx][0] = tempx;
 									stack[curIdx][1] = tempy - 1;
 									curIdx++;
@@ -154,12 +138,7 @@ public class Analyzer {
 							}
 							if ((tempx < imgWidth - 1)
 									&& !searchArray[tempx + 1][tempy]) {
-								rgb = image.getRGB(tempx + 1, tempy);
-								red = (rgb >> 16) & 0xFF;
-								green = (rgb >> 8) & 0xFF;
-								blue = rgb & 0xFF;
-								avg = red * 0.2989 + green * .587 + blue * .114;
-								if ((int) (Math.round(avg)) <= CONTRAST_THRESHOLD) {
+								if (isDarkEnough(image.getRGB(tempx + 1, tempy))) {
 									stack[curIdx][0] = tempx + 1;
 									stack[curIdx][1] = tempy;
 									curIdx++;
@@ -167,12 +146,7 @@ public class Analyzer {
 							}
 							if ((tempy < imgHeight - 1)
 									&& !searchArray[tempx][tempy + 1]) {
-								rgb = image.getRGB(tempx, tempy + 1);
-								red = (rgb >> 16) & 0xFF;
-								green = (rgb >> 8) & 0xFF;
-								blue = rgb & 0xFF;
-								avg = red * 0.2989 + green * .587 + blue * .114;
-								if ((int) (Math.round(avg)) <= CONTRAST_THRESHOLD) {
+								if (isDarkEnough(image.getRGB(tempx, tempy + 1))) {
 									stack[curIdx][0] = tempx;
 									stack[curIdx][1] = tempy + 1;
 									curIdx++;
@@ -238,6 +212,19 @@ public class Analyzer {
 		}
 	}
 
+	public boolean isDarkEnough(int rgb) {
+		int red;
+		int green;
+		int blue;
+		double avg;
+		red = (rgb >> 16) & 0xFF;
+		green = (rgb >> 8) & 0xFF;
+		blue = rgb & 0xFF;
+		avg = red * 0.2989 + green * .587 + blue * .114;
+		boolean found = ((int) (Math.round(avg)) <= CONTRAST_THRESHOLD);
+		return found;
+	}
+
 	public void flydentify(BufferedImage image) {
 		// just for a single image
 		flies = new LinkedList<Fly>();
@@ -258,7 +245,7 @@ public class Analyzer {
 		return avgVel;
 	}
 
-	public LinkedList<Fly> getFlies() {
+	public List<Fly> getFlies() {
 		return flies;
 	}
 }
