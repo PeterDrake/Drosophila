@@ -2,6 +2,7 @@ package edu.lclark.drosophila;
 
 import java.awt.*;
 import java.util.EventListener;
+import java.util.LinkedList;//remember to get rid of this
 import java.util.List;
 
 import javax.swing.*;
@@ -56,7 +57,7 @@ public class ImagePanel extends JPanel {
 			if(drawTrajectories){
 				g.setColor(Color.RED);
 				List<Fly> flies = a.getFlyList();
-				for(Fly fly : flies){
+				for(Fly fly: flies){
 					for(int i = firstFrame; i < lastFrame; i++){
 						g.drawLine((int) fly.getX(i), (int) fly.getY(i), (int) fly.getX(i+1), (int) fly.getY(i+1));
 					}

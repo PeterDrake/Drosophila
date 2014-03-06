@@ -24,7 +24,7 @@ public class Analyzer {
 	private int numImages;
 
 	public Analyzer() {
-		totalFrames = 5;
+		totalFrames = 20;
 		flies = new LinkedList<Fly>();
 		images = new File[totalFrames];
 		numImages = 0;
@@ -247,5 +247,10 @@ public class Analyzer {
 
 	public List<Fly> getFlies() {
 		return flies;
+	}
+	
+	/** Sets the list of flies to a given list. For testing only. */
+	public void setFlies(List<Fly> flies){
+		this.flies = flies;
 	}
 }

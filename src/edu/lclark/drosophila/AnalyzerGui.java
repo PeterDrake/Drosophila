@@ -49,5 +49,12 @@ public class AnalyzerGui extends JFrame {
 	public List<Fly> getFlies() {
 		return analyzer.getFlies();
 	}
+	
+	/** Sets the analyzer's list of flies to given list. For testing only. */
+	public void setFlies(List<Fly> flies){
+		analyzer.setFlies(flies);
+	}
+	
+
 
 }
