@@ -10,6 +10,17 @@ public class Fly {
 		vx = new double[numFrames];
 		vy = new double[numFrames];
 	}
+	
+	public Fly(double initialX, double initialY, int numFrames)
+	{
+		x = new double[numFrames];
+		y = new double[numFrames];
+		vx = new double[numFrames];
+		vy = new double[numFrames];
+		
+		x[0] = initialX;
+		y[0] = initialY;
+	}
 
 	public double getX(int frameNumber) {
 		return x[frameNumber];

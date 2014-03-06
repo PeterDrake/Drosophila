@@ -9,7 +9,8 @@ public class AnalyzerPanel extends JPanel {
 
 	private AnalyzerGui gui;
 	private ImagePanel ipanel;
-
+	private GraphPanel graphPanel;
+	
 	public void sizeThresholdUpdate(int input) {
 		gui.sizeThresholdUpdate(input);
 	}
@@ -18,8 +19,12 @@ public class AnalyzerPanel extends JPanel {
 		this.gui = gui;
 		ButtonPanel bpanel = new ButtonPanel(this);
 		ipanel = new ImagePanel(this);
+		
+		graphPanel = new GraphPanel(this);
+		
 		add(bpanel);
 		add(ipanel);
+		//add(graphPanel);
 	}
 
 	public void passImage(File file) {

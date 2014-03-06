@@ -239,7 +239,7 @@ public class Analyzer {
 		double[] vx = fly.getVx();
 		double[] vy = fly.getVy();
 		for (int i = start; i <= end; i++) {
-			avgVel += vx[i] + vy[i];
+			avgVel += Math.sqrt(vx[i]*vx[i] + vy[i]*vy[i]);
 		}
 		avgVel = avgVel / (end - (start - 1));
 		return avgVel;
