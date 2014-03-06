@@ -40,4 +40,8 @@ public class AnalyzerPanel extends JPanel {
 	public List<Fly> getFlyList() {
 		return gui.getFlies();
 	}
+
+	public double[] getAverageVelocity() {
+		return gui.getAverageVelocity();
+	}
 }

@@ -244,6 +244,20 @@ public class Analyzer {
 		avgVel = avgVel / (end - (start - 1));
 		return avgVel;
 	}
+	
+	public double[] averageVelMultFlies(List<Fly> flies, int start, int end){
+		double [] avgVel= new double [end-start];
+		double tempAvg;
+		for (int i = start; i < end; i++) {
+			tempAvg =0;
+			for (int j = 0; j < flies.size(); j++) {
+				tempAvg += averageVelFly(flies.get(j), i, i);
+			}
+			avgVel[i-start] = tempAvg/flies.size();
+		}
+		
+		return avgVel;
+	}
 
 	public List<Fly> getFlies() {
 		return flies;

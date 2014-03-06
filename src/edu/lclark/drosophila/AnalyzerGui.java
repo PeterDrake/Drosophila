@@ -50,4 +50,8 @@ public class AnalyzerGui extends JFrame {
 		return analyzer.getFlies();
 	}
 
+	public double[] getAverageVelocity() {
+		return analyzer.averageVelMultFlies(analyzer.getFlies(), 0, analyzer.getFlies().get(0).getVx().length);
+	}
+
 }
