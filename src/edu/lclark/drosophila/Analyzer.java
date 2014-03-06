@@ -82,7 +82,7 @@ public class Analyzer {
 		return avgVel;
 	}
 	
-//	public void plotVel(Fly [] flies, int start , int end){
+//	public static void plotVel(Fly [] flies, int start , int end){
 //	XYSeries series = new XYSeries("XYGraph");
 //
 //	 series.add(1, 1);
