@@ -7,13 +7,24 @@ import javax.swing.*;
 
 public class AnalyzerPanel extends JPanel {
 
+	/**
+	 * The AnalyzerGui object which this AnalyzerPanel communicates with.
+	 */
 	private AnalyzerGui gui;
+
+	/**
+	 * The ImagePanel object which this AnalyzerPanel communicates with.
+	 */
 	private ImagePanel ipanel;
 
-	public void sizeThresholdUpdate(int input) {
-		gui.sizeThresholdUpdate(input);
-	}
-
+	/**
+	 * The constructor for AnalyzerPanel, which adds the button panel and image
+	 * panel to this panel.
+	 * 
+	 * @param gui
+	 *            the AnalyzerGui which this AnalyzerPanel has to communicate
+	 *            with.
+	 */
 	AnalyzerPanel(AnalyzerGui gui) {
 		this.gui = gui;
 		ButtonPanel bpanel = new ButtonPanel(this);
@@ -22,10 +33,23 @@ public class AnalyzerPanel extends JPanel {
 		add(ipanel);
 	}
 
-	public void passImage(File file) {
-		gui.passImage(file);
+	/**
+	 * Gets the List of Fly objects, which contain all gathered data, from the
+	 * Analyzer.
+	 * 
+	 * @return a List of identified Fly objects.
+	 */
+	public List<Fly> getFlyList() {
+		return gui.getFlies();
 	}
 
+	/**
+	 * Returns the file path of specified image that is stored in the Analyzer.
+	 * 
+	 * @param index
+	 *            the index of the image that is desired.
+	 * @return the String containing the file path of the image specified.
+	 */
 	public String passdownImage(int index) {
 		if (gui.passDownImage(index) != null) {
 			return gui.passDownImage(index).getPath();
@@ -33,11 +57,33 @@ public class AnalyzerPanel extends JPanel {
 		return null;
 	}
 
+	/**
+	 * Passes a File containing an image to the Analyzer, which will identify
+	 * any flies within the image.
+	 * 
+	 * @param file
+	 *            the file containing the image that needs to be identified.
+	 */
+	public void passImage(File file) {
+		gui.passImage(file);
+	}
+
+	/**
+	 * Toggles the identifying dots drawn over the identified flies on the gui.
+	 */
 	public void setFlydentifiers() {
 		ipanel.setFlydentifiers();
 	}
 
-	public List<Fly> getFlyList() {
-		return gui.getFlies();
+	/**
+	 * Updates the size threshold in Analyzer. This is used to determine if an
+	 * object identified within an image is large enough to be considered a fly.
+	 * This will also analyze all stored images again.
+	 * 
+	 * @param input
+	 *            the value which size threshold will be set to.
+	 */
+	public void sizeThresholdUpdate(int input) {
+		gui.sizeThresholdUpdate(input);
 	}
 }

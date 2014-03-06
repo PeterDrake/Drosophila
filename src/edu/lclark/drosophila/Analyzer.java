@@ -13,14 +13,35 @@ public class Analyzer {
 
 	private static AnalyzerGui gui;
 
+	/**
+	 * The threshold in pixel color contrast a pixel must pass to be identified.
+	 */
 	private static final int CONTRAST_THRESHOLD = 200;
 
+	public static void main(String[] args) {
+		gui = new AnalyzerGui(new Analyzer());
+		gui.run();
+	}
+
+	/**
+	 * The List of Fly objects in which fly data is stored.
+	 */
 	private List<Fly> flies;
 
+	/**
+	 * The total number of frames in the movie being analyzed. Or, the number of
+	 * images being analyzed.
+	 */
 	private int totalFrames;
 
+	/**
+	 * Stores all of the images being analyzed.
+	 */
 	private File[] images;
 
+	/**
+	 * The total number of images being analyzed.
+	 */
 	private int numImages;
 
 	public Analyzer() {
@@ -30,50 +51,58 @@ public class Analyzer {
 		numImages = 0;
 	}
 
-	public void sizeThresholdUpdate(int input) {
-		sizeThreshold = input;
-		if (numImages > 0) {
-			updateImages();
+	/**
+	 * Calculates the mean velocity of the given fly within the time specified
+	 * by the starting and ending frames.
+	 * 
+	 * @param fly
+	 *            the fly whose average velocity is desired.
+	 * @param start
+	 *            the first frame you want the average velocity calculated from.
+	 * @param end
+	 *            the last frame you want the average velocity calculated from.
+	 * @return the mean velocity of the given fly within the given time frame.
+	 */
+	public double averageVelFly(Fly fly, int start, int end) {
+		double avgVel = 0;
+		double[] vx = fly.getVx();
+		double[] vy = fly.getVy();
+		for (int i = start; i <= end; i++) {
+			avgVel += vx[i] + vy[i];
 		}
-	}
-
-	public static void main(String[] args) {
-		gui = new AnalyzerGui(new Analyzer());
-		gui.run();
-	}
-
-	public File getImage(int index) {
-		return images[index];
-	}
-
-	public void updateImages() {
-		try {
-			for (int i = 0; i < numImages; i++) {
-				BufferedImage image = ImageIO.read(images[i]);
-				flydentify(image, i);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-	}
-
-	public void flydentify(File file) {
-		try {
-			images[numImages] = file;
-			numImages++;
-			BufferedImage image = ImageIO.read(file);
-			flydentify(image, numImages - 1);
-		} catch (IOException e) {
-			System.err.println("EVERYTHING IS HORRIBLE");
-			e.printStackTrace();
-		}
+		avgVel = avgVel / (end - (start - 1));
+		return avgVel;
 	}
 
 	/**
-	 * TODO this is not adjusted for tracking flies between multiple frames.
-	 * People who have worked on this and therefore you can ask questions about:
-	 * Brandon Christian
+	 * Builds a new list of Fly objects with their information gathered from the
+	 * single given image. In order to retrieve information, use the flies List
+	 * in this Analyzer, through getFlies().
+	 * <p>
+	 * WARNING: Calling this method will create a new flies List, meaning any
+	 * previous data will be lost.
+	 * 
+	 * @param image
+	 *            the image which is being analyzed.
+	 */
+	public void flydentify(BufferedImage image) {
+		// just for a single image
+		flies = new LinkedList<Fly>();
+		totalFrames = 1;
+		flydentify(image, 0);
+
+		System.out.println("number of flies: " + flies.size());
+	}
+
+	/**
+	 * Identifies any flies within the given image and adds to the information
+	 * within the flies List for the given frame. In order to retrieve
+	 * information, use the flies List in this Analyzer, through getFlies().
+	 * 
+	 * @param image
+	 *            the image which is being analyzed.
+	 * @param frameNumber
+	 *            which frame out of all frames the given image is.
 	 */
 	public void flydentify(BufferedImage image, int frameNumber) {
 		if (frameNumber == 0) {
@@ -212,6 +241,57 @@ public class Analyzer {
 		}
 	}
 
+	/**
+	 * Adds to the list of Fly objects with their information gathered from the
+	 * single given image. Also, adds the given file to the list of files stored
+	 * within this Analyzer. In order to retrieve information, use the flies
+	 * List in this Analyzer, through getFlies().
+	 * 
+	 * @param file
+	 *            the file containing the image which is being analyzed.
+	 */
+	public void flydentify(File file) {
+		try {
+			images[numImages] = file;
+			numImages++;
+			BufferedImage image = ImageIO.read(file);
+			flydentify(image, numImages - 1);
+		} catch (IOException e) {
+			System.err.println("EVERYTHING IS HORRIBLE");
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Gives the List of Fly objects, which store any information gained from
+	 * analyzed images.
+	 * 
+	 * @return the List of Fly objects, which contain information for individual
+	 *         flies in the analyzed image or movie.
+	 */
+	public List<Fly> getFlies() {
+		return flies;
+	}
+
+	/**
+	 * Gives a file containing an image from the array of images in this
+	 * Analyzer.
+	 * 
+	 * @param index
+	 * @return
+	 */
+	public File getImage(int index) {
+		return images[index];
+	}
+
+	/**
+	 * Checks if the rgb value given is dark enough to be identified as a fly.
+	 * 
+	 * @param rgb
+	 *            the integer rgb value to be judged if dark enough.
+	 * @return true if the rgb value is dark enough, false if the rgb value is
+	 *         too light.
+	 */
 	public boolean isDarkEnough(int rgb) {
 		int red;
 		int green;
@@ -225,27 +305,35 @@ public class Analyzer {
 		return found;
 	}
 
-	public void flydentify(BufferedImage image) {
-		// just for a single image
-		flies = new LinkedList<Fly>();
-		totalFrames = 1;
-		flydentify(image, 0);
-
-		System.out.println("number of flies: " + flies.size());
-	}
-
-	public double averageVelFly(Fly fly, int start, int end) {
-		double avgVel = 0;
-		double[] vx = fly.getVx();
-		double[] vy = fly.getVy();
-		for (int i = start; i <= end; i++) {
-			avgVel += vx[i] + vy[i];
+	/**
+	 * Updates the size threshold field. This is used to determine if an object
+	 * identified within an image is large enough to be considered a fly. This
+	 * will also analyze all stored images again.
+	 * 
+	 * @param input
+	 *            the value which size threshold will be set to.
+	 */
+	public void sizeThresholdUpdate(int input) {
+		sizeThreshold = input;
+		if (numImages > 0) {
+			updateImages();
 		}
-		avgVel = avgVel / (end - (start - 1));
-		return avgVel;
 	}
 
-	public List<Fly> getFlies() {
-		return flies;
+	/**
+	 * This runs flydentify on all stored images.
+	 */
+	public void updateImages() {
+		try {
+			for (int i = 0; i < numImages; i++) {
+				// TODO this should probably create a new flies List, since it
+				// is re running flydentify on all images.
+				BufferedImage image = ImageIO.read(images[i]);
+				flydentify(image, i);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 }
