@@ -40,4 +40,9 @@ public class AnalyzerPanel extends JPanel {
 	public List<Fly> getFlyList() {
 		return gui.getFlies();
 	}
+
+	public void setDrawTrajectories(int startFrame, int endFrame) {
+		ipanel.setDrawTrajectories(startFrame, endFrame);
+		
+	}
 }

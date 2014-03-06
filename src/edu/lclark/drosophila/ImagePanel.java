@@ -12,6 +12,13 @@ public class ImagePanel extends JPanel {
 	private static final int DEFAULT_HEIGHT = 600;
 
 	private boolean flydentifiers;
+	
+	private boolean drawTrajectories;
+	
+	/** First frame to draw trajectories for */
+	private int firstFrame;
+	/** Last frame to draw trajectories for */
+	private int lastFrame;
 
 	private int numberOfImages;
 
@@ -46,8 +53,24 @@ public class ImagePanel extends JPanel {
 							(int) flies.get(i).getY(index) - 3, 6, 6);
 				}
 			}
+			if(drawTrajectories){
+				g.setColor(Color.RED);
+				List<Fly> flies = a.getFlyList();
+				for(Fly fly : flies){
+					for(int i = firstFrame; i < lastFrame; i++){
+						g.drawLine((int) fly.getX(i), (int) fly.getY(i), (int) fly.getX(i+1), (int) fly.getY(i+1));
+					}
+				}
+			}
 			index++;
 			imageOffset+=image.getWidth(null)+10;
 		}
+	}
+
+	public void setDrawTrajectories(int startFrame, int endFrame) {
+		drawTrajectories = !drawTrajectories;
+		firstFrame = startFrame;
+		lastFrame = endFrame;
+		a.repaint();
 	}
 }

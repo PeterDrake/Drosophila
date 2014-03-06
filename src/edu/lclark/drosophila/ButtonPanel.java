@@ -15,6 +15,11 @@ public class ButtonPanel extends JPanel {
 	private JButton setThreshold;
 	private JTextField thresholdText;
 	private JButton drawFlydentifiers;
+	private JButton drawTrajectories;
+	/** First frame to draw trajectories for */
+	private JTextField firstFrame;
+	/** Last frame to draw trajectories for */
+	private JTextField lastFrame;
 
 	private static final int DEFAULT_WIDTH = 500;
 	private static final int DEFAULT_HEIGHT = 500;
@@ -27,20 +32,30 @@ public class ButtonPanel extends JPanel {
 		getImage = new JButton("Open an Image");
 		setThreshold = new JButton("Set fly size threshold (in pixels)");
 		drawFlydentifiers = new JButton("Draw fly locations");
+		drawTrajectories = new JButton("Draw fly trajectories");
+		firstFrame = new JTextField("First frame");
+		firstFrame.setPreferredSize(new Dimension(100, 50));
+		lastFrame = new JTextField("Last frame");
+		lastFrame.setPreferredSize(new Dimension(100, 50));
 		add(getImage);
 		thresholdText = new JTextField();
 		thresholdText.setPreferredSize(new Dimension(100, 50));
 		add(setThreshold);
 		add(thresholdText);
 		add(drawFlydentifiers);
+		add(drawTrajectories);
+		add(firstFrame);
+		add(lastFrame);
 
 		GetImageAction getImageAction = new GetImageAction(this);
 		SetThresholdAction setThresholdAction = new SetThresholdAction();
 		DrawFlydentifiersAction drawFlydentifiersAction = new DrawFlydentifiersAction();
+		DrawTrajectoriesAction drawTrajectoriesAction = new DrawTrajectoriesAction();
 
 		setThreshold.addActionListener(setThresholdAction);
 		getImage.addActionListener(getImageAction);
 		drawFlydentifiers.addActionListener(drawFlydentifiersAction);
+		drawTrajectories.addActionListener(drawTrajectoriesAction);
 	}
 
 	public void passImage(File file) {
@@ -95,5 +110,20 @@ public class ButtonPanel extends JPanel {
 
 		}
 
+	}
+	
+	private class DrawTrajectoriesAction implements ActionListener {
+		
+		@Override
+		public void actionPerformed(ActionEvent e){
+			try {
+				int startFrame = Integer.parseInt(firstFrame.getText());
+				int endFrame = Integer.parseInt(lastFrame.getText());
+				a.setDrawTrajectories(startFrame, endFrame);
+			} catch (NumberFormatException error) {
+				error.printStackTrace();
+				System.exit(1);
+			}
+		}
 	}
 }
