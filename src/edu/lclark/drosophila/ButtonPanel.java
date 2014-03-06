@@ -10,18 +10,75 @@ import javax.swing.*;
 
 public class ButtonPanel extends JPanel {
 
+	private class DrawFlydentifiersAction implements ActionListener {
+
+		public void actionPerformed(ActionEvent e) {
+			a.setFlydentifiers();
+		}
+	}
+	private class DrawTrajectoriesAction implements ActionListener {
+		
+		@Override
+		public void actionPerformed(ActionEvent e){
+			try {
+				int startFrame = Integer.parseInt(firstFrame.getText());
+				int endFrame = Integer.parseInt(lastFrame.getText());
+				a.setDrawTrajectories(startFrame, endFrame);
+			} catch (NumberFormatException error) {
+				error.printStackTrace();
+				System.exit(1);
+			}
+		}
+	}
+	private class GetImageAction implements ActionListener {
+
+		private ButtonPanel bpanel;
+
+		public GetImageAction(ButtonPanel bpanel) {
+			this.bpanel = bpanel;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			int returnVal = fc.showOpenDialog(getImage);
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				File file = fc.getSelectedFile();
+				bpanel.passImage(file);
+				a.repaint();
+			}
+
+		}
+
+	}
+	private class SetThresholdAction implements ActionListener {
+
+		public void actionPerformed(ActionEvent e) {
+			try {
+				int testText = Integer.parseInt(thresholdText.getText());
+				a.sizeThresholdUpdate(testText);
+			} catch (NumberFormatException error) {
+				error.printStackTrace();
+				System.exit(1);
+			}
+
+		}
+	}
 	private JFileChooser fc;
 	private JButton getImage;
 	private JButton setThreshold;
 	private JTextField thresholdText;
+
 	private JButton drawFlydentifiers;
 	private JButton drawTrajectories;
+
 	/** First frame to draw trajectories for */
 	private JTextField firstFrame;
+
 	/** Last frame to draw trajectories for */
 	private JTextField lastFrame;
 
 	private static final int DEFAULT_WIDTH = 500;
+
 	private static final int DEFAULT_HEIGHT = 500;
 
 	private AnalyzerPanel a;
@@ -58,72 +115,15 @@ public class ButtonPanel extends JPanel {
 		drawTrajectories.addActionListener(drawTrajectoriesAction);
 	}
 
-	public void passImage(File file) {
-		a.passImage(file);
+	public Dimension getPreferredSize() {
+		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 	}
 
 	public void paintComponent(Graphics g) {
 
 	}
-
-	public Dimension getPreferredSize() {
-		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-	}
-
-	private class SetThresholdAction implements ActionListener {
-
-		public void actionPerformed(ActionEvent e) {
-			try {
-				int testText = Integer.parseInt(thresholdText.getText());
-				a.sizeThresholdUpdate(testText);
-			} catch (NumberFormatException error) {
-				error.printStackTrace();
-				System.exit(1);
-			}
-
-		}
-	}
-
-	private class DrawFlydentifiersAction implements ActionListener {
-
-		public void actionPerformed(ActionEvent e) {
-			a.setFlydentifiers();
-		}
-	}
-
-	private class GetImageAction implements ActionListener {
-
-		private ButtonPanel bpanel;
-
-		public GetImageAction(ButtonPanel bpanel) {
-			this.bpanel = bpanel;
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			int returnVal = fc.showOpenDialog(getImage);
-			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				File file = fc.getSelectedFile();
-				bpanel.passImage(file);
-				a.repaint();
-			}
-
-		}
-
-	}
 	
-	private class DrawTrajectoriesAction implements ActionListener {
-		
-		@Override
-		public void actionPerformed(ActionEvent e){
-			try {
-				int startFrame = Integer.parseInt(firstFrame.getText());
-				int endFrame = Integer.parseInt(lastFrame.getText());
-				a.setDrawTrajectories(startFrame, endFrame);
-			} catch (NumberFormatException error) {
-				error.printStackTrace();
-				System.exit(1);
-			}
-		}
+	public void passImage(File file) {
+		a.passImage(file);
 	}
 }

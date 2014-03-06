@@ -10,10 +10,6 @@ public class AnalyzerPanel extends JPanel {
 	private AnalyzerGui gui;
 	private ImagePanel ipanel;
 
-	public void sizeThresholdUpdate(int input) {
-		gui.sizeThresholdUpdate(input);
-	}
-
 	AnalyzerPanel(AnalyzerGui gui) {
 		this.gui = gui;
 		ButtonPanel bpanel = new ButtonPanel(this);
@@ -22,8 +18,8 @@ public class AnalyzerPanel extends JPanel {
 		add(ipanel);
 	}
 
-	public void passImage(File file) {
-		gui.passImage(file);
+	public List<Fly> getFlyList() {
+		return gui.getFlies();
 	}
 
 	public String passdownImage(int index) {
@@ -33,16 +29,20 @@ public class AnalyzerPanel extends JPanel {
 		return null;
 	}
 
-	public void setFlydentifiers() {
-		ipanel.setFlydentifiers();
-	}
-
-	public List<Fly> getFlyList() {
-		return gui.getFlies();
+	public void passImage(File file) {
+		gui.passImage(file);
 	}
 
 	public void setDrawTrajectories(int startFrame, int endFrame) {
 		ipanel.setDrawTrajectories(startFrame, endFrame);
 		
+	}
+
+	public void setFlydentifiers() {
+		ipanel.setFlydentifiers();
+	}
+
+	public void sizeThresholdUpdate(int input) {
+		gui.sizeThresholdUpdate(input);
 	}
 }
