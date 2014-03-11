@@ -42,6 +42,16 @@ public class AnalyzerGui extends JFrame {
 	}
 
 	/**
+	 * Getter for the total number of frames or images which have been processed
+	 * by the Analyzer.
+	 * 
+	 * @return the total number of frames or images which have been processed.
+	 */
+	public int getTotalFrames() {
+		return analyzer.getTotalFrames();
+	}
+
+	/**
 	 * Returns the File of a specified image that is stored in the Analyzer.
 	 * 
 	 * @param index

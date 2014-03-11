@@ -34,6 +34,13 @@ public class AnalyzerPanel extends JPanel {
 	}
 
 	/**
+	 * Increments the displayed image index in ImagePanel by 1.
+	 */
+	public void decrementIndex() {
+		ipanel.decrementIndex();
+	}
+
+	/**
 	 * Gets the List of Fly objects, which contain all gathered data, from the
 	 * Analyzer.
 	 * 
@@ -44,6 +51,23 @@ public class AnalyzerPanel extends JPanel {
 	}
 
 	/**
+	 * Getter for the total number of frames or images which have been processed
+	 * by the Analyzer.
+	 * 
+	 * @return the total number of frames or images which have been processed.
+	 */
+	public int getTotalFrames() {
+		return gui.getTotalFrames();
+	}
+
+	/**
+	 * Increments the displayed image index in ImagePanel by 1.
+	 */
+	public void incrementIndex() {
+		ipanel.incrementIndex();
+	}
+
+	/**
 	 * Returns the file path of specified image that is stored in the Analyzer.
 	 * 
 	 * @param index
@@ -51,8 +75,9 @@ public class AnalyzerPanel extends JPanel {
 	 * @return the String containing the file path of the image specified.
 	 */
 	public String passdownImage(int index) {
-		if (gui.passDownImage(index) != null) {
-			return gui.passDownImage(index).getPath();
+		File file = gui.passDownImage(index);
+		if (file != null) {
+			return file.getPath();
 		}
 		return null;
 	}

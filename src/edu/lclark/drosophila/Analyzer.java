@@ -35,20 +35,23 @@ public class Analyzer {
 	private int totalFrames;
 
 	/**
+	 * True if the currently loaded file is a movie. Otherwise, it is false.
+	 * <p>
+	 * This is used so that the proper constructor is called for making a new
+	 * Fly at the end of Flydentify.
+	 */
+	private boolean movieLoaded;
+
+	/**
 	 * Stores all of the images being analyzed.
 	 */
 	private File[] images;
 
-	/**
-	 * The total number of images being analyzed.
-	 */
-	private int numImages;
-
 	public Analyzer() {
-		totalFrames = 20;
+		movieLoaded = false;
+		totalFrames = 0;
 		flies = new LinkedList<Fly>();
-		images = new File[totalFrames];
-		numImages = 0;
+		images = new File[20];
 	}
 
 
@@ -73,26 +76,6 @@ public class Analyzer {
 		}
 		avgVel = avgVel / (end - (start - 1));
 		return avgVel;
-	}
-
-	/**
-	 * Builds a new list of Fly objects with their information gathered from the
-	 * single given image. In order to retrieve information, use the flies List
-	 * in this Analyzer, through getFlies().
-	 * <p>
-	 * WARNING: Calling this method will create a new flies List, meaning any
-	 * previous data will be lost.
-	 * 
-	 * @param image
-	 *            the image which is being analyzed.
-	 */
-	public void flydentify(BufferedImage image) {
-		// just for a single image
-		flies = new LinkedList<Fly>();
-		totalFrames = 1;
-		flydentify(image, 0);
-
-		System.out.println("number of flies: " + flies.size());
 	}
 
 	/**
@@ -234,7 +217,12 @@ public class Analyzer {
 		sizeFlies = tempFlies.size();
 		while (!tempFlies.isEmpty()) {
 			// create a new fly for each fly left
-			Fly aNewFly = new Fly(totalFrames);
+			Fly aNewFly;
+			if (movieLoaded) {
+				aNewFly = new Fly(totalFrames);
+			} else {
+				aNewFly = new Fly();
+			}
 			aNewFly.addFrameInfo(frameNumber, tempFlies.get(0)[0],
 					tempFlies.get(0)[1]);
 			flies.add(aNewFly);
@@ -253,14 +241,29 @@ public class Analyzer {
 	 */
 	public void flydentify(File file) {
 		try {
-			images[numImages] = file;
-			numImages++;
+			images[totalFrames] = file;
+			totalFrames++;
 			BufferedImage image = ImageIO.read(file);
-			flydentify(image, numImages - 1);
+			flydentify(image, totalFrames - 1);
 		} catch (IOException e) {
 			System.err.println("EVERYTHING IS HORRIBLE");
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * This is the method called when analyzing a movie. IT IS INCOMPLETE.
+	 * <p>
+	 * This is just to show the format of how flydentifyMovie should work.
+	 * MovieLoaded needs to be set to true for flydentify to call the proper Fly
+	 * constructor. TotalFrames should be set to the total number of frames
+	 * within the movie. Afterwards, call flydentify on all frames to set up fly
+	 * data.
+	 */
+	public void flydentifyMovie() {
+		movieLoaded = true;
+		totalFrames = 0;
+		images = new File[totalFrames];
 	}
 
 	/**
@@ -282,7 +285,20 @@ public class Analyzer {
 	 * @return
 	 */
 	public File getImage(int index) {
-		return images[index];
+		if (!(index < 0) && index < images.length) {
+			return images[index];
+		}
+		return null;
+	}
+
+	/**
+	 * Getter for the total number of frames or images which have been processed
+	 * by this Analyzer.
+	 * 
+	 * @return the total number of frames or images which have been processed.
+	 */
+	public int getTotalFrames() {
+		return totalFrames;
 	}
 
 	/**
@@ -316,7 +332,7 @@ public class Analyzer {
 	 */
 	public void sizeThresholdUpdate(int input) {
 		sizeThreshold = input;
-		if (numImages > 0) {
+		if (totalFrames > 0) {
 			updateImages();
 		}
 	}
@@ -326,7 +342,7 @@ public class Analyzer {
 	 */
 	public void updateImages() {
 		try {
-			for (int i = 0; i < numImages; i++) {
+			for (int i = 0; i < totalFrames; i++) {
 				// TODO this should probably create a new flies List, since it
 				// is re running flydentify on all images.
 				BufferedImage image = ImageIO.read(images[i]);

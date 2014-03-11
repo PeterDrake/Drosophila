@@ -1,6 +1,7 @@
 package edu.lclark.drosophila;
 
 import java.awt.*;
+import java.io.File;
 import java.util.List;
 
 import javax.swing.*;
@@ -39,6 +40,12 @@ public class ImagePanel extends JPanel {
 	private AnalyzerPanel analyzerPanel;
 
 	/**
+	 * The index of the image that is currently being displayed. Used with
+	 * Analyzer's Files array.
+	 */
+	private int imageIndex;
+
+	/**
 	 * The constructor which sets the AnalyzerPanel this ImagePanel is connected
 	 * to.
 	 * 
@@ -48,6 +55,14 @@ public class ImagePanel extends JPanel {
 	public ImagePanel(AnalyzerPanel a) {
 		this.analyzerPanel = a;
 		flydentifiers = false;
+		imageIndex = 0;
+	}
+
+	/**
+	 * Decrements the displayed image index by 1.
+	 */
+	public void decrementIndex() {
+		imageIndex--;
 	}
 
 	/**
@@ -58,24 +73,36 @@ public class ImagePanel extends JPanel {
 	}
 
 	/**
+	 * Increments the displayed image index by 1.
+	 */
+	public void incrementIndex() {
+		imageIndex++;
+	}
+
+	/**
 	 * Draws any components of this panel. It draws the selected image or frame,
 	 * and red circles over any identified flies.
 	 */
 	public void paintComponent(Graphics g) {
-		int index = 0;
-		int imageOffset = 0;
-		while (analyzerPanel.passdownImage(index) != null) {
-			Image image = new ImageIcon(analyzerPanel.passdownImage(index))
-					.getImage();
-			g.drawImage(image, imageOffset, 0, null);
+		int totalImages = analyzerPanel.getTotalFrames();
+		if (imageIndex < 0) {
+			imageIndex = 0;
+		} else if (imageIndex >= totalImages) {
+			imageIndex = totalImages - 1;
+		}
+		String filePath = analyzerPanel.passdownImage(imageIndex);
+		if (filePath != null) {
+			Image image = new ImageIcon(filePath).getImage();
+			g.drawImage(image, 0, 0, null);
 			if (flydentifiers) {
 				List<Fly> flies = analyzerPanel.getFlyList();
 				int sizeFlies = flies.size();
 				for (int i = 0; i < sizeFlies; i++) {
-					g.setColor(Color.RED);
-					g.drawOval(imageOffset
-							+ ((int) flies.get(i).getX(index) - 3), (int) flies
-							.get(i).getY(index) - 3, 6, 6);
+					g.setColor(new Color(Color.HSBtoRGB(
+							(float) ((i * 1.0) / sizeFlies), (float) 0.75,
+							(float) 0.95)));
+					g.fillOval((int) flies.get(i).getX(imageIndex) - 3,
+							(int) flies.get(i).getY(imageIndex) - 3, 12, 12);
 				}
 			}
 			if (drawTrajectories) {
@@ -98,8 +125,6 @@ public class ImagePanel extends JPanel {
 					}
 				}
 			}
-			index++;
-			imageOffset += image.getWidth(null) + 10;
 		}
 	}
 
@@ -123,5 +148,14 @@ public class ImagePanel extends JPanel {
 	public void setFlydentifiers() {
 		flydentifiers = !flydentifiers;
 		analyzerPanel.repaint();
+	}
+
+	/**
+	 * Sets this ImagePanel's displayed image index to the given
+	 * 
+	 * @param imageIndex
+	 */
+	public void setImageIndex(int imageIndex) {
+		this.imageIndex = imageIndex;
 	}
 }
