@@ -22,8 +22,8 @@ public class AnalyzerPanel extends JPanel {
 		
 		graphPanel = new GraphPanel(this);
 		
-		//add(bpanel);
-		//add(ipanel);
+		add(bpanel);
+		add(ipanel);
 		add(graphPanel);
 	}
 
