@@ -64,7 +64,8 @@ public class ImagePanel extends JPanel {
 		int index = 0;
 		int imageOffset = 0;
 		while (analyzerPanel.passdownImage(index) != null) {
-			Image image = new ImageIcon(analyzerPanel.passdownImage(index)).getImage();
+			Image image = new ImageIcon(analyzerPanel.passdownImage(index))
+					.getImage();
 			g.drawImage(image, imageOffset, 0, null);
 			if (flydentifiers) {
 				List<Fly> flies = analyzerPanel.getFlyList();
@@ -91,6 +92,10 @@ public class ImagePanel extends JPanel {
 		}
 	}
 
+	/**
+	 * Toggles whether or not fly trajectories are drawn over identified flies,
+	 * will draw their paths from startFrame to endFrame
+	 */
 	public void setDrawTrajectories(int startFrame, int endFrame) {
 		drawTrajectories = !drawTrajectories;
 		firstFrame = startFrame;

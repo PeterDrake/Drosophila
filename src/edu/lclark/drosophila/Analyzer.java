@@ -306,11 +306,6 @@ public class Analyzer {
 		return found;
 	}
 
-	/** Sets the list of flies to a given list. For testing only. */
-	public void setFlies(List<Fly> flies){
-		this.flies = flies;
-	}
-
 	/**
 	 * Updates the size threshold field. This is used to determine if an object
 	 * identified within an image is large enough to be considered a fly. This

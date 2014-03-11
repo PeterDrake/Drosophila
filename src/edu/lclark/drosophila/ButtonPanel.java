@@ -10,10 +10,10 @@ import javax.swing.*;
 
 public class ButtonPanel extends JPanel {
 
-/**
- * The action listener which keeps track of when the Flydentifiers button is
- * clicked. It toggles whether or not flydentifiers are drawn.
- */
+	/**
+	 * The action listener which keeps track of when the Flydentifiers button is
+	 * clicked. It toggles whether or not flydentifiers are drawn.
+	 */
 	private class DrawFlydentifiersAction implements ActionListener {
 
 		/**
@@ -24,10 +24,14 @@ public class ButtonPanel extends JPanel {
 		}
 	}
 
+	/**
+	 * The action listener that keeps track of when the DrawTrajectories button
+	 * is clocked. Toggles whether or not fly trajectories are drawn.
+	 */
 	private class DrawTrajectoriesAction implements ActionListener {
-		
+
 		@Override
-		public void actionPerformed(ActionEvent e){
+		public void actionPerformed(ActionEvent e) {
 			try {
 				int startFrame = Integer.parseInt(firstFrame.getText());
 				int endFrame = Integer.parseInt(lastFrame.getText());
@@ -38,7 +42,6 @@ public class ButtonPanel extends JPanel {
 			}
 		}
 	}
-	
 
 	/**
 	 * The action listener which opens a file browsing window when the get image
@@ -118,6 +121,8 @@ public class ButtonPanel extends JPanel {
 	 * The button which lets the user toggle flydentifiers.
 	 */
 	private JButton drawFlydentifiers;
+
+	/** Button that lets user toggle drawing trajectories */
 	private JButton drawTrajectories;
 
 	/** First frame to draw trajectories for */

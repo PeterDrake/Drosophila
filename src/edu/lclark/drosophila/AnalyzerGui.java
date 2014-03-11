@@ -79,13 +79,7 @@ public class AnalyzerGui extends JFrame {
 		});
 		analyzerPanel.repaint();
 	}
-
-	/** Sets the analyzer's list of flies to given list. For testing only. */
-	public void setFlies(List<Fly> flies){
-		analyzer.setFlies(flies);
-	}
 	
-
 	/**
 	 * Updates the size threshold in Analyzer. This is used to determine if an
 	 * object identified within an image is large enough to be considered a fly.
