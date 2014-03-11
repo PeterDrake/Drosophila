@@ -15,7 +15,7 @@ public class ImagePanel extends JPanel {
 	/**
 	 * The default preferred height of this panel.
 	 */
-	private static final int DEFAULT_HEIGHT = 600;
+	private static final int DEFAULT_HEIGHT = 800;
 
 	/**
 	 * The boolean which keeps track of whether or not the identifying dots
@@ -23,6 +23,7 @@ public class ImagePanel extends JPanel {
 	 */
 	private boolean flydentifiers;
 
+	/** Boolean that keeps track of whether or not the trajectories are drawn. */
 	private boolean drawTrajectories;
 
 	/** First frame to draw trajectories for */
@@ -82,8 +83,18 @@ public class ImagePanel extends JPanel {
 				List<Fly> flies = analyzerPanel.getFlyList();
 				for (Fly fly : flies) {
 					for (int i = firstFrame; i < lastFrame; i++) {
-						g.drawLine((int) fly.getX(i), (int) fly.getY(i),
-								(int) fly.getX(i + 1), (int) fly.getY(i + 1));
+						int x1 = (int) fly.getX(i) - 3;
+						int y1 = (int) fly.getY(i) - 3;
+						int x2 = (int) fly.getX(i + 1) - 3;
+						int y2 = (int) fly.getY(i + 1) - 3;
+						//if(x1 > -3 && y1 > -3 && x2 > -3 && y2 > -3){//doesn't draw flies that don't appear in both frames
+							g.drawLine(x1, y1, x2, y2);
+						//}
+						/*
+						 * g.drawLine((int) fly.getX(i) - 3, (int)
+						 * fly.getY(i)-3, (int) fly.getX(i + 1)-3, (int)
+						 * fly.getY(i + 1)-3);
+						 */
 					}
 				}
 			}
@@ -94,12 +105,14 @@ public class ImagePanel extends JPanel {
 
 	/**
 	 * Toggles whether or not fly trajectories are drawn over identified flies,
-	 * will draw their paths from startFrame to endFrame
+	 * will draw their paths from startFrame to endFrame. Input is frame values
+	 * starting at 1 for ease of use, this method converts that to frame values
+	 * starting at 0 to match implementation.
 	 */
 	public void setDrawTrajectories(int startFrame, int endFrame) {
 		drawTrajectories = !drawTrajectories;
-		firstFrame = startFrame;
-		lastFrame = endFrame;
+		firstFrame = startFrame - 1;
+		lastFrame = endFrame - 1;
 		analyzerPanel.repaint();
 	}
 
