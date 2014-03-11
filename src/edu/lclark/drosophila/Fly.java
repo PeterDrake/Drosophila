@@ -27,8 +27,8 @@ public class Fly {
 	private double[] vy;
 
 	/**
-	 * A constructor for the Fly class, if an image or images are loaded.  
-	 * All arrays are initialized to size 20
+	 * A constructor for the Fly class, if an image or images are loaded. All
+	 * arrays are initialized to size 20
 	 */
 	public Fly() {
 		x = new double[20];
@@ -36,7 +36,7 @@ public class Fly {
 		vx = new double[20];
 		vy = new double[20];
 	}
-	
+
 	/**
 	 * A constructor for the Fly class, if a movie is loaded.
 	 * <p>

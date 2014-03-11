@@ -34,6 +34,13 @@ public class AnalyzerPanel extends JPanel {
 	}
 
 	/**
+	 * Increments the displayed image index in ImagePanel by 1.
+	 */
+	public void decrementIndex() {
+		ipanel.decrementIndex();
+	}
+
+	/**
 	 * Gets the List of Fly objects, which contain all gathered data, from the
 	 * Analyzer.
 	 * 
@@ -41,6 +48,23 @@ public class AnalyzerPanel extends JPanel {
 	 */
 	public List<Fly> getFlyList() {
 		return gui.getFlies();
+	}
+
+	/**
+	 * Getter for the total number of frames or images which have been processed
+	 * by the Analyzer.
+	 * 
+	 * @return the total number of frames or images which have been processed.
+	 */
+	public int getTotalFrames() {
+		return gui.getTotalFrames();
+	}
+
+	/**
+	 * Increments the displayed image index in ImagePanel by 1.
+	 */
+	public void incrementIndex() {
+		ipanel.incrementIndex();
 	}
 
 	/**
@@ -86,27 +110,5 @@ public class AnalyzerPanel extends JPanel {
 	 */
 	public void sizeThresholdUpdate(int input) {
 		gui.sizeThresholdUpdate(input);
-	}
-
-	/**
-	 * Getter for the total number of frames or images which have been processed by the Analyzer.
-	 * @return the total number of frames or images which have been processed.
-	 */
-	public int getTotalFrames() {
-		return gui.getTotalFrames();
-	}
-
-	/**
-	 * Increments the displayed image index in ImagePanel by 1.
-	 */
-	public void incrementIndex() {
-		ipanel.incrementIndex();
-	}
-
-	/**
-	 * Increments the displayed image index in ImagePanel by 1.
-	 */
-	public void decrementIndex() {
-		ipanel.decrementIndex();
 	}
 }

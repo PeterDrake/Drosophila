@@ -11,6 +11,17 @@ import javax.swing.*;
 public class ButtonPanel extends JPanel {
 
 	/**
+	 * The action listener which decrements the ImagePanel's displayed image
+	 * index by 1 when the forward frame button is clicked.
+	 */
+	private class BackFrameAction implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			analyzerPanel.decrementIndex();
+			analyzerPanel.repaint();
+		}
+	}
+
+	/**
 	 * The action listener which keeps track of when the Flydentifiers button is
 	 * clicked. It toggles whether or not flydentifiers are drawn.
 	 */
@@ -21,6 +32,17 @@ public class ButtonPanel extends JPanel {
 		 */
 		public void actionPerformed(ActionEvent e) {
 			analyzerPanel.setFlydentifiers();
+		}
+	}
+
+	/**
+	 * The action listener which increments the ImagePanel's displayed image
+	 * index by 1 when the forward frame button is clicked.
+	 */
+	private class ForwardFrameAction implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			analyzerPanel.incrementIndex();
+			analyzerPanel.repaint();
 		}
 	}
 
@@ -75,28 +97,6 @@ public class ButtonPanel extends JPanel {
 			}
 		}
 	}
-	
-	/**
-	 * The action listener which increments the ImagePanel's displayed image index by 1 when
-	 * the forward frame button is clicked.
-	 */
-	private class ForwardFrameAction implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			analyzerPanel.incrementIndex();
-			analyzerPanel.repaint();
-		}
-	}
-	
-	/**
-	 * The action listener which decrements the ImagePanel's displayed image index by 1 when
-	 * the forward frame button is clicked.
-	 */
-	private class BackFrameAction implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			analyzerPanel.decrementIndex();
-			analyzerPanel.repaint();
-		}
-	}
 
 	/**
 	 * The file browser which allows the user to choose a file which contains an
@@ -114,12 +114,12 @@ public class ButtonPanel extends JPanel {
 	 * is.
 	 */
 	private JButton setThreshold;
-	
+
 	/**
 	 * The button which advances the displayed image one frame forward.
 	 */
 	private JButton forwardFrame;
-	
+
 	/**
 	 * The button which advances the displayed images one frame backwards.
 	 */

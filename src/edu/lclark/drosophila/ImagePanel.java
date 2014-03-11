@@ -36,22 +36,6 @@ public class ImagePanel extends JPanel {
 	private int imageIndex;
 
 	/**
-	 * Sets this ImagePanel's displayed image index to the given
-	 * 
-	 * @param imageIndex
-	 */
-	public void setImageIndex(int imageIndex) {
-		this.imageIndex = imageIndex;
-	}
-	
-	/**
-	 * Increments the displayed image index by 1.
-	 */
-	public void incrementIndex() {
-		imageIndex ++;
-	}
-
-	/**
 	 * The constructor which sets the AnalyzerPanel this ImagePanel is connected
 	 * to.
 	 * 
@@ -65,10 +49,24 @@ public class ImagePanel extends JPanel {
 	}
 
 	/**
+	 * Decrements the displayed image index by 1.
+	 */
+	public void decrementIndex() {
+		imageIndex--;
+	}
+
+	/**
 	 * Returns the preferred size of this panel as a Dimension object.
 	 */
 	public Dimension getPreferredSize() {
 		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+	}
+
+	/**
+	 * Increments the displayed image index by 1.
+	 */
+	public void incrementIndex() {
+		imageIndex++;
 	}
 
 	/**
@@ -77,13 +75,13 @@ public class ImagePanel extends JPanel {
 	 */
 	public void paintComponent(Graphics g) {
 		int totalImages = analyzerPanel.getTotalFrames();
-		if(imageIndex < 0) {
+		if (imageIndex < 0) {
 			imageIndex = 0;
-		} else if(imageIndex >= totalImages) {
+		} else if (imageIndex >= totalImages) {
 			imageIndex = totalImages - 1;
 		}
 		String filePath = analyzerPanel.passdownImage(imageIndex);
-		if(filePath != null) {			
+		if (filePath != null) {
 			Image image = new ImageIcon(filePath).getImage();
 			g.drawImage(image, 0, 0, null);
 			if (flydentifiers) {
@@ -108,9 +106,11 @@ public class ImagePanel extends JPanel {
 	}
 
 	/**
-	 * Decrements the displayed image index by 1.
+	 * Sets this ImagePanel's displayed image index to the given
+	 * 
+	 * @param imageIndex
 	 */
-	public void decrementIndex() {
-		imageIndex--;
+	public void setImageIndex(int imageIndex) {
+		this.imageIndex = imageIndex;
 	}
 }
