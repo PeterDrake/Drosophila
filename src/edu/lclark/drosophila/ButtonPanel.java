@@ -73,7 +73,28 @@ public class ButtonPanel extends JPanel {
 				error.printStackTrace();
 				System.exit(1);
 			}
-
+		}
+	}
+	
+	/**
+	 * The action listener which increments the ImagePanel's displayed image index by 1 when
+	 * the forward frame button is clicked.
+	 */
+	private class ForwardFrameAction implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			analyzerPanel.incrementIndex();
+			analyzerPanel.repaint();
+		}
+	}
+	
+	/**
+	 * The action listener which decrements the ImagePanel's displayed image index by 1 when
+	 * the forward frame button is clicked.
+	 */
+	private class BackFrameAction implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			analyzerPanel.decrementIndex();
+			analyzerPanel.repaint();
 		}
 	}
 
@@ -93,6 +114,16 @@ public class ButtonPanel extends JPanel {
 	 * is.
 	 */
 	private JButton setThreshold;
+	
+	/**
+	 * The button which advances the displayed image one frame forward.
+	 */
+	private JButton forwardFrame;
+	
+	/**
+	 * The button which advances the displayed images one frame backwards.
+	 */
+	private JButton backFrame;
 
 	/**
 	 * The text field which lets the user specify what the Analyzer's size
@@ -133,18 +164,26 @@ public class ButtonPanel extends JPanel {
 		getImage = new JButton("Open an Image");
 		setThreshold = new JButton("Set fly size threshold (in pixels)");
 		drawFlydentifiers = new JButton("Draw fly locations");
+		forwardFrame = new JButton("\u25B6");
+		backFrame = new JButton("\u25C0");
 		add(getImage);
 		thresholdText = new JTextField();
 		thresholdText.setPreferredSize(new Dimension(100, 50));
 		add(setThreshold);
 		add(thresholdText);
 		add(drawFlydentifiers);
+		add(backFrame);
+		add(forwardFrame);
 		GetImageAction getImageAction = new GetImageAction(this);
 		SetThresholdAction setThresholdAction = new SetThresholdAction();
 		DrawFlydentifiersAction drawFlydentifiersAction = new DrawFlydentifiersAction();
+		ForwardFrameAction forwardFrameAction = new ForwardFrameAction();
+		BackFrameAction backFrameAction = new BackFrameAction();
 		setThreshold.addActionListener(setThresholdAction);
 		getImage.addActionListener(getImageAction);
 		drawFlydentifiers.addActionListener(drawFlydentifiersAction);
+		forwardFrame.addActionListener(forwardFrameAction);
+		backFrame.addActionListener(backFrameAction);
 	}
 
 	/**

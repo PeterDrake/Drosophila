@@ -92,4 +92,12 @@ public class AnalyzerGui extends JFrame {
 		analyzer.sizeThresholdUpdate(input);
 	}
 
+	/**
+	 * Getter for the total number of frames or images which have been processed by the Analyzer.
+	 * @return the total number of frames or images which have been processed.
+	 */
+	public int getTotalFrames() {
+		return analyzer.getTotalFrames();
+	}
+
 }

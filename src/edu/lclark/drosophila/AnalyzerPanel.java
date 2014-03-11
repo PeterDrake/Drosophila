@@ -51,8 +51,9 @@ public class AnalyzerPanel extends JPanel {
 	 * @return the String containing the file path of the image specified.
 	 */
 	public String passdownImage(int index) {
-		if (gui.passDownImage(index) != null) {
-			return gui.passDownImage(index).getPath();
+		File file = gui.passDownImage(index);
+		if (file != null) {
+			return file.getPath();
 		}
 		return null;
 	}
@@ -85,5 +86,27 @@ public class AnalyzerPanel extends JPanel {
 	 */
 	public void sizeThresholdUpdate(int input) {
 		gui.sizeThresholdUpdate(input);
+	}
+
+	/**
+	 * Getter for the total number of frames or images which have been processed by the Analyzer.
+	 * @return the total number of frames or images which have been processed.
+	 */
+	public int getTotalFrames() {
+		return gui.getTotalFrames();
+	}
+
+	/**
+	 * Increments the displayed image index in ImagePanel by 1.
+	 */
+	public void incrementIndex() {
+		ipanel.incrementIndex();
+	}
+
+	/**
+	 * Increments the displayed image index in ImagePanel by 1.
+	 */
+	public void decrementIndex() {
+		ipanel.decrementIndex();
 	}
 }

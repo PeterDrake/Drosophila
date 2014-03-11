@@ -27,7 +27,20 @@ public class Fly {
 	private double[] vy;
 
 	/**
-	 * The constructor for the Fly class, which initializes all fields.
+	 * A constructor for the Fly class, if an image or images are loaded.  
+	 * All arrays are initialized to size 20
+	 */
+	public Fly() {
+		x = new double[20];
+		y = new double[20];
+		vx = new double[20];
+		vy = new double[20];
+	}
+	
+	/**
+	 * A constructor for the Fly class, if a movie is loaded.
+	 * <p>
+	 * Field arrays are as large as there are number of frames specified.
 	 * 
 	 * @param numFrames
 	 *            the number of frames the fly must store data for.
