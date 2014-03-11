@@ -7,5 +7,6 @@
 	<classpathentry kind="lib" path="logback-classic-1.0.0.jar"/>
 	<classpathentry kind="lib" path="slf4j-api-1.6.4.jar"/>
 	<classpathentry kind="lib" path="xuggle-utils-1.20.688.jar"/>
+	<classpathentry kind="lib" path="xuggle-xuggler-5.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
