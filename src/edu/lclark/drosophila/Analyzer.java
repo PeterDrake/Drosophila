@@ -43,7 +43,10 @@ public class Analyzer {
 	}
 
 	public File getImage(int index) {
+		if(index<images.length){
 		return images[index];
+		}
+		return null;
 	}
 
 	public void updateImages() {
@@ -59,14 +62,28 @@ public class Analyzer {
 	}
 
 	public void flydentify(File file) {
+		if(file.getName().endsWith(".mov")){
+			int maxFrame=testingstuff.VideoThumbnailsExample.getFrames(file.getAbsolutePath());
+			System.out.println("highest Frame number"+ maxFrame);
+			totalFrames = maxFrame;
+			images = new File[totalFrames];
+			for(int i=0;i<maxFrame;i++){
+				File thisFrame= new File("frames/frame"+i+".png");
+				flydentify(thisFrame);
+			}
+		
+		}
+		else{
 		try {
 			images[numImages] = file;
+			System.out.println("numimages"+numImages);
 			numImages++;
 			BufferedImage image = ImageIO.read(file);
 			flydentify(image, numImages - 1);
 		} catch (IOException e) {
 			System.err.println("EVERYTHING IS HORRIBLE");
 			e.printStackTrace();
+		}
 		}
 	}
 
