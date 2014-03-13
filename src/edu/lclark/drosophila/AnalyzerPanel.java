@@ -45,6 +45,13 @@ public class AnalyzerPanel extends JPanel {
 	}
 
 	/**
+	 * Removes the currently attached images and fly data from the Analyzer.
+	 */
+	public void clearImages() {
+		gui.clearImages();
+	}
+
+	/**
 	 * Increments the displayed image index in ImagePanel by 1.
 	 */
 	public void decrementIndex() {

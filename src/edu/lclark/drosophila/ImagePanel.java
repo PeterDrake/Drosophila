@@ -103,11 +103,13 @@ public class ImagePanel extends JPanel {
 				List<Fly> flies = analyzerPanel.getFlyList();
 				int sizeFlies = flies.size();
 				for (int i = 0; i < sizeFlies; i++) {
-					g.setColor(new Color(Color.HSBtoRGB(
-							(float) ((i * 1.0) / sizeFlies), (float) 0.75,
-							(float) 0.95)));
-					g.fillOval((int) flies.get(i).getX(imageIndex) - 3,
-							(int) flies.get(i).getY(imageIndex) - 3, 12, 12);
+					if (flies.get(i).getX(imageIndex) != -1) {
+						g.setColor(new Color(Color.HSBtoRGB(
+								(float) ((i * 1.0) / sizeFlies), (float) 0.75,
+								(float) 0.95)));
+						g.fillOval((int) flies.get(i).getX(imageIndex) - 6,
+								(int) flies.get(i).getY(imageIndex) - 6, 12, 12);
+					}
 				}
 			}
 			if (drawTrajectories) {

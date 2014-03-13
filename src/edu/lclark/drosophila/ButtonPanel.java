@@ -21,6 +21,18 @@ public class ButtonPanel extends JPanel {
 	}
 
 	/**
+	 * The action listener which clears the Analyzer's stored images and fly
+	 * data.
+	 */
+	private class ClearImageAction implements ActionListener {
+
+		public void actionPerformed(ActionEvent e) {
+			analyzerPanel.clearImages();
+			analyzerPanel.repaint();
+		}
+	}
+
+	/**
 	 * The action listener which keeps track of when the Flydentifiers button is
 	 * clicked. It toggles whether or not flydentifiers are drawn.
 	 */
@@ -143,6 +155,11 @@ public class ButtonPanel extends JPanel {
 	private JButton backFrame;
 
 	/**
+	 * The button which detaches all added files from the analyzer.
+	 */
+	private JButton clearImages;
+
+	/**
 	 * The text field which lets the user specify what the Analyzer's size
 	 * threshold is.
 	 */
@@ -253,9 +270,10 @@ public class ButtonPanel extends JPanel {
 		add(lastFrame, constraints);
 
 		backFrame = new JButton("\u25C0");
+		constraints.fill = constraints.HORIZONTAL;
 		constraints.ipadx = 0;
 		constraints.ipady = 0;
-		constraints.gridx = 1;
+		constraints.gridx = 2;
 		constraints.gridy = 4;
 		constraints.gridwidth = 1;
 		add(backFrame, constraints);
@@ -263,10 +281,21 @@ public class ButtonPanel extends JPanel {
 		backFrame.addActionListener(backFrameAction);
 
 		forwardFrame = new JButton("\u25B6");
-		constraints.gridx = 2;
+		constraints.fill = constraints.HORIZONTAL;
+		constraints.gridx = 3;
 		add(forwardFrame, constraints);
 		ForwardFrameAction forwardFrameAction = new ForwardFrameAction();
 		forwardFrame.addActionListener(forwardFrameAction);
+		
+		clearImages = new JButton("Clear all images");
+		constraints.gridx = 0;
+		constraints.gridwidth = 2;
+		constraints.gridy = 4;
+		constraints.fill = constraints.HORIZONTAL;
+		add(clearImages, constraints);
+		ClearImageAction clearImageAction = new ClearImageAction();
+		clearImages.addActionListener(clearImageAction);
+
 	}
 
 	/**
