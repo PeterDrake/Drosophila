@@ -93,9 +93,15 @@ public class AnalyzerPanel extends JPanel {
 		gui.passImage(file);
 	}
 
+	public void setDrawTrajectories(int startFrame, int endFrame) {
+		ipanel.setDrawTrajectories(startFrame, endFrame);
+		
+	}
+
 	/**
 	 * Toggles the identifying dots drawn over the identified flies on the gui.
 	 */
+
 	public void setFlydentifiers() {
 		ipanel.setFlydentifiers();
 	}

@@ -54,6 +54,7 @@ public class Analyzer {
 		images = new File[20];
 	}
 
+
 	/**
 	 * Calculates the mean velocity of the given fly within the time specified
 	 * by the starting and ending frames.

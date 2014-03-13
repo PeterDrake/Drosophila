@@ -89,7 +89,7 @@ public class AnalyzerGui extends JFrame {
 		});
 		analyzerPanel.repaint();
 	}
-
+	
 	/**
 	 * Updates the size threshold in Analyzer. This is used to determine if an
 	 * object identified within an image is large enough to be considered a fly.
@@ -101,5 +101,6 @@ public class AnalyzerGui extends JFrame {
 	public void sizeThresholdUpdate(int input) {
 		analyzer.sizeThresholdUpdate(input);
 	}
+
 
 }

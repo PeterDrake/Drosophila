@@ -36,6 +36,26 @@ public class ButtonPanel extends JPanel {
 	}
 
 	/**
+	 * The action listener that keeps track of when the DrawTrajectories button
+	 * is clocked. Toggles whether or not fly trajectories are drawn.
+	 */
+	private class DrawTrajectoriesAction implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			try {
+				int startFrame = Integer.parseInt(firstFrame.getText());
+				int endFrame = Integer.parseInt(lastFrame.getText());
+				analyzerPanel.setDrawTrajectories(startFrame, endFrame);
+			} catch (NumberFormatException error) {
+				error.printStackTrace();
+				System.exit(1);
+			}
+		}
+
+	}
+
+	/*
 	 * The action listener which increments the ImagePanel's displayed image
 	 * index by 1 when the forward frame button is clicked.
 	 */
@@ -70,9 +90,7 @@ public class ButtonPanel extends JPanel {
 				bpanel.passImage(file);
 				analyzerPanel.repaint();
 			}
-
 		}
-
 	}
 
 	/**
@@ -136,6 +154,15 @@ public class ButtonPanel extends JPanel {
 	 */
 	private JButton drawFlydentifiers;
 
+	/** Button that lets user toggle drawing trajectories */
+	private JButton drawTrajectories;
+
+	/** First frame to draw trajectories for */
+	private JTextField firstFrame;
+
+	/** Last frame to draw trajectories for */
+	private JTextField lastFrame;
+
 	/**
 	 * The default preferred width of this panel.
 	 */
@@ -164,6 +191,11 @@ public class ButtonPanel extends JPanel {
 		getImage = new JButton("Open an Image");
 		setThreshold = new JButton("Set fly size threshold (in pixels)");
 		drawFlydentifiers = new JButton("Draw fly locations");
+		drawTrajectories = new JButton("Draw fly trajectories");
+		firstFrame = new JTextField("First frame");
+		firstFrame.setPreferredSize(new Dimension(100, 50));
+		lastFrame = new JTextField("Last frame");
+		lastFrame.setPreferredSize(new Dimension(100, 50));
 		forwardFrame = new JButton("\u25B6");
 		backFrame = new JButton("\u25C0");
 		add(getImage);
@@ -172,16 +204,23 @@ public class ButtonPanel extends JPanel {
 		add(setThreshold);
 		add(thresholdText);
 		add(drawFlydentifiers);
+		add(drawTrajectories);
+		add(firstFrame);
+		add(lastFrame);
 		add(backFrame);
 		add(forwardFrame);
+
 		GetImageAction getImageAction = new GetImageAction(this);
 		SetThresholdAction setThresholdAction = new SetThresholdAction();
 		DrawFlydentifiersAction drawFlydentifiersAction = new DrawFlydentifiersAction();
+		DrawTrajectoriesAction drawTrajectoriesAction = new DrawTrajectoriesAction();
 		ForwardFrameAction forwardFrameAction = new ForwardFrameAction();
 		BackFrameAction backFrameAction = new BackFrameAction();
+
 		setThreshold.addActionListener(setThresholdAction);
 		getImage.addActionListener(getImageAction);
 		drawFlydentifiers.addActionListener(drawFlydentifiersAction);
+		drawTrajectories.addActionListener(drawTrajectoriesAction);
 		forwardFrame.addActionListener(forwardFrameAction);
 		backFrame.addActionListener(backFrameAction);
 	}
