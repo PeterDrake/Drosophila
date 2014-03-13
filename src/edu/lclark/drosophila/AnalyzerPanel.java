@@ -1,5 +1,6 @@
 package edu.lclark.drosophila;
 
+import java.awt.*;
 import java.io.File;
 import java.util.List;
 
@@ -27,10 +28,20 @@ public class AnalyzerPanel extends JPanel {
 	 */
 	AnalyzerPanel(AnalyzerGui gui) {
 		this.gui = gui;
+		this.setLayout(new GridBagLayout());
+		GridBagConstraints constraints = new GridBagConstraints();
 		ButtonPanel bpanel = new ButtonPanel(this);
+		constraints.gridx = 0;
+		constraints.gridy = 0;
+		constraints.weightx = 1;
+		constraints.insets = new Insets(0, 0, 0, 50);
+		add(bpanel, constraints);
 		ipanel = new ImagePanel(this);
-		add(bpanel);
-		add(ipanel);
+		constraints.anchor = constraints.EAST;
+		constraints.gridx = 1;
+		constraints.gridy = 0;
+		constraints.weightx = 1;
+		add(ipanel, constraints);
 	}
 
 	/**
@@ -95,7 +106,7 @@ public class AnalyzerPanel extends JPanel {
 
 	public void setDrawTrajectories(int startFrame, int endFrame) {
 		ipanel.setDrawTrajectories(startFrame, endFrame);
-		
+
 	}
 
 	/**

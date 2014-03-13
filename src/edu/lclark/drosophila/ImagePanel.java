@@ -72,6 +72,11 @@ public class ImagePanel extends JPanel {
 		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 	}
 
+	/** Returns the minimum size of this panel as a Dimension object */
+	public Dimension getMinimumSize() {
+		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+	}
+
 	/**
 	 * Increments the displayed image index by 1.
 	 */
@@ -112,14 +117,22 @@ public class ImagePanel extends JPanel {
 				int sizeFlies = flies.size();
 				for (Fly fly : flies) {
 					g.setColor(new Color(Color.HSBtoRGB(
-							(float) ((flyNumber * 1.0) / sizeFlies), (float) 0.75,
-							(float) 0.95)));
+							(float) ((flyNumber * 1.0) / sizeFlies),
+							(float) 0.75, (float) 0.95)));
 					for (int i = firstFrame; i < lastFrame; i++) {
 						int x1 = (int) fly.getX(i);
 						int y1 = (int) fly.getY(i);
 						int x2 = (int) fly.getX(i + 1);
 						int y2 = (int) fly.getY(i + 1);
-						if(!((x1==0 && y1==0)||(x2 == 0 && y2 == 0))){//doesn't draw flies that don't appear in both frames
+						if (!((x1 == 0 && y1 == 0) || (x2 == 0 && y2 == 0))) {// doesn't
+																				// draw
+																				// flies
+																				// that
+																				// don't
+																				// appear
+																				// in
+																				// both
+																				// frames
 							g.drawLine(x1, y1, x2, y2);
 						}
 					}
