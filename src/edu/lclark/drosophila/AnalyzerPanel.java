@@ -11,10 +11,6 @@ public class AnalyzerPanel extends JPanel {
 	private ImagePanel ipanel;
 	private GraphPanel graphPanel;
 	
-	public void sizeThresholdUpdate(int input) {
-		gui.sizeThresholdUpdate(input);
-	}
-
 	AnalyzerPanel(AnalyzerGui gui) {
 		this.gui = gui;
 		ButtonPanel bpanel = new ButtonPanel(this);
@@ -27,8 +23,12 @@ public class AnalyzerPanel extends JPanel {
 		add(graphPanel);
 	}
 
-	public void passImage(File file) {
-		gui.passImage(file);
+	public double[] getAverageVelocity() {
+		return gui.getAverageVelocity();
+	}
+
+	public List<Fly> getFlyList() {
+		return gui.getFlies();
 	}
 
 	public String passdownImage(int index) {
@@ -38,15 +38,15 @@ public class AnalyzerPanel extends JPanel {
 		return null;
 	}
 
+	public void passImage(File file) {
+		gui.passImage(file);
+	}
+
 	public void setFlydentifiers() {
 		ipanel.setFlydentifiers();
 	}
 
-	public List<Fly> getFlyList() {
-		return gui.getFlies();
-	}
-
-	public double[] getAverageVelocity() {
-		return gui.getAverageVelocity();
+	public void sizeThresholdUpdate(int input) {
+		gui.sizeThresholdUpdate(input);
 	}
 }

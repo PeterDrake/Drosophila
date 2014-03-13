@@ -15,6 +15,11 @@ public class Analyzer {
 
 	private static final int CONTRAST_THRESHOLD = 200;
 
+	public static void main(String[] args) {
+		gui = new AnalyzerGui(new Analyzer());
+		gui.run();
+	}
+
 	private List<Fly> flies;
 
 	private int totalFrames;
@@ -30,44 +35,38 @@ public class Analyzer {
 		numImages = 0;
 	}
 
-	public void sizeThresholdUpdate(int input) {
-		sizeThreshold = input;
-		if (numImages > 0) {
-			updateImages();
+	public double averageVelFly(Fly fly, int start, int end) {
+		double avgVel = 0;
+		double[] vx = fly.getVx();
+		double[] vy = fly.getVy();
+		for (int i = start; i <= end; i++) {
+			avgVel += Math.sqrt(vx[i] * vx[i] + vy[i] * vy[i]);
 		}
+		avgVel = avgVel / (end - (start - 1));
+		return avgVel;
 	}
 
-	public static void main(String[] args) {
-		gui = new AnalyzerGui(new Analyzer());
-		gui.run();
-	}
-
-	public File getImage(int index) {
-		return images[index];
-	}
-
-	public void updateImages() {
-		try {
-			for (int i = 0; i < numImages; i++) {
-				BufferedImage image = ImageIO.read(images[i]);
-				flydentify(image, i);
+	public double[] averageVelMultFlies(List<Fly> flies, int start, int end) {
+		double[] avgVel = new double[end - start];
+		double tempAvg;
+		for (int i = start; i < end; i++) {
+			tempAvg = 0;
+			for (int j = 0; j < flies.size(); j++) {
+				tempAvg += averageVelFly(flies.get(j), i, i);
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1);
+			avgVel[i - start] = tempAvg / flies.size();
 		}
+
+		return avgVel;
 	}
 
-	public void flydentify(File file) {
-		try {
-			images[numImages] = file;
-			numImages++;
-			BufferedImage image = ImageIO.read(file);
-			flydentify(image, numImages - 1);
-		} catch (IOException e) {
-			System.err.println("EVERYTHING IS HORRIBLE");
-			e.printStackTrace();
-		}
+	public void flydentify(BufferedImage image) {
+		// just for a single image
+		flies = new LinkedList<Fly>();
+		totalFrames = 1;
+		flydentify(image, 0);
+
+		System.out.println("number of flies: " + flies.size());
 	}
 
 	/**
@@ -212,6 +211,26 @@ public class Analyzer {
 		}
 	}
 
+	public void flydentify(File file) {
+		try {
+			images[numImages] = file;
+			numImages++;
+			BufferedImage image = ImageIO.read(file);
+			flydentify(image, numImages - 1);
+		} catch (IOException e) {
+			System.err.println("EVERYTHING IS HORRIBLE");
+			e.printStackTrace();
+		}
+	}
+
+	public List<Fly> getFlies() {
+		return flies;
+	}
+
+	public File getImage(int index) {
+		return images[index];
+	}
+
 	public boolean isDarkEnough(int rgb) {
 		int red;
 		int green;
@@ -225,41 +244,22 @@ public class Analyzer {
 		return found;
 	}
 
-	public void flydentify(BufferedImage image) {
-		// just for a single image
-		flies = new LinkedList<Fly>();
-		totalFrames = 1;
-		flydentify(image, 0);
-
-		System.out.println("number of flies: " + flies.size());
-	}
-
-	public double averageVelFly(Fly fly, int start, int end) {
-		double avgVel = 0;
-		double[] vx = fly.getVx();
-		double[] vy = fly.getVy();
-		for (int i = start; i <= end; i++) {
-			avgVel += Math.sqrt(vx[i]*vx[i] + vy[i]*vy[i]);
+	public void sizeThresholdUpdate(int input) {
+		sizeThreshold = input;
+		if (numImages > 0) {
+			updateImages();
 		}
-		avgVel = avgVel / (end - (start - 1));
-		return avgVel;
 	}
-	
-	public double[] averageVelMultFlies(List<Fly> flies, int start, int end){
-		double [] avgVel= new double [end-start];
-		double tempAvg;
-		for (int i = start; i < end; i++) {
-			tempAvg =0;
-			for (int j = 0; j < flies.size(); j++) {
-				tempAvg += averageVelFly(flies.get(j), i, i);
+
+	public void updateImages() {
+		try {
+			for (int i = 0; i < numImages; i++) {
+				BufferedImage image = ImageIO.read(images[i]);
+				flydentify(image, i);
 			}
-			avgVel[i-start] = tempAvg/flies.size();
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
 		}
-		
-		return avgVel;
-	}
-
-	public List<Fly> getFlies() {
-		return flies;
 	}
 }

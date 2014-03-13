@@ -6,15 +6,6 @@ import javax.swing.*;
 
 public class GraphPanelTest extends JFrame {
 
-	private GraphPanel graphPanel;
-	
-	public GraphPanelTest()
-	{
-		graphPanel = new GraphPanel();
-		
-		add(graphPanel);
-	}
-	
 	public static void main(String[] args)
 	{
 		EventQueue.invokeLater(new Runnable()
@@ -28,6 +19,14 @@ public class GraphPanelTest extends JFrame {
               frame.pack();
            }
         });
+	}
+	
+	private GraphPanel graphPanel;
+	
+	public GraphPanelTest()
+	{
+		graphPanel = new GraphPanel();
+		add(graphPanel);
 	}
 	
 }

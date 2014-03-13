@@ -14,13 +14,26 @@ public class AnalyzerGui extends JFrame {
 	
 	private AnalyzerPanel analyzerPanel;
 
-	public void sizeThresholdUpdate(int input) {
-		analyzer.sizeThresholdUpdate(input);
-	}
-
 	public AnalyzerGui(Analyzer a) {
 		this.analyzer = a;
 		this.analyzerPanel = new AnalyzerPanel(this);
+	}
+
+	public double[] getAverageVelocity() {
+		return analyzer.averageVelMultFlies(analyzer.getFlies(), 0, analyzer.getFlies().get(0).getVx().length);
+	}
+
+	public List<Fly> getFlies() {
+		return analyzer.getFlies();
+	}
+
+	public File passDownImage(int index) {
+		return analyzer.getImage(index);
+	}
+
+	public void passImage(File file) {
+		analyzer.flydentify(file);
+
 	}
 
 	public void run() {
@@ -37,21 +50,8 @@ public class AnalyzerGui extends JFrame {
 		analyzerPanel.repaint();
 	}
 
-	public File passDownImage(int index) {
-		return analyzer.getImage(index);
-	}
-
-	public void passImage(File file) {
-		analyzer.flydentify(file);
-
-	}
-
-	public List<Fly> getFlies() {
-		return analyzer.getFlies();
-	}
-
-	public double[] getAverageVelocity() {
-		return analyzer.averageVelMultFlies(analyzer.getFlies(), 0, analyzer.getFlies().get(0).getVx().length);
+	public void sizeThresholdUpdate(int input) {
+		analyzer.sizeThresholdUpdate(input);
 	}
 
 }

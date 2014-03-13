@@ -26,30 +26,6 @@ public class GraphPanel extends JPanel {
 		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 	}
 	
-	public void VertDrawString(String string, int x, int y, Graphics g){
-		Graphics2D g2d = (Graphics2D) g;
-		AffineTransform at = new AffineTransform();
-		at.rotate(-Math.PI /2, 0, 0);
-		g2d.setTransform(at);
-		
-		Font f =new Font("SansSarif", Font.PLAIN, 12);
-		Rectangle2D bounds; 
-		g.setFont(f);
-		String temp;
-		int stringWidth=(int) f.getStringBounds(string, g2d.getFontRenderContext()).getWidth();
-		
-		for(int i= 0; i<=string.length()-1; i++){
-			temp= string.substring(i,i+1);
-			bounds=f.getStringBounds(temp, g2d.getFontRenderContext());
-			g.drawString(temp, y-stringWidth/2, x);
-			y+=bounds.getWidth();
-		}
-		
-		at.setToRotation(0);
-		g2d.setTransform(at);
-		
-	}
-
 	public void paintComponent(Graphics g) {
 		double averageVelocity[] = { 85, 56, 42, 3, 7, 11, 46, 36 }; // test data! use analyzerPanel.getAverageVelocity 								
 		double frameRate = .10; // this may not be the real frameRate
@@ -129,5 +105,29 @@ public class GraphPanel extends JPanel {
 		
 		
 
+	}
+
+	public void VertDrawString(String string, int x, int y, Graphics g){
+		Graphics2D g2d = (Graphics2D) g;
+		AffineTransform at = new AffineTransform();
+		at.rotate(-Math.PI /2, 0, 0);
+		g2d.setTransform(at);
+		
+		Font f =new Font("SansSarif", Font.PLAIN, 12);
+		Rectangle2D bounds; 
+		g.setFont(f);
+		String temp;
+		int stringWidth=(int) f.getStringBounds(string, g2d.getFontRenderContext()).getWidth();
+		
+		for(int i= 0; i<=string.length()-1; i++){
+			temp= string.substring(i,i+1);
+			bounds=f.getStringBounds(temp, g2d.getFontRenderContext());
+			g.drawString(temp, y-stringWidth/2, x);
+			y+=bounds.getWidth();
+		}
+		
+		at.setToRotation(0);
+		g2d.setTransform(at);
+		
 	}
 }
