@@ -111,10 +111,10 @@ public class ImagePanel extends JPanel {
 				int flyNumber = 0;
 				int sizeFlies = flies.size();
 				for (Fly fly : flies) {
+					g.setColor(new Color(Color.HSBtoRGB(
+							(float) ((flyNumber * 1.0) / sizeFlies), (float) 0.75,
+							(float) 0.95)));
 					for (int i = firstFrame; i < lastFrame; i++) {
-						g.setColor(new Color(Color.HSBtoRGB(
-								(float) ((flyNumber * 1.0) / sizeFlies), (float) 0.75,
-								(float) 0.95)));
 						int x1 = (int) fly.getX(i);
 						int y1 = (int) fly.getY(i);
 						int x2 = (int) fly.getX(i + 1);
@@ -122,8 +122,8 @@ public class ImagePanel extends JPanel {
 						if(!((x1==0 && y1==0)||(x2 == 0 && y2 == 0))){//doesn't draw flies that don't appear in both frames
 							g.drawLine(x1, y1, x2, y2);
 						}
-						flyNumber++;
 					}
+					flyNumber++;
 				}
 			}
 		}
