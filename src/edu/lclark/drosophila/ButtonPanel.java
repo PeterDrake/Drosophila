@@ -22,6 +22,18 @@ public class ButtonPanel extends JPanel {
 	}
 
 	/**
+	 * The action listener which clears the Analyzer's stored images and fly
+	 * data.
+	 */
+	private class ClearImageAction implements ActionListener {
+
+		public void actionPerformed(ActionEvent e) {
+			analyzerPanel.clearImages();
+			analyzerPanel.repaint();
+		}
+	}
+
+	/**
 	 * The action listener which keeps track of when the Flydentifiers button is
 	 * clicked. It toggles whether or not flydentifiers are drawn.
 	 */
@@ -144,6 +156,11 @@ public class ButtonPanel extends JPanel {
 	private JButton backFrame;
 
 	/**
+	 * The button which detaches all added files from the analyzer.
+	 */
+	private JButton clearImages;
+
+	/**
 	 * The text field which lets the user specify what the Analyzer's size
 	 * threshold is.
 	 */
@@ -198,6 +215,7 @@ public class ButtonPanel extends JPanel {
 		lastFrame.setPreferredSize(new Dimension(100, 50));
 		forwardFrame = new JButton("\u25B6");
 		backFrame = new JButton("\u25C0");
+		clearImages = new JButton("Clear all images");
 		add(getImage);
 		thresholdText = new JTextField();
 		thresholdText.setPreferredSize(new Dimension(100, 50));
@@ -209,20 +227,21 @@ public class ButtonPanel extends JPanel {
 		add(lastFrame);
 		add(backFrame);
 		add(forwardFrame);
-
+		add(clearImages);
 		GetImageAction getImageAction = new GetImageAction(this);
 		SetThresholdAction setThresholdAction = new SetThresholdAction();
 		DrawFlydentifiersAction drawFlydentifiersAction = new DrawFlydentifiersAction();
 		DrawTrajectoriesAction drawTrajectoriesAction = new DrawTrajectoriesAction();
 		ForwardFrameAction forwardFrameAction = new ForwardFrameAction();
 		BackFrameAction backFrameAction = new BackFrameAction();
-
+		ClearImageAction clearImageAction = new ClearImageAction();
 		setThreshold.addActionListener(setThresholdAction);
 		getImage.addActionListener(getImageAction);
 		drawFlydentifiers.addActionListener(drawFlydentifiersAction);
 		drawTrajectories.addActionListener(drawTrajectoriesAction);
 		forwardFrame.addActionListener(forwardFrameAction);
 		backFrame.addActionListener(backFrameAction);
+		clearImages.addActionListener(clearImageAction);
 	}
 
 	/**
