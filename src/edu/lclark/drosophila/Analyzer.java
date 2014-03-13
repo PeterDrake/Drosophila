@@ -173,7 +173,7 @@ public class Analyzer {
 							tempLocation[0] = (double) totalX / numPixels;
 							tempLocation[1] = (double) totalY / numPixels;
 							tempFlies.add(tempLocation);
-							System.out.println("size: " + numPixels);
+							//System.out.println("size: " + numPixels);
 						}
 					} else {
 						// we searched this already!

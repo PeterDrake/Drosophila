@@ -35,6 +35,10 @@ public class Fly {
 		y = new double[20];
 		vx = new double[20];
 		vy = new double[20];
+		for (int i = 0; i < 20; i++) {
+			x[i] = -1;
+			y[i] = -1;
+		}
 	}
 
 	/**
@@ -50,6 +54,10 @@ public class Fly {
 		y = new double[numFrames];
 		vx = new double[numFrames];
 		vy = new double[numFrames];
+		for (int i = 0; i < numFrames; i++) {
+			x[i] = -1;
+			y[i] = -1;
+		}
 	}
 
 	/**
