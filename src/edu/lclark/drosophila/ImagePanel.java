@@ -47,12 +47,8 @@ public class ImagePanel extends JPanel {
 							.get(i).getY(index) - 3, 6, 6);
 				}
 			}
-			try {
+
 				repaint();
-				Thread.sleep(((long) (1000)));
-			} catch (InterruptedException e) {
-				e.getStackTrace();
-			}
 			index++;
 			imageOffset += image.getWidth(null) + 10;
 		}

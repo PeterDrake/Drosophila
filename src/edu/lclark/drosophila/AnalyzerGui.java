@@ -48,6 +48,10 @@ public class AnalyzerGui extends JFrame {
 	public File getMovie(){
 		return analyzer.getMovie();
 	}
+	
+	public void playMovie(String sourceUrl){
+		analyzerPanel.playMovie(sourceUrl);
+	}
 
 	public List<Fly> getFlies() {
 		return analyzer.getFlies();

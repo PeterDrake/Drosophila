@@ -70,6 +70,7 @@ public class Analyzer {
 	public void flydentify(File file) {
 		if(file.getName().endsWith(".mov")){
 			movie=file;
+			gui.playMovie(file.getPath());
 			int maxFrame=testingstuff.VideoThumbnailsExample.getFrames(file.getAbsolutePath());
 			System.out.println("highest Frame number"+ maxFrame);
 			totalFrames = maxFrame;

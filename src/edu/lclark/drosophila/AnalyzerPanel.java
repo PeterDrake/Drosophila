@@ -19,7 +19,7 @@ public class AnalyzerPanel extends JPanel {
 		this.gui = gui;
 		ButtonPanel bpanel = new ButtonPanel(this);
 		ipanel = new ImagePanel(this);
-		mpanel = new MoviePanel(this);
+		mpanel = new MoviePanel();
 		add(bpanel);
 		add(ipanel);
 		add(mpanel);
@@ -37,6 +37,10 @@ public class AnalyzerPanel extends JPanel {
 	}
 	public File getMovie(){
 			return gui.getMovie();
+	}
+	
+	public void playMovie(String sourceUrl){
+		mpanel.play(sourceUrl);
 	}
 
 	public void setFlydentifiers() {
