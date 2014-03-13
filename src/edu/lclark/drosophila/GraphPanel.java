@@ -69,7 +69,6 @@ public class GraphPanel extends JPanel {
 		
 		DecimalFormat df= new DecimalFormat ("##.##");
 		g.setColor(Color.LIGHT_GRAY);
-		VertDrawString("Average Velocity (in pixels per frame)", leftMarg/3,-(GPanelHeight+topMarg-bottomMarg)/2, g);
 		
 		stringWidth=(int) f.getStringBounds("Time (in frames)", g2d.getFontRenderContext()).getWidth();
 		g.drawString("Time (in frames)", (GPanelWidth-stringWidth+leftMarg-rightMarg)/2 , GPanelHeight-(bottomMarg/3));
@@ -102,9 +101,11 @@ public class GraphPanel extends JPanel {
 			}
 
 		}
+		g.setColor(Color.LIGHT_GRAY);
+		JLabel butts = new JLabel("Average Velocity (in pixels per frame)");
 		
-		
-
+		((Graphics2D)butts.getGraphics()).rotate(-Math.PI / 2, butts.getWidth()/2, butts.getHeight()/2);
+		//VertDrawString("Average Velocity (in pixels per frame)", leftMarg/3,-(GPanelHeight+topMarg-bottomMarg)/2, g);
 	}
 
 	public void VertDrawString(String string, int x, int y, Graphics g){
