@@ -26,6 +26,19 @@ import com.xuggle.xuggler.Utils;
  */
 public class MoviePanel extends JPanel
 {
+	private AnalyzerPanel analyzerpanel;
+	private ImageComponent mScreen = null;
+	public MoviePanel(AnalyzerPanel apanel){
+		analyzerpanel=apanel;
+		mScreen = new ImageComponent(this);
+	}
+	public void paintComponent(Graphics G){
+		if(analyzerpanel.getMovie()!=null){
+			System.out.println("found a movie");
+			Play(analyzerpanel.getMovie().getPath());
+		}
+			System.out.println("did not find a movie");
+	}
 
   /**
    * Takes a media container (file) as the first argument, opens it,
@@ -35,7 +48,7 @@ public class MoviePanel extends JPanel
    * @param args Must contain one string which represents a filename
    */
   @SuppressWarnings("deprecation")
-  public static void Play(String filename)
+  public void Play(String filename)
   {
     // Let's make sure that we can actually convert video pixel formats.
     if (!IVideoResampler.isSupported(
@@ -98,7 +111,6 @@ public class MoviePanel extends JPanel
     /*
      * And once we have that, we draw a window on screen
      */
-    openJavaWindow();
 
     /*
      * Now, we start walking through the container looking at each packet.
@@ -172,6 +184,7 @@ public class MoviePanel extends JPanel
              * be in different units depending on your IContainer, and IStream
              * and things can get hairy quickly.
              */
+            System.out.println("displaying images");
             if (firstTimestampInStream == Global.NO_PTS)
             {
               // This is our first time through
@@ -209,6 +222,7 @@ public class MoviePanel extends JPanel
                 }
               }
             }
+            System.out.println("got out of offset loop");
 
             // And finally, convert the BGR24 to an Java buffered image
             BufferedImage javaImage = Utils.videoPictureToImage(newPic);
@@ -243,17 +257,13 @@ public class MoviePanel extends JPanel
       container.close();
       container = null;
     }
-    //closeJavaWindow();
+    closeJavaWindow();
 
   }
 
-  /**
-   * The window we'll draw the video on.
-   * 
-   */
-  private static ImageComponent mScreen = null;
+  
 
-  private static void updateJavaWindow(BufferedImage javaImage)
+  private void updateJavaWindow(BufferedImage javaImage)
   {
     mScreen.setImage(javaImage);
   }
@@ -261,16 +271,13 @@ public class MoviePanel extends JPanel
   /**
    * Opens a Swing window on screen.
    */
-  private static void openJavaWindow()
-  {
-    mScreen = new ImageComponent();
-  }
+  
 
   /**
    * Forces the swing thread to terminate; I'm sure there is a right
    * way to do this in swing, but this works too.
    */
-  private static void closeJavaWindow()
+  private void closeJavaWindow()
   {
     System.exit(0);
   }
@@ -282,6 +289,11 @@ public class MoviePanel extends JPanel
     private static final long serialVersionUID = 5584422798735147930L;
     private Image mImage;
     private Dimension mSize;
+    private MoviePanel moviePanel;
+    
+    public ImageComponent(MoviePanel mpanel){
+    	moviePanel=mpanel;
+    }
 
     public void setImage(Image image)
     {
@@ -290,6 +302,7 @@ public class MoviePanel extends JPanel
     
     public void setImageSize(Dimension newSize)
     {
+    	mSize=newSize;
     }
     
     private class ImageRunnable implements Runnable
@@ -310,8 +323,8 @@ public class MoviePanel extends JPanel
         if (!newSize.equals(mSize))
         {
           ImageComponent.this.mSize = newSize;
-          MoviePanel.this.setSize(mImage.getWidth(null), mImage.getHeight(null));
-          MoviePanel.this.setVisible(true);
+          setSize(mImage.getWidth(null), mImage.getHeight(null));
+          setVisible(true);
         }
         repaint();
       }

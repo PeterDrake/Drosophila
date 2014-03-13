@@ -9,6 +9,7 @@ public class AnalyzerPanel extends JPanel {
 
 	private AnalyzerGui gui;
 	private ImagePanel ipanel;
+	private MoviePanel mpanel;
 
 	public void sizeThresholdUpdate(int input) {
 		gui.sizeThresholdUpdate(input);
@@ -18,8 +19,10 @@ public class AnalyzerPanel extends JPanel {
 		this.gui = gui;
 		ButtonPanel bpanel = new ButtonPanel(this);
 		ipanel = new ImagePanel(this);
+		mpanel = new MoviePanel(this);
 		add(bpanel);
 		add(ipanel);
+		add(mpanel);
 	}
 
 	public void passImage(File file) {
@@ -31,6 +34,9 @@ public class AnalyzerPanel extends JPanel {
 			return gui.passDownImage(index).getPath();
 		}
 		return null;
+	}
+	public File getMovie(){
+			return gui.getMovie();
 	}
 
 	public void setFlydentifiers() {

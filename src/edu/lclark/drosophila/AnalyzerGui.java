@@ -45,6 +45,9 @@ public class AnalyzerGui extends JFrame {
 		analyzer.flydentify(file);
 
 	}
+	public File getMovie(){
+		return analyzer.getMovie();
+	}
 
 	public List<Fly> getFlies() {
 		return analyzer.getFlies();

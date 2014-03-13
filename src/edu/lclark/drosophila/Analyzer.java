@@ -18,6 +18,8 @@ public class Analyzer {
 	private List<Fly> flies;
 
 	private int totalFrames;
+	
+	private File movie;
 
 	private File[] images;
 
@@ -60,9 +62,14 @@ public class Analyzer {
 			System.exit(1);
 		}
 	}
+	
+	public File getMovie(){
+		return movie;
+	}
 
 	public void flydentify(File file) {
 		if(file.getName().endsWith(".mov")){
+			movie=file;
 			int maxFrame=testingstuff.VideoThumbnailsExample.getFrames(file.getAbsolutePath());
 			System.out.println("highest Frame number"+ maxFrame);
 			totalFrames = maxFrame;
