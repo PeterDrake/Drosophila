@@ -26,6 +26,8 @@ public class GraphPanel extends JPanel {
 	
 	private String xLabel;
 	
+	private Color color;
+	
 	
 	private boolean drawPoints;
 
@@ -38,6 +40,7 @@ public class GraphPanel extends JPanel {
 		xLabel = "Time in frames";
 		yLabel = "Average Velocity (in pixels per frame)";
 		title = "Average Velocity vs Time";
+		color = Color.BLACK;
 	}
 
 	public GraphPanel(AnalyzerPanel analyzerPanel, boolean drawPoints, double frameRate, String title, String yLabel, String xLabel) {
@@ -47,6 +50,7 @@ public class GraphPanel extends JPanel {
 		this.title = title;
 		this.yLabel = yLabel;
 		this.xLabel = xLabel;
+		color = Color.RED;
 	}
 
 	public Dimension getPreferredSize() {
@@ -131,6 +135,7 @@ public class GraphPanel extends JPanel {
 
 		g.setColor(Color.BLACK);
 		g.drawRect(leftMarg, topMarg, GPanelWidth - (leftMarg+rightMarg), GPanelHeight - (topMarg+bottomMarg));
+		g.setColor(color);
 		for (int i = 0; i < averageVelocity.length; i++) {
 			
 			// draw the points

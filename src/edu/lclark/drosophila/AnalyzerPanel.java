@@ -49,10 +49,11 @@ public class AnalyzerPanel extends JPanel {
 		constraints.weightx = 1;
 		constraints.gridheight = 2;
 		add(ipanel, constraints);
-		graphPanel = new GraphPanel(this, false, .10, "TITLE", "X", "Y");
+		graphPanel = new GraphPanel(this, false, .10, "TITLE", "Y684654654654654654654", "Xkljhfdsalkjfhasdkljfh" );
 		constraints.gridx = 0;
 		constraints.gridy = 1;
 		constraints.gridheight = 1;
+		constraints.weighty = 1;
 		constraints.anchor = constraints.NORTH;
 		add(graphPanel, constraints);
 	}
