@@ -91,17 +91,19 @@ public class Analyzer {
 
 	public void flydentify(File file) {
 		if(file.getName().endsWith(".mov")){
-			movie=file;
-			gui.playMovie(file.getPath());
-			int maxFrame=testingstuff.VideoThumbnailsExample.getFrames(file.getAbsolutePath());
-			System.out.println("highest Frame number"+ maxFrame);
-			totalFrames = maxFrame;
-			images = new File[totalFrames];
-			for(int i=0;i<maxFrame;i++){
-				File thisFrame= new File("frames/frame"+i+".png");
-				flydentify(thisFrame);
-			}
-		
+			System.out.println("We don't know how to deal with a .mov");
+			System.exit(1);
+//			movie=file;
+//			gui.playMovie(file.getPath());
+//			int maxFrame=testingstuff.VideoThumbnailsExample.getFrames(file.getAbsolutePath());
+//			System.out.println("highest Frame number"+ maxFrame);
+//			totalFrames = maxFrame;
+//			images = new File[totalFrames];
+//			for(int i=0;i<maxFrame;i++){
+//				File thisFrame= new File("frames/frame"+i+".png");
+//				flydentify(thisFrame);
+//			}
+//		
 		}
 		else{
 		try {
