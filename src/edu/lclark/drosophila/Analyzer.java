@@ -76,15 +76,13 @@ public class Analyzer {
 		avgVel = avgVel/ (end-(start-1)); 
 		return avgVel;
 	}
-	
-	public double totalDistance(Fly fly, int start, int end){
-		double dist=0;
-		for (int i = start; i < end; i++) {
-			dist+= java.lang.Math.pow((java.lang.Math.pow((fly.getX(i)-fly.getX(i+1)),2) + (java.lang.Math.pow((fly.getY(i)-fly.getY(i+1)),2))),.5);
-		}
-		return dist;
-	}
-	
+	/**
+	 * this method calls the above method on an array of flies and computes the average
+	 * @param flies
+	 * @param start
+	 * @param end
+	 * @return average velocity of flies from start to end
+	 */
 	
 	public double[] averageVelMultFlies(Fly [] flies, int start, int end){
 		double [] avgVel= new double [end-start];
@@ -100,6 +98,20 @@ public class Analyzer {
 		return avgVel;
 	}
 
+	/**
+	 *  this calculates total distance of one fly over multiple frames
+	 * @param fly
+	 * @param start
+	 * @param end
+	 * @return total distance traveled from start frame to end frame
+	 */
+	public double totalDistance(Fly fly, int start, int end){
+		double dist=0;
+		for (int i = start; i < end; i++) {
+			dist+= java.lang.Math.pow((java.lang.Math.pow((fly.getX(i)-fly.getX(i+1)),2) + (java.lang.Math.pow((fly.getY(i)-fly.getY(i+1)),2))),.5);
+		}
+		return dist;
+	}
 	/**
 	 * Removes the currently attached images and fly data from this Analyzer.
 	 */
