@@ -14,14 +14,39 @@ public class GraphPanel extends JPanel {
 
 	private AnalyzerPanel analyzerPanel;
 	
+	private double[] averageVelocity;
+	
+	private double frameRate;
+	
+	private double videoLength;
+	
+	private String title;
+	
+	private String yLabel;
+	
+	private String xLabel;
+	
+	
 	private boolean drawPoints;
 
 	public GraphPanel() {
 		drawPoints = false;
+		double tempAverageVelocity[] = { 85, 56, 42, 3, 7, 11, 46, 36 }; // test data! use analyzerPanel.getAverageVelocity 			
+		averageVelocity = tempAverageVelocity;
+		frameRate = .10; // this may not be the real frameRate
+		videoLength = averageVelocity.length * frameRate;
+		xLabel = "Time in frames";
+		yLabel = "Average Velocity (in pixels per frame)";
+		title = "Average Velocity vs Time";
 	}
 
-	public GraphPanel(AnalyzerPanel analyzerPanel) {
+	public GraphPanel(AnalyzerPanel analyzerPanel, boolean drawPoints, double frameRate, String title, String yLabel, String xLabel) {
 		this.analyzerPanel = analyzerPanel;
+		this.drawPoints = drawPoints;
+		this.frameRate = frameRate;
+		this.title = title;
+		this.yLabel = yLabel;
+		this.xLabel = xLabel;
 	}
 
 	public Dimension getPreferredSize() {
@@ -32,11 +57,11 @@ public class GraphPanel extends JPanel {
 		this.drawPoints = drawPoints;
 	}
 	
-	public void paintComponent(Graphics g) {
-		double averageVelocity[] = { 85, 56, 42, 3, 7, 11, 46, 36 }; // test data! use analyzerPanel.getAverageVelocity 								
-		double frameRate = .10; // this may not be the real frameRate
-		double videoLength = averageVelocity.length * frameRate;
-		
+	public void paintComponent(Graphics g) {	
+		if(analyzerPanel.getFlyList().size() <= 0){
+			return;
+		}
+		averageVelocity = analyzerPanel.getAverageVelocity();
 		int GPanelWidth= this.getWidth();
 		int GPanelHeight=this.getHeight();
 		
@@ -76,11 +101,11 @@ public class GraphPanel extends JPanel {
 		DecimalFormat df= new DecimalFormat ("##.##");
 		g.setColor(Color.LIGHT_GRAY);
 		
-		stringWidth=(int) f.getStringBounds("Time in frames", g2d.getFontRenderContext()).getWidth();
-		g.drawString("Time in frames", (GPanelWidth-stringWidth+leftMarg-rightMarg)/2 , GPanelHeight-(bottomMarg/3));
+		stringWidth=(int) f.getStringBounds(xLabel, g2d.getFontRenderContext()).getWidth();
+		g.drawString(xLabel, (GPanelWidth-stringWidth+leftMarg-rightMarg)/2 , GPanelHeight-(bottomMarg/3));
 		
-		stringWidth=(int) f.getStringBounds("Average Velocity vs Time", g2d.getFontRenderContext()).getWidth();
-		g.drawString("Average Velocity vs Time",(GPanelWidth-stringWidth)/2 , topMarg/3);
+		stringWidth=(int) f.getStringBounds(title, g2d.getFontRenderContext()).getWidth();
+		g.drawString(title,(GPanelWidth-stringWidth)/2 , topMarg/3);
 		
 		// drawing the grid lines and the data for the grid lines
 		double d = videoLength/((GPanelWidth-(leftMarg+rightMarg))/gridxOffset);
@@ -120,7 +145,7 @@ public class GraphPanel extends JPanel {
 		//JLabel butts = new JLabel("Average Velocity (in pixels per frame)");
 		
 		//((Graphics2D)butts.getGraphics()).rotate(-Math.PI / 2, butts.getWidth()/2, butts.getHeight()/2);
-		VertDrawString("Average Velocity (in pixels per frame)", leftMarg/3,-(GPanelHeight+topMarg-bottomMarg)/2, g);
+		VertDrawString(yLabel, leftMarg/3,-(GPanelHeight+topMarg-bottomMarg)/2, g);
 	}
 
 	public void VertDrawString(String string, int x, int y, Graphics g){

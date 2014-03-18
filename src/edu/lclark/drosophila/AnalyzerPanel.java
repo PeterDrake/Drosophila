@@ -35,7 +35,7 @@ public class AnalyzerPanel extends JPanel {
 		ButtonPanel bpanel = new ButtonPanel(this);
 		ipanel = new ImagePanel(this);
 		
-		graphPanel = new GraphPanel(this);
+		graphPanel = new GraphPanel(this, false, .10, "TITLE", "X", "Y");
 		
 		add(bpanel);
 		add(ipanel);
