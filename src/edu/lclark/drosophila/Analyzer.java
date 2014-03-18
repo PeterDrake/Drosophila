@@ -68,10 +68,8 @@ public class Analyzer {
 	 */
 	public double averageVelFly(Fly fly, int start, int end) {
 		double avgVel=0;
-		double [] vx= fly.getVx(); 
-		double [] vy= fly.getVy();
 		for (int i = start; i <= end; i++) {
-			avgVel+= java.lang.Math.pow(java.lang.Math.pow(vx[i], 2)+ java.lang.Math.pow(vy[i], 2), .5);
+			avgVel+= fly.getVelocityatFrame(i);
 		}
 		avgVel = avgVel/ (end-(start-1)); 
 		return avgVel;
@@ -84,15 +82,15 @@ public class Analyzer {
 	 * @return average velocity of flies from start to end
 	 */
 	
-	public double[] averageVelMultFlies(Fly [] flies, int start, int end){
+	public double[] averageVelMultFlies(List<Fly> flies, int start, int end){
 		double [] avgVel= new double [end-start];
 		double tempAvg;
 		for (int i = start; i < end; i++) {
 			tempAvg =0;
-			for (int j = 0; j < flies.length; j++) {
-				tempAvg += averageVelFly(flies[j], i, i);
+			for (int j = 0; j < flies.size(); j++) {
+				tempAvg += averageVelFly(flies.get(j), i, i);
 			}
-			avgVel[i-start] = tempAvg/flies.length;
+			avgVel[i-start] = tempAvg/flies.size();
 		}
 		
 		return avgVel;

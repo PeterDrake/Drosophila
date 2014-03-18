@@ -1,9 +1,10 @@
 package edu.lclark.drosophila;
 
 import static org.junit.Assert.*;
-import org.junit.*;
 
-import org.junit.Test;
+import java.util.LinkedList;
+
+import org.junit.*;
 
 public class AnalyzerTest {
 			public Fly fly;
@@ -59,8 +60,11 @@ public class AnalyzerTest {
 				fly2.setVy(fly2Y);
 				fly3.setVx(fly3X);
 				fly3.setVy(fly3Y);
-				Fly[] flyArray = {fly1, fly2, fly3};
-				double[] avgVel = analyzer.averageVelMultFlies(flyArray, 0, 5);
+				LinkedList<Fly> flyList= new LinkedList<Fly>();
+				flyList.add(fly1);
+				flyList.add(fly2);
+				flyList.add(fly3);
+				double[] avgVel = analyzer.averageVelMultFlies(flyList, 0, 5);
 				
 				assertEquals(5.1, avgVel[0], .1);
 				assertEquals(5.54, avgVel[1], .1);

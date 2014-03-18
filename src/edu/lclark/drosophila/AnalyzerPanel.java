@@ -2,6 +2,7 @@ package edu.lclark.drosophila;
 
 import java.awt.*;
 import java.io.File;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.*;
@@ -17,6 +18,10 @@ public class AnalyzerPanel extends JPanel {
 	 * The ImagePanel object which this AnalyzerPanel communicates with.
 	 */
 	private ImagePanel ipanel;
+	/**
+	 * The Data Panel object which this AnalyzerPanel communicates with.
+	 */
+	private DataPanel dpanel;
 
 	/**
 	 * The constructor for AnalyzerPanel, which adds the button panel and image
@@ -42,6 +47,13 @@ public class AnalyzerPanel extends JPanel {
 		constraints.gridy = 0;
 		constraints.weightx = 1;
 		add(ipanel, constraints);
+		dpanel = new DataPanel(this);
+		constraints.anchor = constraints.NORTH;
+		constraints.gridx = 0;
+		constraints.gridy = 0;
+		constraints.gridwidth= 1;
+		constraints.weightx = 1;
+		add(dpanel, constraints);
 	}
 
 	/**
@@ -65,6 +77,9 @@ public class AnalyzerPanel extends JPanel {
 	 * @return a List of identified Fly objects.
 	 */
 	public List<Fly> getFlyList() {
+		if(gui.getFlies()==null){
+			return new LinkedList<Fly>();
+		}
 		return gui.getFlies();
 	}
 

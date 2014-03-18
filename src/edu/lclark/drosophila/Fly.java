@@ -94,7 +94,14 @@ public class Fly {
 	public double[] getVy() {
 		return vy;
 	}
-
+	/**
+	 * returns the 2-dimensional velocity at a particular frame;
+	 * @param frame
+	 * @return double velocity
+	 */
+	public double getVelocityatFrame(int frame){
+		return (Math.sqrt((vx[frame]*vx[frame]+vy[frame]*vy[frame])));
+	}
 	/**
 	 * Getter for this fly's x position.
 	 * 
