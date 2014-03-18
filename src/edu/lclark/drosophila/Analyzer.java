@@ -67,13 +67,36 @@ public class Analyzer {
 	 * @return the mean velocity of the given fly within the given time frame.
 	 */
 	public double averageVelFly(Fly fly, int start, int end) {
-		double avgVel = 0;
-		double[] vx = fly.getVx();
-		double[] vy = fly.getVy();
+		double avgVel=0;
+		double [] vx= fly.getVx(); 
+		double [] vy= fly.getVy();
 		for (int i = start; i <= end; i++) {
-			avgVel += vx[i] + vy[i];
+			avgVel+= java.lang.Math.pow(java.lang.Math.pow(vx[i], 2)+ java.lang.Math.pow(vy[i], 2), .5);
 		}
-		avgVel = avgVel / (end - (start - 1));
+		avgVel = avgVel/ (end-(start-1)); 
+		return avgVel;
+	}
+	
+	public double totalDistance(Fly fly, int start, int end){
+		double dist=0;
+		for (int i = start; i < end; i++) {
+			dist+= java.lang.Math.pow((java.lang.Math.pow((fly.getX(i)-fly.getX(i+1)),2) + (java.lang.Math.pow((fly.getY(i)-fly.getY(i+1)),2))),.5);
+		}
+		return dist;
+	}
+	
+	
+	public double[] averageVelMultFlies(Fly [] flies, int start, int end){
+		double [] avgVel= new double [end-start];
+		double tempAvg;
+		for (int i = start; i < end; i++) {
+			tempAvg =0;
+			for (int j = 0; j < flies.length; j++) {
+				tempAvg += averageVelFly(flies[j], i, i);
+			}
+			avgVel[i-start] = tempAvg/flies.length;
+		}
+		
 		return avgVel;
 	}
 
