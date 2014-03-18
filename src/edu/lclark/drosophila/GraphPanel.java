@@ -64,8 +64,8 @@ public class GraphPanel extends JPanel {
 		double widthOffset = (GPanelWidth - (leftMarg+rightMarg))
 				/ (double) (averageVelocity.length - 1);
 		
-		double gridxOffset = 40;//(GPanelWidth - (leftMarg+rightMarg)) / 10.0;
-		double gridyOffset = 40;//(GPanelHeight -(topMarg+bottomMarg))/ 10.0; 
+		double gridxOffset = 40.0;//(GPanelWidth - (leftMarg+rightMarg)) / 10.0;
+		double gridyOffset = 40.0;//(GPanelHeight -(topMarg+bottomMarg))/ 10.0; 
 		double heightOffset = (double)(GPanelHeight - (topMarg+bottomMarg)) / maxVelocity;
 		Graphics2D g2d = (Graphics2D) g;
 		Font f =new Font("SansSarif", Font.PLAIN, 12);
@@ -83,20 +83,20 @@ public class GraphPanel extends JPanel {
 		g.drawString("Average Velocity vs Time",(GPanelWidth-stringWidth)/2 , topMarg/3);
 		
 		// drawing the grid lines and the data for the grid lines
-		double d = videoLength/((GPanelWidth-(leftMarg+rightMarg))/40);
-		int L = (GPanelWidth - (leftMarg + rightMarg)) / 40;
-		double videoLengthPrime = videoLength - d *((GPanelWidth-(leftMarg+rightMarg)) - L * 40) /40.0;
-		for (int i = 0; i*40 <= GPanelWidth - (leftMarg + rightMarg); i++) {
+		double d = videoLength/((GPanelWidth-(leftMarg+rightMarg))/gridxOffset);
+		for (int i = 0; i*gridxOffset <= GPanelWidth - (leftMarg + rightMarg); i++) {
 			g.drawLine((int)(gridxOffset * i) + leftMarg, GPanelHeight-bottomMarg,
 					(int)(gridxOffset * i) + leftMarg, topMarg);
 			
-			g.drawString(""+df.format(videoLengthPrime*i/L), (int)(gridxOffset * i) + leftMarg, GPanelHeight-(bottomMarg/2));
+			g.drawString(""+df.format(d*i), (int)(gridxOffset * i) + leftMarg, GPanelHeight-(bottomMarg/2));
 		}
-		for( int i = 0; i*40 <= GPanelHeight - (topMarg + bottomMarg); i++) {
+		
+		d = maxVelocity/((GPanelHeight-(topMarg+bottomMarg))/gridyOffset);
+		for( int i = 0; i*gridyOffset <= GPanelHeight - (topMarg + bottomMarg); i++) {
 			g.drawLine(leftMarg,(int) -(gridyOffset * i) + GPanelHeight - bottomMarg, GPanelWidth-rightMarg,
 					(int)	-(gridyOffset * i) + GPanelHeight - bottomMarg);
 			
-			g.drawString(""+df.format(maxVelocity-(i*maxVelocity/10.0)), leftMarg/2, (int)(gridyOffset * i) + topMarg);
+			g.drawString(""+df.format(d*i), leftMarg/2, (int)(-gridyOffset * i) + GPanelHeight - bottomMarg);
 		}
 
 		g.setColor(Color.BLACK);
