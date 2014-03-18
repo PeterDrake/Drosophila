@@ -51,7 +51,7 @@ public class Analyzer {
 		movieLoaded = false;
 		totalFrames = 0;
 		flies = new LinkedList<Fly>();
-		images = new File[totalFrames];
+		images = new File[5];
 	}
 
 	public double[] averageVelMultFlies(List<Fly> flies, int start, int end) {

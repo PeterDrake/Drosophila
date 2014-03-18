@@ -57,16 +57,21 @@ public class GraphPanel extends JPanel {
 		this.drawPoints = drawPoints;
 	}
 	
+	/** Returns the minimum size of this panel as a Dimension object */
+	public Dimension getMinimumSize() {
+		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+	}
+	
 	public void paintComponent(Graphics g) {	
+		g.setColor(Color.WHITE);
+		int GPanelWidth= this.getWidth();
+		int GPanelHeight=this.getHeight();
+		g.fillRect(0, 0, GPanelWidth, GPanelHeight);
 		if(analyzerPanel.getFlyList().size() <= 0){
 			return;
 		}
 		averageVelocity = analyzerPanel.getAverageVelocity();
-		int GPanelWidth= this.getWidth();
-		int GPanelHeight=this.getHeight();
 		
-		g.setColor(Color.WHITE);
-		g.fillRect(0, 0, GPanelWidth, GPanelHeight);
 		g.setColor(Color.BLACK);
 
 		double maxVelocity = 0;
