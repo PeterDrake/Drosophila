@@ -1,5 +1,7 @@
 package testingstuff;
 
+import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -7,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 
 import com.xuggle.mediatool.IMediaReader;
 import com.xuggle.mediatool.MediaListenerAdapter;
@@ -49,6 +52,17 @@ public class VideoThumbnailsExample {
         	  	// Wait
         };
         System.out.println(frames);
+        JFrame frame = new JFrame();
+        JPanel panel = new JPanel() {
+        		public void paintComponent(Graphics g) {
+        			g.drawImage(frames.get(8), 0, 0, null);
+			}
+        };
+        panel.setPreferredSize(new Dimension(200, 300));
+        frame.add(panel);
+        frame.pack();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
     }
 
     private class ImageSnapListener extends MediaListenerAdapter {
