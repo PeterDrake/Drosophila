@@ -25,11 +25,11 @@ public class DataPanel extends JPanel {
 	}
 	public String createLabels(){
 		String Labels="";
-		Labels+="flys	X      Y      Velocity       AvgVelocity     Total Distance";
+		Labels+="Fly   AvgVelocity   TotalTrajectory";
 		return Labels;
 	}
 	public String createFlyLine(Fly fly, int frame){
 		String Data ="";
-		Data += fly.getX(frame)+"   "+fly.getY(frame)+"   "+;
+		Data += fly+"   "+fly.getAvgVelocity()+"   "+fly.getTotalTrajectory();
 	}
 }
