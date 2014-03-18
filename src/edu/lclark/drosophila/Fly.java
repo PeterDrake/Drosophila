@@ -59,6 +59,17 @@ public class Fly {
 			y[i] = -1;
 		}
 	}
+	/**
+	 * A constructor only for testing purposes.
+	 */
+	public Fly(int x0,int y0,int numFrames) {
+		x = new double[numFrames];
+		y = new double[numFrames];
+		vx = new double[numFrames];
+		vy = new double[numFrames];
+			x[0] = x0;
+			y[0] = y0;
+		}
 
 	/**
 	 * Stores the x and y position for this fly in the given frame.
