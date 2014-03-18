@@ -1,12 +1,11 @@
 package edu.lclark.drosophila;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class ButtonPanel extends JPanel {
 
@@ -17,6 +16,18 @@ public class ButtonPanel extends JPanel {
 	private class BackFrameAction implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			analyzerPanel.decrementIndex();
+			analyzerPanel.repaint();
+		}
+	}
+
+	/**
+	 * The action listener which clears the Analyzer's stored images and fly
+	 * data.
+	 */
+	private class ClearImageAction implements ActionListener {
+
+		public void actionPerformed(ActionEvent e) {
+			analyzerPanel.clearImages();
 			analyzerPanel.repaint();
 		}
 	}
@@ -144,6 +155,11 @@ public class ButtonPanel extends JPanel {
 	private JButton backFrame;
 
 	/**
+	 * The button which detaches all added files from the analyzer.
+	 */
+	private JButton clearImages;
+
+	/**
 	 * The text field which lets the user specify what the Analyzer's size
 	 * threshold is.
 	 */
@@ -166,7 +182,7 @@ public class ButtonPanel extends JPanel {
 	/**
 	 * The default preferred width of this panel.
 	 */
-	private static final int DEFAULT_WIDTH = 500;
+	private static final int DEFAULT_WIDTH = 400;
 
 	/**
 	 * The default preferred height of this panel.
@@ -187,48 +203,110 @@ public class ButtonPanel extends JPanel {
 	 */
 	public ButtonPanel(AnalyzerPanel a) {
 		this.analyzerPanel = a;
+		this.setLayout(new GridBagLayout());
+		GridBagConstraints constraints = new GridBagConstraints();
+
 		fileChooser = new JFileChooser();
 		getImage = new JButton("Open an Image");
+		constraints.fill = constraints.HORIZONTAL;
+		constraints.gridx = 0;
+		constraints.gridy = 0;
+		constraints.gridwidth = 4;
+		constraints.weightx = 1;
+		add(getImage, constraints);
+		GetImageAction getImageAction = new GetImageAction(this);
+		getImage.addActionListener(getImageAction);
+
 		setThreshold = new JButton("Set fly size threshold (in pixels)");
+		constraints.gridx = 0;
+		constraints.gridy = 1;
+		constraints.gridwidth = 3;
+		add(setThreshold, constraints);
+		SetThresholdAction setThresholdAction = new SetThresholdAction();
+		setThreshold.addActionListener(setThresholdAction);
+
+		thresholdText = new JTextField();
+		thresholdText.setPreferredSize(new Dimension(100, 500));
+		constraints.gridx = 3;
+		constraints.gridy = 1;
+		constraints.ipadx = 75;
+		constraints.ipady = 10;
+		constraints.gridwidth = 1;
+		add(thresholdText, constraints);
+
 		drawFlydentifiers = new JButton("Draw fly locations");
+		constraints.fill = constraints.HORIZONTAL;
+		constraints.ipadx = 0;
+		constraints.ipady = 0;
+		constraints.gridx = 0;
+		constraints.gridy = 2;
+		constraints.gridwidth = 4;
+		add(drawFlydentifiers, constraints);
+		DrawFlydentifiersAction drawFlydentifiersAction = new DrawFlydentifiersAction();
+		drawFlydentifiers.addActionListener(drawFlydentifiersAction);
+
 		drawTrajectories = new JButton("Draw fly trajectories");
+		constraints.ipadx = 100;
+		constraints.gridx = 0;
+		constraints.gridy = 3;
+		constraints.gridwidth = 2;
+		add(drawTrajectories, constraints);
+		DrawTrajectoriesAction drawTrajectoriesAction = new DrawTrajectoriesAction();
+		drawTrajectories.addActionListener(drawTrajectoriesAction);
+
 		firstFrame = new JTextField("First frame");
 		firstFrame.setPreferredSize(new Dimension(100, 50));
+		constraints.fill = constraints.NONE;
+		constraints.gridx = 2;
+		constraints.gridwidth = 1;
+		constraints.ipadx = 100;
+		constraints.ipady = 10;
+		add(firstFrame, constraints);
+
 		lastFrame = new JTextField("Last frame");
 		lastFrame.setPreferredSize(new Dimension(100, 50));
-		forwardFrame = new JButton("\u25B6");
+		constraints.gridx = 3;
+		constraints.weightx = 1;
+		add(lastFrame, constraints);
+
 		backFrame = new JButton("\u25C0");
-		add(getImage);
-		thresholdText = new JTextField();
-		thresholdText.setPreferredSize(new Dimension(100, 50));
-		add(setThreshold);
-		add(thresholdText);
-		add(drawFlydentifiers);
-		add(drawTrajectories);
-		add(firstFrame);
-		add(lastFrame);
-		add(backFrame);
-		add(forwardFrame);
-
-		GetImageAction getImageAction = new GetImageAction(this);
-		SetThresholdAction setThresholdAction = new SetThresholdAction();
-		DrawFlydentifiersAction drawFlydentifiersAction = new DrawFlydentifiersAction();
-		DrawTrajectoriesAction drawTrajectoriesAction = new DrawTrajectoriesAction();
-		ForwardFrameAction forwardFrameAction = new ForwardFrameAction();
+		constraints.fill = constraints.HORIZONTAL;
+		constraints.ipadx = 0;
+		constraints.ipady = 0;
+		constraints.gridx = 2;
+		constraints.gridy = 4;
+		constraints.gridwidth = 1;
+		add(backFrame, constraints);
 		BackFrameAction backFrameAction = new BackFrameAction();
-
-		setThreshold.addActionListener(setThresholdAction);
-		getImage.addActionListener(getImageAction);
-		drawFlydentifiers.addActionListener(drawFlydentifiersAction);
-		drawTrajectories.addActionListener(drawTrajectoriesAction);
-		forwardFrame.addActionListener(forwardFrameAction);
 		backFrame.addActionListener(backFrameAction);
+
+		forwardFrame = new JButton("\u25B6");
+		constraints.fill = constraints.HORIZONTAL;
+		constraints.gridx = 3;
+		add(forwardFrame, constraints);
+		ForwardFrameAction forwardFrameAction = new ForwardFrameAction();
+		forwardFrame.addActionListener(forwardFrameAction);
+		
+		clearImages = new JButton("Clear all images");
+		constraints.gridx = 0;
+		constraints.gridwidth = 2;
+		constraints.gridy = 4;
+		constraints.fill = constraints.HORIZONTAL;
+		add(clearImages, constraints);
+		ClearImageAction clearImageAction = new ClearImageAction();
+		clearImages.addActionListener(clearImageAction);
+
 	}
 
 	/**
 	 * Returns the preferred size of this panel as a Dimension object.
 	 */
 	public Dimension getPreferredSize() {
+		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+	}
+
+	/** Returns the minimum size of this panel as a Dimension object. */
+	public Dimension getMinimumSize() {
 		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 	}
 

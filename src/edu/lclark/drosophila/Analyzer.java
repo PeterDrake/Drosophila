@@ -78,7 +78,6 @@ public class Analyzer {
 		images = new File[20];
 	}
 
-
 	/**
 	 * Calculates the mean velocity of the given fly within the time specified
 	 * by the starting and ending frames.
@@ -100,6 +99,16 @@ public class Analyzer {
 		}
 		avgVel = avgVel / (end - (start - 1));
 		return avgVel;
+	}
+
+	/**
+	 * Removes the currently attached images and fly data from this Analyzer.
+	 */
+	public void clearImages() {
+		movieLoaded = false;
+		totalFrames = 0;
+		flies = new LinkedList<Fly>();
+		images = new File[20];
 	}
 
 	/**
@@ -198,7 +207,7 @@ public class Analyzer {
 							tempLocation[0] = (double) totalX / numPixels;
 							tempLocation[1] = (double) totalY / numPixels;
 							tempFlies.add(tempLocation);
-							//System.out.println("size: " + numPixels);
+							// System.out.println("size: " + numPixels);
 						}
 					} else {
 						// we searched this already!
