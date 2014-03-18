@@ -13,9 +13,11 @@ public class GraphPanel extends JPanel {
 	private static final int DEFAULT_HEIGHT = 600;
 
 	private AnalyzerPanel analyzerPanel;
+	
+	private boolean drawPoints;
 
 	public GraphPanel() {
-
+		drawPoints = false;
 	}
 
 	public GraphPanel(AnalyzerPanel analyzerPanel) {
@@ -24,6 +26,10 @@ public class GraphPanel extends JPanel {
 
 	public Dimension getPreferredSize() {
 		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+	}
+	
+	public void setDrawPoints(boolean drawPoints) {
+		this.drawPoints = drawPoints;
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -58,8 +64,8 @@ public class GraphPanel extends JPanel {
 		double widthOffset = (GPanelWidth - (leftMarg+rightMarg))
 				/ (double) (averageVelocity.length - 1);
 		
-		double gridxOffset = (GPanelWidth - (leftMarg+rightMarg)) / 10.0;
-		double gridyOffset = (GPanelHeight -(topMarg+bottomMarg))/ 10.0; 
+		double gridxOffset = 40;//(GPanelWidth - (leftMarg+rightMarg)) / 10.0;
+		double gridyOffset = 40;//(GPanelHeight -(topMarg+bottomMarg))/ 10.0; 
 		double heightOffset = (double)(GPanelHeight - (topMarg+bottomMarg)) / maxVelocity;
 		Graphics2D g2d = (Graphics2D) g;
 		Font f =new Font("SansSarif", Font.PLAIN, 12);
@@ -70,28 +76,37 @@ public class GraphPanel extends JPanel {
 		DecimalFormat df= new DecimalFormat ("##.##");
 		g.setColor(Color.LIGHT_GRAY);
 		
-		stringWidth=(int) f.getStringBounds("Time (in frames)", g2d.getFontRenderContext()).getWidth();
-		g.drawString("Time (in frames)", (GPanelWidth-stringWidth+leftMarg-rightMarg)/2 , GPanelHeight-(bottomMarg/3));
+		stringWidth=(int) f.getStringBounds("Time in frames", g2d.getFontRenderContext()).getWidth();
+		g.drawString("Time in frames", (GPanelWidth-stringWidth+leftMarg-rightMarg)/2 , GPanelHeight-(bottomMarg/3));
 		
 		stringWidth=(int) f.getStringBounds("Average Velocity vs Time", g2d.getFontRenderContext()).getWidth();
 		g.drawString("Average Velocity vs Time",(GPanelWidth-stringWidth)/2 , topMarg/3);
 		
-		for (int i = 0; i <= 10; i++) {
+		// drawing the grid lines and the data for the grid lines
+		double d = videoLength/((GPanelWidth-(leftMarg+rightMarg))/40);
+		int L = (GPanelWidth - (leftMarg + rightMarg)) / 40;
+		double videoLengthPrime = videoLength - d *((GPanelWidth-(leftMarg+rightMarg)) - L * 40) /40.0;
+		for (int i = 0; i*40 <= GPanelWidth - (leftMarg + rightMarg); i++) {
 			g.drawLine((int)(gridxOffset * i) + leftMarg, GPanelHeight-bottomMarg,
 					(int)(gridxOffset * i) + leftMarg, topMarg);
-			g.drawLine(leftMarg,(int) (gridyOffset * i) + topMarg, GPanelWidth-rightMarg,
-				(int)	(gridyOffset * i) + topMarg);
-
+			
+			g.drawString(""+df.format(videoLengthPrime*i/L), (int)(gridxOffset * i) + leftMarg, GPanelHeight-(bottomMarg/2));
+		}
+		for( int i = 0; i*40 <= GPanelHeight - (topMarg + bottomMarg); i++) {
+			g.drawLine(leftMarg,(int) -(gridyOffset * i) + GPanelHeight - bottomMarg, GPanelWidth-rightMarg,
+					(int)	-(gridyOffset * i) + GPanelHeight - bottomMarg);
+			
 			g.drawString(""+df.format(maxVelocity-(i*maxVelocity/10.0)), leftMarg/2, (int)(gridyOffset * i) + topMarg);
-			g.drawString(""+df.format(videoLength*i/10.0), (int)(gridxOffset * i) + leftMarg, GPanelHeight-(bottomMarg/2));
-
 		}
 
 		g.setColor(Color.BLACK);
 		g.drawRect(leftMarg, topMarg, GPanelWidth - (leftMarg+rightMarg), GPanelHeight - (topMarg+bottomMarg));
 		for (int i = 0; i < averageVelocity.length; i++) {
-			g.fillOval((int) (xOffSet + i * widthOffset),	
-					(int) (yOffSet - averageVelocity[i] * heightOffset), 6, 6);
+			
+			// draw the points
+			if(drawPoints) {
+				g.fillOval((int) (xOffSet + i * widthOffset),(int) (yOffSet - averageVelocity[i] * heightOffset), 6, 6);
+			}
 			if (i != 0) {
 				g.drawLine(
 						(int) (xOffSet + i * widthOffset + 3),
@@ -102,10 +117,10 @@ public class GraphPanel extends JPanel {
 
 		}
 		g.setColor(Color.LIGHT_GRAY);
-		JLabel butts = new JLabel("Average Velocity (in pixels per frame)");
+		//JLabel butts = new JLabel("Average Velocity (in pixels per frame)");
 		
-		((Graphics2D)butts.getGraphics()).rotate(-Math.PI / 2, butts.getWidth()/2, butts.getHeight()/2);
-		//VertDrawString("Average Velocity (in pixels per frame)", leftMarg/3,-(GPanelHeight+topMarg-bottomMarg)/2, g);
+		//((Graphics2D)butts.getGraphics()).rotate(-Math.PI / 2, butts.getWidth()/2, butts.getHeight()/2);
+		VertDrawString("Average Velocity (in pixels per frame)", leftMarg/3,-(GPanelHeight+topMarg-bottomMarg)/2, g);
 	}
 
 	public void VertDrawString(String string, int x, int y, Graphics g){
@@ -128,7 +143,6 @@ public class GraphPanel extends JPanel {
 		}
 		
 		at.setToRotation(0);
-		g2d.setTransform(at);
-		
+		g2d.setTransform(at);	
 	}
 }

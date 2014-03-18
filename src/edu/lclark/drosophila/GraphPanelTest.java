@@ -27,6 +27,7 @@ public class GraphPanelTest extends JFrame {
 	{
 		graphPanel = new GraphPanel();
 		add(graphPanel);
+		graphPanel.setDrawPoints(true);
 	}
 	
 }
