@@ -14,9 +14,10 @@ import com.xuggle.xuggler.Global;
 
 public class VideoThumbnailsExample {
     
-    public static final double SECONDS_BETWEEN_FRAMES = 10;
+    public static final double SECONDS_BETWEEN_FRAMES = 5;
 
     private static final String inputFilename = "step.mov";
+    
     private static final String outputFilePrefix = "frames/frame";
     
     // The video stream index, used to ensure we display frames from one and
