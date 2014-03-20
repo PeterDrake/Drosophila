@@ -155,7 +155,16 @@ public class GraphPanel extends JPanel {
 		//JLabel butts = new JLabel("Average Velocity (in pixels per frame)");
 		
 		//((Graphics2D)butts.getGraphics()).rotate(-Math.PI / 2, butts.getWidth()/2, butts.getHeight()/2);
-		VertDrawString(yLabel, leftMarg/3,-(GPanelHeight+topMarg-bottomMarg)/2, g);
+	//	VertDrawString(yLabel, leftMarg/3,-(GPanelHeight+topMarg-bottomMarg)/2, g);
+		//Graphics2D g2d = (Graphics2D) g;
+		//AffineTransform at = new AffineTransform();
+//		at.setToRotation(-Math.PI/2.0, GPanelWidth/2.0, GPanelHeight/2.0);
+//		g2d.setTransform(at);
+		g2d.rotate(-Math.PI/2.0);
+		g2d.translate(-GPanelHeight,0);
+		stringWidth=(int) f.getStringBounds(yLabel, g2d.getFontRenderContext()).getWidth();
+		//g.drawString(yLabel, (GPanelWidth-stringWidth+leftMarg-rightMarg)/2 , GPanelHeight-(bottomMarg/3));
+		g2d.drawString(yLabel,(GPanelHeight-topMarg+bottomMarg-stringWidth)/2, leftMarg/3);
 	}
 
 	public void VertDrawString(String string, int x, int y, Graphics g){
