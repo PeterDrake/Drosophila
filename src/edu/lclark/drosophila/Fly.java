@@ -72,6 +72,42 @@ public class Fly {
 		}
 
 	/**
+	 *  this calculates total distance of one fly over multiple frames
+	 * @param fly
+	 * @param start
+	 * @param end
+	 * @return total distance traveled from start frame to end frame
+	 */
+	public double totalDistance(int start, int end){
+		double dist=0;
+		for (int i = start; i < end; i++) {
+			dist+= java.lang.Math.pow((java.lang.Math.pow((getX(i)-getX(i+1)),2) + (java.lang.Math.pow((getY(i)-getY(i+1)),2))),.5);
+		}
+		return dist;
+	}
+	
+	/**
+	 * Calculates the mean velocity of the given fly within the time specified
+	 * by the starting and ending frames.
+	 * 
+	 * @param fly
+	 *            the fly whose average velocity is desired.
+	 * @param start
+	 *            the first frame you want the average velocity calculated from.
+	 * @param end
+	 *            the last frame you want the average velocity calculated from.
+	 * @return the mean velocity of the given fly within the given time frame.
+	 */
+	public double averageVelFly(int start, int end) {
+		double avgVel=0;
+		for (int i = start; i <= end; i++) {
+			avgVel+= getVelocityatFrame(i);
+		}
+		avgVel = avgVel/ (end-(start-1)); 
+		return avgVel;
+	}
+	
+	/**
 	 * Stores the x and y position for this fly in the given frame.
 	 * 
 	 * @param frameNumber

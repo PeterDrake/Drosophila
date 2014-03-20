@@ -30,6 +30,7 @@ public class DataPanel extends JPanel {
 	}
 	public String createFlyLine(Fly fly, int frame){
 		String Data ="";
-		Data += fly+"   "+fly.getAvgVelocity()+"   "+fly.getTotalTrajectory();
+		Data += fly+"   "+fly.averageVelFly(frame, frame)+"   "+fly.totalDistance(frame, frame);
+		return Data;
 	}
 }

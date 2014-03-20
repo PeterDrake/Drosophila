@@ -22,11 +22,11 @@ public class AnalyzerTest {
 				double[] myVy = {5, 2, 1, 0, 2};
 				fly.setVx(myVx);
 				fly.setVy(myVy);
-				assertEquals(5, analyzer.averageVelFly(fly, 0, 0), .1);
-				assertEquals(3.5, analyzer.averageVelFly(fly, 0, 1), .1);
-				assertEquals(2.6666, analyzer.averageVelFly(fly, 0, 2), .1);
-				assertEquals(2, analyzer.averageVelFly(fly, 0, 3), .1);
-				assertEquals(2, analyzer.averageVelFly(fly, 0, 4), .1);
+				assertEquals(5, fly.averageVelFly( 0, 0), .1);
+				assertEquals(3.5, fly.averageVelFly(0, 1), .1);
+				assertEquals(2.6666, fly.averageVelFly( 0, 2), .1);
+				assertEquals(2, fly.averageVelFly( 0, 3), .1);
+				assertEquals(2, fly.averageVelFly(0, 4), .1);
 			}
 
 			@Test
@@ -36,10 +36,10 @@ public class AnalyzerTest {
 				double[] myVy = {6, 3, 1};
 				fly.setVx(myVx);
 				fly.setVy(myVy);
-				assertEquals(6.7, analyzer.averageVelFly(fly, 0, 0), .1);
-				assertEquals(6.26, analyzer.averageVelFly(fly, 0, 1), .1);
-				assertEquals(4.51, analyzer.averageVelFly(fly, 0, 2), .1);
-				assertEquals(3.41, analyzer.averageVelFly(fly, 1, 2), .1);
+				assertEquals(6.7, fly.averageVelFly(0, 0), .1);
+				assertEquals(6.26, fly.averageVelFly(0, 1), .1);
+				assertEquals(4.51, fly.averageVelFly(0, 2), .1);
+				assertEquals(3.41, fly.averageVelFly(1, 2), .1);
 			}
 
 			@Test
@@ -79,12 +79,12 @@ public class AnalyzerTest {
 				double[] myY = {0, 1, 2};
 				fly.setX(myX);
 				fly.setY(myY);
-				assertEquals(2, analyzer.totalDistance(fly, 0, 2), .1);
+				assertEquals(2, fly.totalDistance(0, 2), .1);
 				double[] myX2 = {1, 5, 3};
 				double[] myY2 = {0, 1, 2};
 				fly.setX(myX2);
 				fly.setY(myY2);
-				assertEquals(6.35, analyzer.totalDistance(fly, 0, 2), .1);
+				assertEquals(6.35, fly.totalDistance(0, 2), .1);
 			}
 			
 			
