@@ -121,8 +121,33 @@ public class ButtonPanel extends JPanel {
 				int testText = Integer.parseInt(thresholdText.getText());
 				analyzerPanel.sizeThresholdUpdate(testText);
 			} catch (NumberFormatException error) {
-				error.printStackTrace();
-				System.exit(1);
+				thresholdText.setText("Error");
+				//error.printStackTrace();
+				//System.exit(1);
+			}
+		}
+	}
+	
+	/**
+	 * The action listener which changes the Analyzer's size threshold when the
+	 * size threshold button is clicked.
+	 */
+	private class SetContrastThresholdAction implements ActionListener {
+
+		/**
+		 * Parses the entered number in the text box, and sets the Analyzer's
+		 * size threshold when the button is clicked.
+		 */
+		public void actionPerformed(ActionEvent e) {
+			// TODO This just ignores anything that is not an integer. We need
+			// to fix that.
+			try {
+				int testText = Integer.parseInt(contrastThresholdText.getText());
+				analyzerPanel.contrastThresholdUpdate(testText);
+			} catch (NumberFormatException error) {
+				contrastThresholdText.setText("Error");
+				//error.printStackTrace();
+				//System.exit(1);
 			}
 		}
 	}
@@ -143,6 +168,12 @@ public class ButtonPanel extends JPanel {
 	 * is.
 	 */
 	private JButton setThreshold;
+	
+	/**
+	 * The button which lets the user specify what the Analyzer's contrast threshold
+	 * is.
+	 */
+	private JButton setContrastThreshold;
 
 	/**
 	 * The button which advances the displayed image one frame forward.
@@ -164,6 +195,12 @@ public class ButtonPanel extends JPanel {
 	 * threshold is.
 	 */
 	private JTextField thresholdText;
+	
+	/**
+	 * The text field which lets the user specify what the Analyzer's contrast
+	 * threshold is.
+	 */
+	private JTextField contrastThresholdText;
 
 	/**
 	 * The button which lets the user toggle flydentifiers.
@@ -225,7 +262,7 @@ public class ButtonPanel extends JPanel {
 		SetThresholdAction setThresholdAction = new SetThresholdAction();
 		setThreshold.addActionListener(setThresholdAction);
 
-		thresholdText = new JTextField();
+		thresholdText = new JTextField("0");
 		thresholdText.setPreferredSize(new Dimension(100, 500));
 		constraints.gridx = 3;
 		constraints.gridy = 1;
@@ -234,12 +271,31 @@ public class ButtonPanel extends JPanel {
 		constraints.gridwidth = 1;
 		add(thresholdText, constraints);
 
+		setContrastThreshold = new JButton("Set fly contrast threshold (0 - 255)");
+		constraints.gridx = 0;
+		constraints.gridy = 2;
+		constraints.ipadx = 0;
+		constraints.ipady = 0;
+		constraints.gridwidth = 3;
+		add(setContrastThreshold, constraints);
+		SetContrastThresholdAction setContrastThresholdAction = new SetContrastThresholdAction();
+		setContrastThreshold.addActionListener(setContrastThresholdAction);
+		
+		contrastThresholdText = new JTextField("200");
+		contrastThresholdText.setPreferredSize(new Dimension(100, 500));
+		constraints.gridx = 3;
+		constraints.gridy = 2;
+		constraints.ipadx = 75;
+		constraints.ipady = 10;
+		constraints.gridwidth = 1;
+		add(contrastThresholdText, constraints);
+		
 		drawFlydentifiers = new JButton("Draw fly locations");
 		constraints.fill = constraints.HORIZONTAL;
 		constraints.ipadx = 0;
 		constraints.ipady = 0;
 		constraints.gridx = 0;
-		constraints.gridy = 2;
+		constraints.gridy = 3;
 		constraints.gridwidth = 4;
 		add(drawFlydentifiers, constraints);
 		DrawFlydentifiersAction drawFlydentifiersAction = new DrawFlydentifiersAction();
@@ -248,7 +304,7 @@ public class ButtonPanel extends JPanel {
 		drawTrajectories = new JButton("Draw fly trajectories");
 		constraints.ipadx = 100;
 		constraints.gridx = 0;
-		constraints.gridy = 3;
+		constraints.gridy = 4;
 		constraints.gridwidth = 2;
 		add(drawTrajectories, constraints);
 		DrawTrajectoriesAction drawTrajectoriesAction = new DrawTrajectoriesAction();
@@ -274,7 +330,7 @@ public class ButtonPanel extends JPanel {
 		constraints.ipadx = 0;
 		constraints.ipady = 0;
 		constraints.gridx = 2;
-		constraints.gridy = 4;
+		constraints.gridy = 5;
 		constraints.gridwidth = 1;
 		add(backFrame, constraints);
 		BackFrameAction backFrameAction = new BackFrameAction();
@@ -290,7 +346,7 @@ public class ButtonPanel extends JPanel {
 		clearImages = new JButton("Clear all images");
 		constraints.gridx = 0;
 		constraints.gridwidth = 2;
-		constraints.gridy = 4;
+		constraints.gridy = 5;
 		constraints.fill = constraints.HORIZONTAL;
 		add(clearImages, constraints);
 		ClearImageAction clearImageAction = new ClearImageAction();

@@ -16,7 +16,7 @@ public class Analyzer {
 	/**
 	 * The threshold in pixel color contrast a pixel must pass to be identified.
 	 */
-	private static final int CONTRAST_THRESHOLD = 200;
+	private int contrastThreshold = 200;
 
 	public static void main(String[] args) {
 		gui = new AnalyzerGui(new Analyzer());
@@ -144,7 +144,7 @@ public class Analyzer {
 					int green = (rgb >> 8) & 0xFF;
 					int blue = rgb & 0xFF;
 					double avg = red * 0.2989 + green * .587 + blue * .114;
-					if ((int) (Math.round(avg)) <= CONTRAST_THRESHOLD) { // if
+					if ((int) (Math.round(avg)) <= contrastThreshold) { // if
 																			// the
 																			// color
 																			// is
@@ -351,7 +351,7 @@ public class Analyzer {
 		green = (rgb >> 8) & 0xFF;
 		blue = rgb & 0xFF;
 		avg = red * 0.2989 + green * .587 + blue * .114;
-		boolean found = ((int) (Math.round(avg)) <= CONTRAST_THRESHOLD);
+		boolean found = ((int) (Math.round(avg)) <= contrastThreshold);
 		return found;
 	}
 
@@ -367,6 +367,22 @@ public class Analyzer {
 		sizeThreshold = input;
 		if (totalFrames > 0) {
 			updateImages();
+		}
+	}
+	
+	/**
+	 * Updates the contrast threshold field. This is used to tell how dark a spot
+	 * has to be to be considered a fly. This will also analyze all stored image again
+	 * 
+	 * @param input
+	 * 			  the value which contrast threshold will be set to.
+	 */
+	public void contrastThresholdUpdate(int input) {
+		if(input >= 0 && input <= 255) {
+			contrastThreshold = input;
+			if (totalFrames > 0) {
+				updateImages();
+			}
 		}
 	}
 
