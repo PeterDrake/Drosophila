@@ -54,6 +54,7 @@ public class AnalyzerPanel extends JPanel {
 		constraints.gridy = 1;
 		constraints.gridheight = 1;
 		constraints.weighty = 1;
+		//constraints.insets = new Insets(0, 50, 50, 0);
 		constraints.anchor = constraints.NORTH;
 		add(graphPanel, constraints);
 	}

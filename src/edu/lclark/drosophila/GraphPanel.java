@@ -66,14 +66,18 @@ public class GraphPanel extends JPanel {
 		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 	}
 	
+	public Dimension getMaximumSize() {
+		return new Dimension(1000, 1000);
+	}
+	
 	public void paintComponent(Graphics g) {	
+		if(analyzerPanel.getFlyList().size() <= 0){
+			return;
+		}
 		g.setColor(Color.WHITE);
 		int GPanelWidth= this.getWidth();
 		int GPanelHeight=this.getHeight();
 		g.fillRect(0, 0, GPanelWidth, GPanelHeight);
-		if(analyzerPanel.getFlyList().size() <= 0){
-			return;
-		}
 		averageVelocity = analyzerPanel.getAverageVelocity();
 		
 		g.setColor(Color.BLACK);
@@ -152,41 +156,24 @@ public class GraphPanel extends JPanel {
 
 		}
 		g.setColor(Color.LIGHT_GRAY);
-		//JLabel butts = new JLabel("Average Velocity (in pixels per frame)");
-		
-		//((Graphics2D)butts.getGraphics()).rotate(-Math.PI / 2, butts.getWidth()/2, butts.getHeight()/2);
-		//Graphics2D g2d = (Graphics2D) g;
-		//AffineTransform at = new AffineTransform();
-//		at.setToRotation(-Math.PI/2.0, GPanelWidth/2.0, GPanelHeight/2.0);
-//		g2d.setTransform(at);
 		g2d.rotate(-Math.PI/2.0);
 		g2d.translate(-GPanelHeight,0);
 		stringWidth=(int) f.getStringBounds(yLabel, g2d.getFontRenderContext()).getWidth();
-		//g.drawString(yLabel, (GPanelWidth-stringWidth+leftMarg-rightMarg)/2 , GPanelHeight-(bottomMarg/3));
 		VertDrawString(yLabel,(GPanelHeight-topMarg+bottomMarg-stringWidth)/2 ,leftMarg/3, g2d);
-		//g2d.drawString(yLabel,(GPanelHeight-topMarg+bottomMarg+stringWidth)/2, leftMarg/3);
+
 	}
 
-	public void VertDrawString(String string, int x, int y, Graphics2D g2d){
-		//Graphics2D g2d = (Graphics2D) g;
-//		AffineTransform at = new AffineTransform();
-//		at.rotate(-Math.PI /2, 0, 0);
-//		g2d.setTransform(at);
-		
+	public void VertDrawString(String string, int x, int y, Graphics2D g2d){		
 		Font f =new Font("SansSarif", Font.PLAIN, 12);
 		Rectangle2D bounds; 
 		g2d.setFont(f);
 		String temp;
-		//int stringWidth=(int) f.getStringBounds(string, g2d.getFontRenderContext()).getWidth();
-		
 		for(int i= 0; i<=string.length()-1; i++){
 			temp= string.substring(i,i+1);
 			bounds=f.getStringBounds(temp, g2d.getFontRenderContext());
 			g2d.drawString(temp, x, y);
 			x+=bounds.getWidth();
 		}
-		
-//		at.setToRotation(0);
-//		g2d.setTransform(at);	
+
 	}
 }
