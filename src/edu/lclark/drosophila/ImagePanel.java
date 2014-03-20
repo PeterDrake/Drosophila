@@ -1,6 +1,7 @@
 package edu.lclark.drosophila;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
 
@@ -44,6 +45,17 @@ public class ImagePanel extends JPanel {
 	 * Analyzer's Files array.
 	 */
 	private int imageIndex;
+	
+	/** 
+	 * The current frame of the movie
+	 */
+	private BufferedImage image;
+
+	private boolean moviePlaying;
+
+	public void setMoviePlaying(boolean a){
+		moviePlaying = a; 
+	}
 
 	/**
 	 * The constructor which sets the AnalyzerPanel this ImagePanel is connected
@@ -89,6 +101,11 @@ public class ImagePanel extends JPanel {
 	 * and red circles over any identified flies.
 	 */
 	public void paintComponent(Graphics g) {
+		System.out.println("did we ever set movie playing to true? Yeah we did.");
+		if(moviePlaying){
+			g.drawImage(image, 0, 0, null);
+		} else { 
+		
 		int totalImages = analyzerPanel.getTotalFrames();
 		if (imageIndex < 0) {
 			imageIndex = 0;
@@ -142,6 +159,7 @@ public class ImagePanel extends JPanel {
 				}
 			}
 		}
+		}
 	}
 
 	/**
@@ -173,5 +191,9 @@ public class ImagePanel extends JPanel {
 	 */
 	public void setImageIndex(int imageIndex) {
 		this.imageIndex = imageIndex;
+	}
+
+	public void setImage(BufferedImage b) {
+		image = b; 
 	}
 }

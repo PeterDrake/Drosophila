@@ -1,6 +1,7 @@
 package edu.lclark.drosophila;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
 
@@ -134,5 +135,29 @@ public class AnalyzerPanel extends JPanel {
 	 */
 	public void sizeThresholdUpdate(int input) {
 		gui.sizeThresholdUpdate(input);
+	}
+
+	
+	/**
+	 * Daisy chain method to pass an opened movie file
+	 * @param file
+	 */
+	public void passMovie(File file) {
+		gui.passMovie(file);
+	}
+
+	public void showMovie(List<BufferedImage> frames, long l) {
+		ipanel.setMoviePlaying(true);
+		try {
+			int i = 0;
+		for (BufferedImage b : frames) {
+			ipanel.setImage(b);
+			System.out.println(i);
+			i++;
+			ipanel.repaint();
+			Thread.sleep(l);
+		} } catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 	}
 }

@@ -88,7 +88,7 @@ public class ButtonPanel extends JPanel {
 		public GetImageAction(ButtonPanel bpanel) {
 			this.bpanel = bpanel;
 		}
-
+		
 		/**
 		 * Opens the file browsing window and passes the selected image to the
 		 * Button Panel when chosen.
@@ -103,6 +103,42 @@ public class ButtonPanel extends JPanel {
 			}
 		}
 	}
+	
+	
+	/**
+	 * The action listener which opens a file browsing window when the open movie
+	 * button is clicked.
+	 */
+	private class OpenMovieAction implements ActionListener {
+
+		private ButtonPanel bpanel; 
+		
+		public OpenMovieAction(ButtonPanel bpanel) { 
+			this.bpanel = bpanel; 
+		}
+		
+		/**
+		 * Opens the file browsing window and passes the selected movie to the
+		 * Button Panel when chosen.
+		 */
+		public void actionPerformed(ActionEvent e) {
+			int returnVal = fileChooser.showOpenDialog(openMovie); 
+			if(returnVal == JFileChooser.APPROVE_OPTION) {
+				File file = fileChooser.getSelectedFile();
+				bpanel.passMovie(file); 
+				//analyzerPanel.repaint(); Maybe we need this? We shall see...  
+			}
+			
+		} 
+		
+		
+		
+		
+		
+		
+	}
+	
+	
 
 	/**
 	 * The action listener which changes the Analyzer's size threshold when the
@@ -158,6 +194,11 @@ public class ButtonPanel extends JPanel {
 	 * The button which detaches all added files from the analyzer.
 	 */
 	private JButton clearImages;
+	
+	/**
+	 * This button opens and plays a movie.
+	 */
+	private JButton openMovie; 
 
 	/**
 	 * The text field which lets the user specify what the Analyzer's size
@@ -211,12 +252,20 @@ public class ButtonPanel extends JPanel {
 		constraints.fill = constraints.HORIZONTAL;
 		constraints.gridx = 0;
 		constraints.gridy = 0;
-		constraints.gridwidth = 4;
+		constraints.gridwidth = 2;
 		constraints.weightx = 1;
 		add(getImage, constraints);
 		GetImageAction getImageAction = new GetImageAction(this);
 		getImage.addActionListener(getImageAction);
-
+		
+		fileChooser = new JFileChooser(); // unsure if we need a new variable to open a movie vs. opening an image
+		openMovie = new JButton("Open a movie"); 
+		constraints.gridx = 2; 
+		add(openMovie, constraints); 
+		OpenMovieAction openMovieAction = new OpenMovieAction(this); 
+		openMovie.addActionListener(openMovieAction); 
+		
+		
 		setThreshold = new JButton("Set fly size threshold (in pixels)");
 		constraints.gridx = 0;
 		constraints.gridy = 1;
@@ -296,6 +345,16 @@ public class ButtonPanel extends JPanel {
 		ClearImageAction clearImageAction = new ClearImageAction();
 		clearImages.addActionListener(clearImageAction);
 
+	}
+
+	
+	/**
+	 * Daisy chain method to pass an opened movie file
+	 * @param file
+	 */
+	public void passMovie(File file) {
+		analyzerPanel.passMovie(file);
+		
 	}
 
 	/**

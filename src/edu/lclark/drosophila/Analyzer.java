@@ -3,9 +3,20 @@ package edu.lclark.drosophila;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.imageio.ImageIO;
+
+import com.xuggle.mediatool.IMediaReader;
+import com.xuggle.mediatool.ToolFactory;
+import com.xuggle.mediatool.IMediaReader;
+import com.xuggle.mediatool.MediaListenerAdapter;
+import com.xuggle.mediatool.ToolFactory;
+import com.xuggle.mediatool.event.IVideoPictureEvent;
+import com.xuggle.xuggler.Global;
+
 
 public class Analyzer {
 
@@ -46,12 +57,33 @@ public class Analyzer {
 	 * Stores all of the images being analyzed.
 	 */
 	private File[] images;
+	
+	/**
+	 * The number of seconds between frames in a movie file
+	 */
+	public static final double SECONDS_BETWEEN_FRAMES = 1 / 10.0;
+
+	/**
+	 * The number of microseconds between frames in a movie file 
+	 */
+	public static final long MICRO_SECONDS_BETWEEN_FRAMES = (long) (Global.DEFAULT_PTS_PER_SECOND * SECONDS_BETWEEN_FRAMES);
+
+	// Time of last frame write
+	// PTS means ... picture time stamp?
+	private long mLastPtsWrite;
+
+	/**
+	 * The List of frames in a movie 
+	 */
+	private List<BufferedImage> frames;
 
 	public Analyzer() {
 		movieLoaded = false;
 		totalFrames = 0;
 		flies = new LinkedList<Fly>();
 		images = new File[20];
+		frames = new ArrayList<BufferedImage>();
+		mLastPtsWrite = Global.NO_PTS;
 	}
 
 	/**
@@ -362,4 +394,66 @@ public class Analyzer {
 			System.exit(1);
 		}
 	}
+
+	
+	
+	/**
+	 * Plays a selected movie in a new moviePanel 
+	 * @param file
+	 */
+	public void playMovie(File file) {
+		IMediaReader mediaReader = ToolFactory.makeReader(file.getAbsolutePath());
+		// stipulate that we want BufferedImages created in BGR 24bit color
+		// space
+		mediaReader
+				.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
+		mediaReader.addListener(new ImageSnapListener());
+		// read out the contents of the media file and
+		// dispatch events to the attached listener
+		while (mediaReader.readPacket() == null) {
+			// Wait
+		}
+		gui.showMovie(frames, MICRO_SECONDS_BETWEEN_FRAMES / 1000); 
+	}
+	
+	private class ImageSnapListener extends MediaListenerAdapter {
+
+		public void onVideoPicture(IVideoPictureEvent event) {
+			// if uninitialized, back date mLastPtsWrite to get the very first
+			// frame
+			if (mLastPtsWrite == Global.NO_PTS) {
+				mLastPtsWrite = event.getTimeStamp()
+						- MICRO_SECONDS_BETWEEN_FRAMES;
+			}
+			// if it's time to write the next frame
+			if (event.getTimeStamp() - mLastPtsWrite >= MICRO_SECONDS_BETWEEN_FRAMES) {
+				double seconds = ((double) event.getTimeStamp())
+						/ Global.DEFAULT_PTS_PER_SECOND;
+				frames.add(event.getImage());
+				System.out.printf(
+						"at elapsed time of %6.3f seconds wrote: %s\n",
+						seconds, "<imaginary file>");
+				// update last write time
+				mLastPtsWrite += MICRO_SECONDS_BETWEEN_FRAMES;
+			}
+		}
+	}
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

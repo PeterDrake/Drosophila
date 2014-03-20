@@ -1,6 +1,7 @@
 package edu.lclark.drosophila;
 
 import java.awt.EventQueue;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
 
@@ -107,6 +108,20 @@ public class AnalyzerGui extends JFrame {
 	 */
 	public void sizeThresholdUpdate(int input) {
 		analyzer.sizeThresholdUpdate(input);
+	}
+
+	
+	/**
+	 * Daisy chain method to pass an opened movie file
+	 * @param file
+	 */
+	public void passMovie(File file) {
+		analyzer.playMovie(file);
+		
+	}
+
+	public void showMovie(List<BufferedImage> frames, long l) {
+		analyzerPanel.showMovie(frames, l); 
 	}
 
 }
