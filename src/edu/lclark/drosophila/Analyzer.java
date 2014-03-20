@@ -51,6 +51,17 @@ public class Analyzer {
 		movieLoaded = false;
 		totalFrames = 0;
 		flies = new LinkedList<Fly>();
+		images = new File[5];
+	}
+
+
+	public void flydentify(BufferedImage image) {
+		// just for a single image
+		flies = new LinkedList<Fly>();
+		totalFrames = 1;
+		flydentify(image, 0);
+
+		System.out.println("number of flies: " + flies.size());
 		images = new File[20];
 	}
 

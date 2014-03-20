@@ -13,6 +13,11 @@ public class AnalyzerPanel extends JPanel {
 	 * The AnalyzerGui object which this AnalyzerPanel communicates with.
 	 */
 	private AnalyzerGui gui;
+	
+	/**
+	 * The GraphPanel object which this AnalyzerPanel communicates with.
+	 */
+	private GraphPanel graphPanel;
 
 	/**
 	 * The ImagePanel object which this AnalyzerPanel communicates with.
@@ -40,12 +45,15 @@ public class AnalyzerPanel extends JPanel {
 		constraints.gridy = 0;
 		constraints.weightx = 1;
 		constraints.insets = new Insets(0, 0, 0, 50);
+		constraints.anchor = constraints.NORTH;
 		add(bpanel, constraints);
 		ipanel = new ImagePanel(this);
 		constraints.anchor = constraints.EAST;
 		constraints.gridx = 1;
 		constraints.gridy = 0;
 		constraints.weightx = 1;
+		constraints.weighty = 1;
+		constraints.gridheight = 2;
 		add(ipanel, constraints);
 		dpanel = new DataPanel(this);
 		constraints.anchor = constraints.NORTH;
@@ -55,6 +63,18 @@ public class AnalyzerPanel extends JPanel {
 		constraints.weightx = 1;
 		add(dpanel, constraints);
 		
+		graphPanel = new GraphPanel(this, false, .10, "TITLE", "vertical label now this is longer ", "Xkljhfdsalkjfhasdkljfh" );
+		constraints.gridx = 0;
+		constraints.gridy = 1;
+		constraints.gridheight = 1;
+		//constraints.insets = new Insets(0, 50, 50, 0);
+		add(graphPanel, constraints);
+	}
+
+	public double[] getAverageVelocity() {
+		return gui.getAverageVelocity();
+
+
 	}
 
 	/**
@@ -62,6 +82,7 @@ public class AnalyzerPanel extends JPanel {
 	 */
 	public void clearImages() {
 		gui.clearImages();
+
 	}
 
 	/**
@@ -135,7 +156,6 @@ public class AnalyzerPanel extends JPanel {
 	/**
 	 * Toggles the identifying dots drawn over the identified flies on the gui.
 	 */
-
 	public void setFlydentifiers() {
 		ipanel.setFlydentifiers();
 	}

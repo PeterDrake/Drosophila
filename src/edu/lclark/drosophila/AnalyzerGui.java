@@ -15,6 +15,7 @@ public class AnalyzerGui extends JFrame {
 	 */
 	private Analyzer analyzer;
 
+
 	/**
 	 * The AnalyzerPanel object which this AnalyzerGui communicates with.
 	 */
@@ -29,6 +30,10 @@ public class AnalyzerGui extends JFrame {
 	public AnalyzerGui(Analyzer a) {
 		this.analyzer = a;
 		this.analyzerPanel = new AnalyzerPanel(this);
+	}
+
+	public double[] getAverageVelocity() {
+		return analyzer.averageVelMultFlies(analyzer.getFlies(), 0, analyzer.getFlies().get(0).getVx().length);
 	}
 
 	/**

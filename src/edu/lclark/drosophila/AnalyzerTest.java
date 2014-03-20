@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.LinkedList;
 
+
 import org.junit.*;
 
 public class AnalyzerTest {
@@ -98,10 +99,5 @@ public class AnalyzerTest {
 				fly.setY(myY2);
 				assertEquals(6.35, fly.totalDistance(0, 2), .1);
 			}
+}
 			
-			
-		
-
-	}
-
-
