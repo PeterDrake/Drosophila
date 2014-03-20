@@ -54,6 +54,7 @@ public class AnalyzerPanel extends JPanel {
 		constraints.gridwidth= 1;
 		constraints.weightx = 1;
 		add(dpanel, constraints);
+		
 	}
 
 	/**

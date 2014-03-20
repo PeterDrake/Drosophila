@@ -28,6 +28,18 @@ public class AnalyzerTest {
 				assertEquals(2, fly.averageVelFly( 0, 3), .1);
 				assertEquals(2, fly.averageVelFly(0, 4), .1);
 			}
+			@Test
+			public void testXYVel(){
+				Fly fly1= new Fly(0, 0, 4);
+				fly1.addFrameInfo(1, 1, 0);
+				fly1.addFrameInfo(2, 1, 3);
+				fly1.addFrameInfo(3, 1, 0);
+				double[] expectedx= {0,1,0,0};
+				double[] expectedy= {0,0,3,3};
+				assertArrayEquals(expectedx, fly1.getVx(),0.01);
+				assertArrayEquals(expectedy, fly1.getVy(),0.01);
+					
+				}
 
 			@Test
 			public void testAvgFlyVel2() {

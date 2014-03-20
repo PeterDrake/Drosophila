@@ -234,6 +234,7 @@ public class Analyzer {
 			}
 			aNewFly.addFrameInfo(frameNumber, tempFlies.get(0)[0],
 					tempFlies.get(0)[1]);
+			aNewFly.setId(flies.size());
 			flies.add(aNewFly);
 			tempFlies.remove(0);
 		}
