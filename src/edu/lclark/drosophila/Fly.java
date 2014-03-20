@@ -2,6 +2,10 @@ package edu.lclark.drosophila;
 
 public class Fly {
 
+	/** Id number to be able to tell flies apart */
+	private int id;
+	/** The number of frames this fly stores info for */
+	private int numFrames;
 	/**
 	 * Stores all x positions of the fly for all frames. For example, x[4]
 	 * stores the fly's x position in frame 4.
@@ -31,11 +35,13 @@ public class Fly {
 	 * arrays are initialized to size 20
 	 */
 	public Fly() {
-		x = new double[20];
-		y = new double[20];
-		vx = new double[20];
-		vy = new double[20];
-		for (int i = 0; i < 20; i++) {
+		id = -1;
+		numFrames = 20;
+		x = new double[numFrames];
+		y = new double[numFrames];
+		vx = new double[numFrames];
+		vy = new double[numFrames];
+		for (int i = 0; i < numFrames; i++) {
 			x[i] = -1;
 			y[i] = -1;
 		}
@@ -50,6 +56,8 @@ public class Fly {
 	 *            the number of frames the fly must store data for.
 	 */
 	public Fly(int numFrames) {
+		id = -1;
+		this.numFrames = numFrames;
 		x = new double[numFrames];
 		y = new double[numFrames];
 		vx = new double[numFrames];
@@ -74,6 +82,22 @@ public class Fly {
 	public void addFrameInfo(int frameNumber, double x, double y) {
 		this.x[frameNumber] = x;
 		this.y[frameNumber] = y;
+	}
+	
+	/** Copies the data from this fly to a new Fly */
+	public Fly copyThisFly(){
+		Fly newFly = new Fly(numFrames);
+		for(int i = 0; i < numFrames; i++){
+			if(x[i] == -1){
+				break;
+			}
+			newFly.addFrameInfo(i,  x[i], y[i]);
+		}
+		return newFly;
+	}
+	
+	public int getId(){
+		return id;
 	}
 
 	public double[] getVx() {
@@ -104,6 +128,11 @@ public class Fly {
 	 */
 	public double getY(int frameNumber) {
 		return y[frameNumber];
+	}
+	
+	/**Sets fly ID to given int */
+	public void setId(int id){
+		this.id = id;
 	}
 
 	public void setVx(double[] vx) {

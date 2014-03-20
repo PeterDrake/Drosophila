@@ -192,51 +192,91 @@ public class Analyzer {
 				}
 			}
 		}
-		// create this variable because flies.size() is linear
-		int sizeFlies = flies.size();
-		for (int i = 0; i < sizeFlies && !tempFlies.isEmpty(); i++) {
-			// going through each existing fly and matching it to the closest
-			// temporary counterpart
-			Fly pastFly = flies.get(i);
-			double pastX = pastFly.getX(0);
-			double pastY = pastFly.getY(0);
-			double dist = Math.sqrt(Math.pow(pastX - tempFlies.get(0)[0], 2)
-					+ Math.pow(pastY - tempFlies.get(0)[1], 2));
-			int closestFlyIndex = 0;
-			int sizeTempFlies = tempFlies.size();
-			for (int j = 1; j < sizeTempFlies; j++) {
-				double thisDist = Math.sqrt(Math.pow(pastX
-						- tempFlies.get(j)[0], 2)
-						+ Math.pow(pastY - tempFlies.get(j)[1], 2));
-				if (thisDist < dist) {
-					dist = thisDist;
-					closestFlyIndex = j;
+		Fly[] fullPrevFlies = new Fly[flies.size()];
+		List<Fly> iterablePrevFlies = new LinkedList<Fly>();
+		int index = 0;
+		for(Fly fly : flies){
+			iterablePrevFlies.add(fly);
+			fullPrevFlies[index] = fly;
+			index++;
+		}
+		//Stores coordinates in indices 0 and 1 of array, stores id in index 2
+		double[][] fullTempFlies = new double[tempFlies.size()][3];
+		for(int i = 0; i < fullTempFlies.length; i++){
+			fullTempFlies[i][0] = tempFlies.get(i)[0];
+			fullTempFlies[i][1] = tempFlies.get(i)[1];
+			fullTempFlies[i][2] = i;
+		}
+		List<double[]> newFlies = new LinkedList<double[]>();
+		while(!tempFlies.isEmpty() || !iterablePrevFlies.isEmpty()){
+			if(!tempFlies.isEmpty()){
+				for(double[] d : tempFlies){
+					double dist = Double.MAX_VALUE;
+					int closestFlyIndex = -1;
+					double currentX = d[0];
+					double currentY = d[1];
+					for(int j = 0; j < fullPrevFlies.length; j++){
+						double thisDist = Math.sqrt(Math.pow(currentX - fullPrevFlies[j].getX(frameNumber), 2) 
+								+ Math.pow(currentY - fullPrevFlies[j].getY(frameNumber), 2));
+						if(thisDist < dist){
+							dist = thisDist;
+							closestFlyIndex = j;
+						}
+					}
+					boolean flyFound = false;
+					for(Fly fly : iterablePrevFlies){
+						if(fly.getId() == closestFlyIndex){
+							flyFound = true;
+							fly.addFrameInfo(frameNumber, currentX, currentY);
+							iterablePrevFlies.remove(fly);
+							tempFlies.remove(d);
+							break;
+							
+						}
+					}
+					if(!flyFound){
+						newFlies.add(new double[]{currentX, currentY, closestFlyIndex});
+					}
 				}
 			}
-			// augmenting the existing fly to contain information about location
-			// from the image
-			pastFly.addFrameInfo(frameNumber,
-					tempFlies.get(closestFlyIndex)[0],
-					tempFlies.get(closestFlyIndex)[1]);
-			// remove the temporary fly so two existing flies can't map to the
-			// same temporary one
-			tempFlies.remove(closestFlyIndex);
-		}
-		// in case there are more temporary flies than existing flies
-		sizeFlies = tempFlies.size();
-		while (!tempFlies.isEmpty()) {
-			// create a new fly for each fly left
-			Fly aNewFly;
-			if (movieLoaded) {
-				aNewFly = new Fly(totalFrames);
-			} else {
-				aNewFly = new Fly();
+			if(!iterablePrevFlies.isEmpty()){
+				for(Fly fly: iterablePrevFlies){
+					double dist = Double.MAX_VALUE;
+					int closestFlyIndex = -1;
+					double pastX = fly.getX(frameNumber);
+					double pastY = fly.getY(frameNumber);
+					for(int j = 0; j < fullTempFlies.length; j++){
+						double thisDist = Math.sqrt(Math.pow(pastX - fullTempFlies[j][0], 2) 
+								+ Math.pow(pastY - fullTempFlies[j][1], 2));
+						if(thisDist < dist){
+							dist = thisDist;
+							closestFlyIndex = j;
+						}
+					}
+					for(Fly f : flies){
+						if(fly.getId() == f.getId()){
+							f.addFrameInfo(frameNumber, fullTempFlies[closestFlyIndex][0], fullTempFlies[closestFlyIndex][1]);
+							iterablePrevFlies.remove(fly);
+							
+						}
+					}
+					for(double[] d : tempFlies){
+						if(d[2] == closestFlyIndex){
+							tempFlies.remove(d);
+						}
+					}
+				}
 			}
-			aNewFly.addFrameInfo(frameNumber, tempFlies.get(0)[0],
-					tempFlies.get(0)[1]);
-			flies.add(aNewFly);
-			tempFlies.remove(0);
 		}
+		for(double[] d : newFlies){
+			
+			Fly aNewFly = flies.get((int)d[2]).copyThisFly();
+			aNewFly.addFrameInfo(frameNumber, d[0], d[1]);
+			aNewFly.setId(flies.size());
+			flies.add(aNewFly);
+			newFlies.remove(d);
+		}
+		
 	}
 
 	/**
