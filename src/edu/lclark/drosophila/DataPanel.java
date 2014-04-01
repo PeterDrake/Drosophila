@@ -17,7 +17,7 @@ public class DataPanel extends JPanel {
 		
 		this.analyzerpanel=analyzerpanel;
 		flyList=analyzerpanel.getFlyList();
-		text= new JTextArea(12,24);
+		text= new JTextArea(12,30);
 		JScrollPane scrollpane= new JScrollPane(text);
 		add(scrollpane);
 		text.append(createLabels());
@@ -35,7 +35,14 @@ public class DataPanel extends JPanel {
 	 * sets this panels default size
 	 */
 	public Dimension getPreferredSize(){
-		return new Dimension(300,300);
+		return new Dimension(400,400);
+	}
+	
+	/**
+	 * sets this panels minimum size
+	 */
+	public Dimension getMinimumSize(){
+		return new Dimension(400,400);
 	}
 	/**
 	 * creates the String that labels our data
