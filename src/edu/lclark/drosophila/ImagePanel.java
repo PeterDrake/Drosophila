@@ -1,9 +1,12 @@
 package edu.lclark.drosophila;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class ImagePanel extends JPanel {
@@ -44,6 +47,10 @@ public class ImagePanel extends JPanel {
 	 * Analyzer's Files array.
 	 */
 	private int imageIndex;
+
+	private double oldImageContrast;
+
+	private BufferedImage oldImage;
 
 	/**
 	 * The constructor which sets the AnalyzerPanel this ImagePanel is connected
@@ -95,9 +102,25 @@ public class ImagePanel extends JPanel {
 		} else if (imageIndex >= totalImages) {
 			imageIndex = totalImages - 1;
 		}
-		String filePath = analyzerPanel.passdownImage(imageIndex);
-		if (filePath != null) {
-			Image image = new ImageIcon(filePath).getImage();
+		//String filePath = analyzerPanel.passdownImage(imageIndex);
+		File file = null;
+		if(imageIndex >=0) {
+			file = analyzerPanel.passdownFile(imageIndex);
+		}
+		else
+		{
+			return;
+		}
+		if (file != null) {
+			//Image image = new ImageIcon(filePath).getImage();
+			BufferedImage image = null;
+			try {
+				image = ImageIO.read(file);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				System.exit(0);
+			}
 			int imgWidth = image.getWidth(null);
 			int imgHeight = image.getHeight(null);
 			
@@ -105,7 +128,37 @@ public class ImagePanel extends JPanel {
 			double yScale = this.getHeight()/(double)imgHeight;
 			double scale = Math.min(xScale, yScale);
 			
-			g.drawImage(image, 0, 0, (int) (imgWidth * scale), (int)(imgHeight * scale), null);
+			double imageContrast = analyzerPanel.getImageContrast();
+			if(imageContrast != oldImageContrast) {
+				for(int i = 0; i < image.getWidth(null); i++){
+					for(int j = 0; j < image.getHeight(null); j++){
+						int rgb = image.getRGB(i, j);
+						int red = (rgb >> 16) & 0xFF;
+						int green = (rgb >> 8) & 0xFF;
+						int blue = rgb & 0xFF;
+						red *= imageContrast;
+						green *= imageContrast;
+						blue *= imageContrast;
+						if(red > 255){
+							red = 255;
+						}
+						if(green > 255){
+							green = 255;
+						}
+						if(blue > 255){
+							blue = 255;
+						}
+						rgb = red << 16;
+						rgb += green << 8;
+						rgb += blue;
+						image.setRGB(i, j, rgb);
+					}
+				}
+				oldImage = image;
+				oldImageContrast = imageContrast;
+			}
+			
+			g.drawImage(oldImage, 0, 0, (int) (imgWidth * scale), (int)(imgHeight * scale), null);
 			//g.drawImage(image, 0, 0, null);
 			if (flydentifiers) {
 				List<Fly> flies = analyzerPanel.getFlyList();

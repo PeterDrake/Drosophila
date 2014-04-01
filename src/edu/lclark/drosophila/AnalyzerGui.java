@@ -114,4 +114,16 @@ public class AnalyzerGui extends JFrame {
 		analyzer.sizeThresholdUpdate(input);
 	}
 
+	public void setImageContrast(double d) {
+		analyzer.setImageContrast(d);		
+	}
+
+	public double getImageContrast() {
+		return analyzer.getImageContrast();
+	}
+
+	public File passdownFile(int imageIndex) {
+		return analyzer.passdownFile(imageIndex);
+	}
+
 }

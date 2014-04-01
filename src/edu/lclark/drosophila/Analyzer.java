@@ -17,6 +17,11 @@ public class Analyzer {
 	 * The threshold in pixel color contrast a pixel must pass to be identified.
 	 */
 	private static final int CONTRAST_THRESHOLD = 200;
+	
+	/**
+	 * The maximum size a fly can be
+	 */
+	private static final int MAX_FLY_SIZE = 5000;
 
 	public static void main(String[] args) {
 		gui = new AnalyzerGui(new Analyzer());
@@ -46,6 +51,11 @@ public class Analyzer {
 	 * Stores all of the images being analyzed.
 	 */
 	private File[] images;
+
+	/**
+	 * A value for editing the contrast of the actual image
+	 */
+	private double imageContrast = 1.0;
 
 	public Analyzer() {
 		movieLoaded = false;
@@ -130,6 +140,18 @@ public class Analyzer {
 					int red = (rgb >> 16) & 0xFF;
 					int green = (rgb >> 8) & 0xFF;
 					int blue = rgb & 0xFF;
+					red *= imageContrast;
+					green *= imageContrast;
+					blue *= imageContrast;
+					if(red > 255){
+						red = 255;
+					}
+					if(green > 255){
+						green = 255;
+					}
+					if(blue > 255){
+						blue = 255;
+					}
 					double avg = red * 0.2989 + green * .587 + blue * .114;
 					if ((int) (Math.round(avg)) <= CONTRAST_THRESHOLD) { // if
 																			// the
@@ -373,5 +395,21 @@ public class Analyzer {
 			e.printStackTrace();
 			System.exit(1);
 		}
+	}
+
+
+	public void setImageContrast(double d) {
+		imageContrast = d;
+		updateImages();
+	}
+
+
+	public double getImageContrast() {
+		return imageContrast;
+	}
+
+
+	public File passdownFile(int imageIndex) {
+		return images[imageIndex];
 	}
 }

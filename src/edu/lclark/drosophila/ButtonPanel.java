@@ -3,6 +3,9 @@ package edu.lclark.drosophila;
 import java.io.File;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -126,6 +129,26 @@ public class ButtonPanel extends JPanel {
 			}
 		}
 	}
+	
+	/**
+	 * The action listener which changes the Analyzer's size threshold when the
+	 * size threshold button is clicked.
+	 */
+	private class SetImageContrastAction implements ChangeListener {
+
+		/**
+		 *Event which sets the size threshold when the slider is moved 
+		 *
+		 */
+		public void stateChanged(ChangeEvent e) {
+			JSlider Source = (JSlider)e.getSource();
+			if(!Source.getValueIsAdjusting()){
+				analyzerPanel.setImageContrast((double)Source.getValue()/10.0);
+				//System.err.println(Source.getValue() + " : " + (double)Source.getValue()/10.0);
+				analyzerPanel.repaint();
+			}
+		}
+	}
 
 	/**
 	 * The file browser which allows the user to choose a file which contains an
@@ -239,17 +262,17 @@ public class ButtonPanel extends JPanel {
 		constraints.gridwidth = 1;
 		add(thresholdText, constraints);
 		
-		setImageContrast = new JSlider(JSlider.HORIZONTAL, 10, 30, 1);
+		setImageContrast = new JSlider(JSlider.HORIZONTAL, 10, 30, 10);
 		setImageContrast.setMajorTickSpacing(50);
 		setImageContrast.setPaintLabels(true);
 		setImageContrast.setPaintTicks(true);
 		constraints.gridx = 0;
-		constraints.gridy = 1;
+		constraints.gridy = 10;
 		constraints.gridwidth = 3;
 		add(setImageContrast, constraints);
 		SetImageContrastAction setImageContrastAction = new SetImageContrastAction();
 		setImageContrast.addChangeListener(setImageContrastAction);
-		analyzerPanel.sizeImageContrastUpdate(1.0);
+		//analyzerPanel.sizeImageContrastUpdate(1.0);
 
 		drawFlydentifiers = new JButton("Draw fly locations");
 		constraints.fill = constraints.HORIZONTAL;

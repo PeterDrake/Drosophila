@@ -173,4 +173,16 @@ public class AnalyzerPanel extends JPanel {
 	public void sizeThresholdUpdate(int input) {
 		gui.sizeThresholdUpdate(input);
 	}
+
+	public void setImageContrast(double d) {
+		gui.setImageContrast(d);		
+	}
+
+	public double getImageContrast() {
+		return gui.getImageContrast();
+	}
+
+	public File passdownFile(int imageIndex) {
+		return gui.passdownFile(imageIndex);
+	}
 }
