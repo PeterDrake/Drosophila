@@ -1,6 +1,7 @@
 package edu.lclark.drosophila;
 
 import java.io.File;
+import java.text.ParseException;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -9,6 +10,9 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyListener;
+import java.awt.event.TextEvent;
+import java.awt.event.TextListener;
 
 public class ButtonPanel extends JPanel {
 
@@ -121,10 +125,34 @@ public class ButtonPanel extends JPanel {
 			JSlider Source = (JSlider)e.getSource();
 			if(!Source.getValueIsAdjusting()){
 				analyzerPanel.sizeThresholdUpdate((int)Source.getValue());
-				thresholdText.setText(""+(int)Source.getValue());
+			}
+			if(Source.getValueIsAdjusting()){
+				thresholdText.setText(""+(int)Source.getValue());				
 			}
 	}
 	}
+	/**
+	 * The action listener that will adjust the Threshold as the textbox is changed
+	 */
+	private class setThresholdEntered implements TextListener{
+		public void textValueChanged(TextEvent e){
+			JTextField Source = (JTextField)e.getSource();
+			String Text= Source.getText();
+			try{
+				int value=Integer.parseInt(Text);
+				analyzerPanel.sizeThresholdUpdate(value);
+				setThreshold.setValue(value);
+			}
+			catch(NumberFormatException E){
+				E.getStackTrace();
+				analyzerPanel.sizeThresholdUpdate(DEFAULT_SLIDER_THRESHOLD);
+				setThreshold.setValue(DEFAULT_SLIDER_THRESHOLD);
+			
+				
+			}
+		}
+	}
+	
 
 	/**
 	 * The file browser which allows the user to choose a file which contains an
