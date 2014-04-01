@@ -146,18 +146,36 @@ public class AnalyzerPanel extends JPanel {
 		gui.passMovie(file);
 	}
 
-	public void showMovie(List<BufferedImage> frames, long l) {
+	
+	
+	public void showMovie(final List<BufferedImage> frames, final long l) {
+		System.out.println("l is " + l);
 		ipanel.setMoviePlaying(true);
-		try {
-			int i = 0;
-		for (BufferedImage b : frames) {
-			ipanel.setImage(b);
-			System.out.println(i);
-			i++;
-			ipanel.repaint();
-			Thread.sleep(l);
-		} } catch (InterruptedException e) {
-				e.printStackTrace();
+		new Thread(new Runnable() {
+			public void run() {
+				for (BufferedImage b : frames) {
+					final BufferedImage image = b;
+					System.out.println("About to create a runnable");
+					EventQueue.invokeLater(new Runnable() {
+						public void run() {
+							try {
+								System.out.println("About to run");
+								ipanel.setImage(image);
+								ipanel.paintImmediately(ipanel.getVisibleRect());
+								System.out.println("I painted!");
+								System.out.println("About to sleep");
+								Thread.sleep(l);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+						}
+					});
+				}
+				
 			}
+		}
+				).start();
+
 	}
+	
 }

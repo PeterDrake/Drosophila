@@ -100,9 +100,12 @@ public class ImagePanel extends JPanel {
 	 * Draws any components of this panel. It draws the selected image or frame,
 	 * and red circles over any identified flies.
 	 */
+	@Override
 	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
 		System.out.println("did we ever set movie playing to true? Yeah we did.");
 		if(moviePlaying){
+			System.out.println("About to draw image");
 			g.drawImage(image, 0, 0, null);
 		} else { 
 		

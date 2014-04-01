@@ -413,7 +413,9 @@ public class Analyzer {
 		while (mediaReader.readPacket() == null) {
 			// Wait
 		}
-		gui.showMovie(frames, MICRO_SECONDS_BETWEEN_FRAMES / 1000); 
+		gui.showMovie(frames, 100
+				//MICRO_SECONDS_BETWEEN_FRAMES / 1000
+				); 
 	}
 	
 	private class ImageSnapListener extends MediaListenerAdapter {
