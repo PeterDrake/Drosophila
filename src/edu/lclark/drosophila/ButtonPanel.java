@@ -4,8 +4,15 @@ import java.io.File;
 import java.text.ParseException;
 
 import javax.swing.*;
+import javax.swing.event.CaretListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Caret;
+import javax.swing.text.Document;
+import javax.swing.text.JTextComponent;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -118,41 +125,70 @@ public class ButtonPanel extends JPanel {
 	private class SetThresholdAction implements ChangeListener {
 
 		/**
-		 *Event which sets the size threshold when the slider is moved 
-		 *
+		 * Event which sets the size threshold when the slider is moved
+		 * 
 		 */
 		public void stateChanged(ChangeEvent e) {
-			JSlider Source = (JSlider)e.getSource();
-			if(!Source.getValueIsAdjusting()){
-				analyzerPanel.sizeThresholdUpdate((int)Source.getValue());
+			JSlider Source = (JSlider) e.getSource();
+			if (!Source.getValueIsAdjusting()) {
+				analyzerPanel.sizeThresholdUpdate((int) Source.getValue());
 			}
-			if(Source.getValueIsAdjusting()){
-				thresholdText.setText(""+(int)Source.getValue());				
-			}
-	}
-	}
-	/**
-	 * The action listener that will adjust the Threshold as the textbox is changed
-	 */
-	private class setThresholdEntered implements TextListener{
-		public void textValueChanged(TextEvent e){
-			JTextField Source = (JTextField)e.getSource();
-			String Text= Source.getText();
-			try{
-				int value=Integer.parseInt(Text);
-				analyzerPanel.sizeThresholdUpdate(value);
-				setThreshold.setValue(value);
-			}
-			catch(NumberFormatException E){
-				E.getStackTrace();
-				analyzerPanel.sizeThresholdUpdate(DEFAULT_SLIDER_THRESHOLD);
-				setThreshold.setValue(DEFAULT_SLIDER_THRESHOLD);
-			
-				
+			if (Source.getValueIsAdjusting()) {
+				thresholdText.setText("" + (int) Source.getValue());
 			}
 		}
 	}
-	
+
+	/**
+	 * The action listener that will adjust the Threshold as the textbox is
+	 * changed
+	 */
+	private class SetThresholdEntered implements DocumentListener {
+		public void changedUpdate(DocumentEvent e) {
+			reportchange(e);
+		}
+
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			reportchange(e);
+		}
+
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			reportchange(e);
+		}
+
+		public void reportchange(DocumentEvent e) {
+			Document Source = e.getDocument();
+			String text = "25";
+			try {
+				text = Source.getText(0, Source.getLength());
+			} catch (BadLocationException e1) {
+				e1.getStackTrace();
+				System.exit(1);
+				}
+
+			System.out.println(text);
+			System.out.println(text.length());
+			try {
+				int value = Integer.parseInt(text);
+				if(value>0&&value<200){
+				analyzerPanel.sizeThresholdUpdate(value);
+				setThreshold.setValue(value);
+				}
+				else{
+					analyzerPanel.sizeThresholdUpdate(DEFAULT_SLIDER_THRESHOLD);
+					setThreshold.setValue(DEFAULT_SLIDER_THRESHOLD);
+				}
+			} catch (NumberFormatException E) {
+				E.getStackTrace();
+				analyzerPanel.sizeThresholdUpdate(DEFAULT_SLIDER_THRESHOLD);
+				setThreshold.setValue(DEFAULT_SLIDER_THRESHOLD);
+				System.err.println("could not set value, did default");
+
+			}
+		}
+	}
 
 	/**
 	 * The file browser which allows the user to choose a file which contains an
@@ -222,18 +258,22 @@ public class ButtonPanel extends JPanel {
 	/**
 	 * The Highest possible value for the pixel threshold;
 	 */
-	private static final int MAX_SLIDER_THRESHHOLD= 200;
+	private static final int MAX_SLIDER_THRESHHOLD = 200;
 	/**
 	 * The lowest possible value for the pixel theshold;
 	 */
 	private static final int MIN_SLIDER_THRESHOLD = 0;
+	/**
+	 * The label for the Slider
+	 */
+	private JTextComponent SliderLabel;
+	
 
 	/**
 	 * The AnalyzerPanel object that this ImagePanel communicates with.
 	 */
-	
-	private AnalyzerPanel analyzerPanel;
 
+	private AnalyzerPanel analyzerPanel;
 	/**
 	 * The constructor which initializes all fields and adds the buttons to this
 	 * panel.
@@ -257,28 +297,79 @@ public class ButtonPanel extends JPanel {
 		GetImageAction getImageAction = new GetImageAction(this);
 		getImage.addActionListener(getImageAction);
 
-		setThreshold = new JSlider(JSlider.HORIZONTAL,MIN_SLIDER_THRESHOLD,MAX_SLIDER_THRESHHOLD,DEFAULT_SLIDER_THRESHOLD);
+		setThreshold = new JSlider(JSlider.HORIZONTAL, MIN_SLIDER_THRESHOLD,
+				MAX_SLIDER_THRESHHOLD, DEFAULT_SLIDER_THRESHOLD);
 		setThreshold.setMajorTickSpacing(50);
 		setThreshold.setPaintLabels(true);
 		setThreshold.setPaintTicks(true);
-		constraints.gridx = 0;
+		setThreshold.setToolTipText("Sets the Pixel Threshold");
+		constraints.gridx = 1;
 		constraints.gridy = 1;
-		constraints.gridwidth = 3;
+		constraints.gridwidth = 2;
 		add(setThreshold, constraints);
 		SetThresholdAction setThresholdAction = new SetThresholdAction();
 		setThreshold.addChangeListener(setThresholdAction);
 		analyzerPanel.sizeThresholdUpdate(DEFAULT_SLIDER_THRESHOLD);
-
+		
+		SliderLabel = new JTextArea("Threshold Slider");
+		SliderLabel.setEditable(false);
+		constraints.gridx = 0;
+		constraints.gridy = 1;
+		constraints.ipadx = 0;
+		constraints.ipady = 0;
+		constraints.weightx = 0;
+		constraints.gridwidth = 1;
+		add(SliderLabel,constraints);
+		
 		thresholdText = new JTextField();
 		thresholdText.setPreferredSize(new Dimension(100, 500));
-		thresholdText.setText(""+DEFAULT_SLIDER_THRESHOLD);
+		thresholdText.setText("" + DEFAULT_SLIDER_CONTRAST);
 		constraints.gridx = 3;
 		constraints.gridy = 1;
 		constraints.ipadx = 75;
 		constraints.ipady = 10;
 		constraints.gridwidth = 1;
+		SetThresholdEntered setThresholdEntered = new SetThresholdEntered();
+		thresholdText.getDocument().addDocumentListener(setThresholdEntered);
 		add(thresholdText, constraints);
 
+		setThreshold = new JSlider(JSlider.HORIZONTAL, MIN_SLIDER_THRESHOLD,
+				MAX_SLIDER_THRESHHOLD, DEFAULT_SLIDER_THRESHOLD);
+		setThreshold.setMajorTickSpacing(50);
+		setThreshold.setPaintLabels(true);
+		setThreshold.setPaintTicks(true);
+		setThreshold.setToolTipText("Sets the Pixel Threshold");
+		constraints.gridx = 1;
+		constraints.gridy = 1;
+		constraints.gridwidth = 2;
+		add(setThreshold, constraints);
+		SetContrastAction setContrastaAction = new SetContrastAction();
+		setThreshold.addChangeListener(setContrastAction);
+		analyzerPanel.sizeThresholdUpdate(DEFAULT_SLIDER_THRESHOLD);
+		
+		SliderLabel = new JTextArea("Contrast Slider");
+		SliderLabel.setEditable(false);
+		constraints.gridx = 0;
+		constraints.gridy = 1;
+		constraints.ipadx = 0;
+		constraints.ipady = 0;
+		constraints.weightx = 0;
+		constraints.gridwidth = 1;
+		add(SliderLabel,constraints);
+		
+		thresholdText = new JTextField();
+		thresholdText.setPreferredSize(new Dimension(100, 500));
+		thresholdText.setText("" + DEFAULT_SLIDER_THRESHOLD);
+		constraints.gridx = 3;
+		constraints.gridy = 1;
+		constraints.ipadx = 75;
+		constraints.ipady = 10;
+		constraints.gridwidth = 1;
+		SetThresholdEntered setThresholdEntered = new SetThresholdEntered();
+		thresholdText.getDocument().addDocumentListener(setThresholdEntered);
+		add(thresholdText, constraints);
+
+		
 		drawFlydentifiers = new JButton("Draw fly locations");
 		constraints.fill = constraints.HORIZONTAL;
 		constraints.ipadx = 0;
@@ -331,7 +422,7 @@ public class ButtonPanel extends JPanel {
 		add(forwardFrame, constraints);
 		ForwardFrameAction forwardFrameAction = new ForwardFrameAction();
 		forwardFrame.addActionListener(forwardFrameAction);
-		
+
 		clearImages = new JButton("Clear all images");
 		constraints.gridx = 0;
 		constraints.gridwidth = 2;
