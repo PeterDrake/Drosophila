@@ -159,6 +159,7 @@ public class AnalyzerPanel extends JPanel {
 					EventQueue.invokeLater(new Runnable() {
 						public void run() {
 							try {
+								ipanel.setMoviePlaying(true);
 								System.out.println("About to run");
 								ipanel.setImage(image);
 								ipanel.paintImmediately(ipanel.getVisibleRect());
@@ -168,6 +169,7 @@ public class AnalyzerPanel extends JPanel {
 							} catch (InterruptedException e) {
 								e.printStackTrace();
 							}
+							ipanel.setMoviePlaying(false);
 						}
 					});
 				}
@@ -175,7 +177,11 @@ public class AnalyzerPanel extends JPanel {
 			}
 		}
 				).start();
-
+//		ipanel.setMoviePlaying(false);
+	}
+	
+	public void setMoviePlaying(boolean b){
+		ipanel.setMoviePlaying(b);
 	}
 	
 }

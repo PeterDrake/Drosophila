@@ -121,7 +121,7 @@ public class AnalyzerGui extends JFrame {
 	}
 
 	public void showMovie(List<BufferedImage> frames, long l) {
-		analyzerPanel.showMovie(frames, l); 
+		analyzerPanel.showMovie(frames, l);
 	}
 
 }
