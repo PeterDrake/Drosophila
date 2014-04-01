@@ -158,6 +158,11 @@ public class ButtonPanel extends JPanel {
 	 * The button which detaches all added files from the analyzer.
 	 */
 	private JButton clearImages;
+	
+	/**
+	 * A slider for editing the contrast of the actual image
+	 */
+	private JSlider setImageContrast;
 
 	/**
 	 * The text field which lets the user specify what the Analyzer's size
@@ -233,6 +238,18 @@ public class ButtonPanel extends JPanel {
 		constraints.ipady = 10;
 		constraints.gridwidth = 1;
 		add(thresholdText, constraints);
+		
+		setImageContrast = new JSlider(JSlider.HORIZONTAL, 10, 30, 1);
+		setImageContrast.setMajorTickSpacing(50);
+		setImageContrast.setPaintLabels(true);
+		setImageContrast.setPaintTicks(true);
+		constraints.gridx = 0;
+		constraints.gridy = 1;
+		constraints.gridwidth = 3;
+		add(setImageContrast, constraints);
+		SetImageContrastAction setImageContrastAction = new SetImageContrastAction();
+		setImageContrast.addChangeListener(setImageContrastAction);
+		analyzerPanel.sizeImageContrastUpdate(1.0);
 
 		drawFlydentifiers = new JButton("Draw fly locations");
 		constraints.fill = constraints.HORIZONTAL;
