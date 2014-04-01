@@ -193,16 +193,12 @@ public class AnalyzerPanel extends JPanel {
 			public void run() {
 				for (BufferedImage b : frames) {
 					final BufferedImage image = b;
-					System.out.println("About to create a runnable");
 					EventQueue.invokeLater(new Runnable() {
 						public void run() {
 							try {
 								ipanel.setMoviePlaying(true);
-								System.out.println("About to run");
 								ipanel.setImage(image);
 								ipanel.paintImmediately(ipanel.getVisibleRect());
-								System.out.println("I painted!");
-								System.out.println("About to sleep");
 								Thread.sleep(l);
 							} catch (InterruptedException e) {
 								e.printStackTrace();

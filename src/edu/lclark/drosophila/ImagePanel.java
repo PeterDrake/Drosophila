@@ -103,10 +103,15 @@ public class ImagePanel extends JPanel {
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		System.out.println("did we ever set movie playing to true? Yeah we did.");
 		if(moviePlaying){
-			System.out.println("About to draw image");
-			g.drawImage(image, 0, 0, null);
+			int imgWidth = image.getWidth(null);
+			int imgHeight = image.getHeight(null);
+			
+			double xScale = this.getWidth()/(double)imgWidth;
+			double yScale = this.getHeight()/(double)imgHeight;
+			double scale = Math.min(xScale, yScale);
+			
+			g.drawImage(image, 0, 0, (int) (imgWidth * scale), (int)(imgHeight * scale), null);
 		} else { 
 		
 		int totalImages = analyzerPanel.getTotalFrames();

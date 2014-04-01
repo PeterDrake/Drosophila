@@ -82,6 +82,7 @@ public class Analyzer {
 		totalFrames = 0;
 		flies = new LinkedList<Fly>();
 		images = new File[5];
+		frames = new ArrayList<BufferedImage>();
 	}
 
 
@@ -93,7 +94,7 @@ public class Analyzer {
 
 		System.out.println("number of flies: " + flies.size());
 		images = new File[20];
-		frames = new ArrayList<BufferedImage>();
+		
 		mLastPtsWrite = Global.NO_PTS;
 	}
 
