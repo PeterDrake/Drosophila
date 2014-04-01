@@ -255,6 +255,7 @@ public class Analyzer {
 			List<double[]> newFlies = new LinkedList<double[]>();
 			while (containsFalse(tempFliesMarked)
 					|| containsFalse(prevFliesMarked)) {
+				//Searches through the temp flies list to connect the closest fly.
 				if (containsFalse(tempFliesMarked)) {
 					for (int i = 0; i < tempFliesMarked.length; i++) {
 						if (!tempFliesMarked[i]) {
@@ -280,6 +281,7 @@ public class Analyzer {
 									}
 								}
 							} else {
+								//If No previous flies are found:
 								newFlies.add(new double[] { currentX, currentY,
 										closestFlyIndex });
 								tempFliesMarked[i] = true;
@@ -287,6 +289,7 @@ public class Analyzer {
 						}
 					}
 				}
+				//Search through the previous flies for the closest current flies.
 				if (containsFalse(prevFliesMarked)) {
 					for (int i = 0; i < fullPrevFlies.length; i++) {
 						if(!prevFliesMarked[i]) {							
