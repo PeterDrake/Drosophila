@@ -3,6 +3,9 @@ package edu.lclark.drosophila;
 import java.io.File;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -108,23 +111,19 @@ public class ButtonPanel extends JPanel {
 	 * The action listener which changes the Analyzer's size threshold when the
 	 * size threshold button is clicked.
 	 */
-	private class SetThresholdAction implements ActionListener {
+	private class SetThresholdAction implements ChangeListener {
 
 		/**
-		 * Parses the entered number in the text box, and sets the Analyzer's
-		 * size threshold when the button is clicked.
+		 *Event which sets the size threshold when the slider is moved 
+		 *
 		 */
-		public void actionPerformed(ActionEvent e) {
-			// TODO This just ignores anything that is not an integer. We need
-			// to fix that.
-			try {
-				int testText = Integer.parseInt(thresholdText.getText());
-				analyzerPanel.sizeThresholdUpdate(testText);
-			} catch (NumberFormatException error) {
-				error.printStackTrace();
-				System.exit(1);
+		public void stateChanged(ChangeEvent e) {
+			JSlider Source = (JSlider)e.getSource();
+			if(!Source.getValueIsAdjusting()){
+				analyzerPanel.sizeThresholdUpdate((int)Source.getValue());
+				thresholdText.setText(""+(int)Source.getValue());
 			}
-		}
+	}
 	}
 
 	/**
@@ -142,7 +141,7 @@ public class ButtonPanel extends JPanel {
 	 * The button which lets the user specify what the Analyzer's size threshold
 	 * is.
 	 */
-	private JButton setThreshold;
+	private JSlider setThreshold;
 
 	/**
 	 * The button which advances the displayed image one frame forward.
@@ -188,10 +187,23 @@ public class ButtonPanel extends JPanel {
 	 * The default preferred height of this panel.
 	 */
 	private static final int DEFAULT_HEIGHT = 400;
+	/**
+	 * the default pixel threshold for the slider;
+	 */
+	private static final int DEFAULT_SLIDER_THRESHOLD = 25;
+	/**
+	 * The Highest possible value for the pixel threshold;
+	 */
+	private static final int MAX_SLIDER_THRESHHOLD= 200;
+	/**
+	 * The lowest possible value for the pixel theshold;
+	 */
+	private static final int MIN_SLIDER_THRESHOLD = 0;
 
 	/**
 	 * The AnalyzerPanel object that this ImagePanel communicates with.
 	 */
+	
 	private AnalyzerPanel analyzerPanel;
 
 	/**
@@ -217,16 +229,21 @@ public class ButtonPanel extends JPanel {
 		GetImageAction getImageAction = new GetImageAction(this);
 		getImage.addActionListener(getImageAction);
 
-		setThreshold = new JButton("Set fly size threshold (in pixels)");
+		setThreshold = new JSlider(JSlider.HORIZONTAL,MIN_SLIDER_THRESHOLD,MAX_SLIDER_THRESHHOLD,DEFAULT_SLIDER_THRESHOLD);
+		setThreshold.setMajorTickSpacing(50);
+		setThreshold.setPaintLabels(true);
+		setThreshold.setPaintTicks(true);
 		constraints.gridx = 0;
 		constraints.gridy = 1;
 		constraints.gridwidth = 3;
 		add(setThreshold, constraints);
 		SetThresholdAction setThresholdAction = new SetThresholdAction();
-		setThreshold.addActionListener(setThresholdAction);
+		setThreshold.addChangeListener(setThresholdAction);
+		analyzerPanel.sizeThresholdUpdate(DEFAULT_SLIDER_THRESHOLD);
 
 		thresholdText = new JTextField();
 		thresholdText.setPreferredSize(new Dimension(100, 500));
+		thresholdText.setText(""+DEFAULT_SLIDER_THRESHOLD);
 		constraints.gridx = 3;
 		constraints.gridy = 1;
 		constraints.ipadx = 75;

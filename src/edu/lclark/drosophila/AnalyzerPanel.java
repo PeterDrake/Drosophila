@@ -61,7 +61,7 @@ public class AnalyzerPanel extends JPanel {
 		constraints.gridy = 0;
 		constraints.gridwidth= 1;
 		constraints.weightx = 1;
-		add(dpanel, constraints);
+		//add(dpanel, constraints);
 		
 		graphPanel = new GraphPanel(this, false, .10, "TITLE", "vertical label now this is longer ", "Xkljhfdsalkjfhasdkljfh" );
 		constraints.gridx = 0;
