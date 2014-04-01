@@ -143,6 +143,12 @@ public class ButtonPanel extends JPanel {
 			// to fix that.
 			try {
 				int testText = Integer.parseInt(contrastThresholdText.getText());
+				if (testText > 255){
+					contrastThresholdText.setText("255");
+				}
+				if (testText < 0){
+					contrastThresholdText.setText("0");
+				}
 				analyzerPanel.contrastThresholdUpdate(testText);
 			} catch (NumberFormatException error) {
 				contrastThresholdText.setText("Error");

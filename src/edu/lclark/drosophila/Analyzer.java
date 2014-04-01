@@ -378,6 +378,12 @@ public class Analyzer {
 	 * 			  the value which contrast threshold will be set to.
 	 */
 	public void contrastThresholdUpdate(int input) {
+		if (input > 255){
+			input = 255;
+		}
+		if (input < 0){
+			input = 0;
+		}
 		if(input >= 0 && input <= 255) {
 			contrastThreshold = input;
 			if (totalFrames > 0) {
