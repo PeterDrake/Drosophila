@@ -45,6 +45,8 @@ public class AnalyzerPanel extends JPanel {
 		constraints.gridy = 1;
 		constraints.weightx = 1;
 		constraints.insets = new Insets(150, 0, 0, 50);
+		constraints.weighty = 1;
+		constraints.insets = new Insets(0, 0, 0, 50);
 		constraints.anchor = constraints.NORTH;
 		add(bpanel, constraints);
 		constraints.insets = new Insets(0, 0, 0, 50);
@@ -55,6 +57,7 @@ public class AnalyzerPanel extends JPanel {
 		constraints.weightx = 1;
 		constraints.weighty = 1;
 		constraints.gridheight = 3;
+		constraints.gridheight = 2;
 		add(ipanel, constraints);
 		dpanel = new DataPanel(this);
 		constraints.anchor = constraints.NORTH;
@@ -173,5 +176,9 @@ public class AnalyzerPanel extends JPanel {
 	 */
 	public void sizeThresholdUpdate(int input) {
 		gui.sizeThresholdUpdate(input);
+	}
+	
+	public void contrastThresholdUpdate(int input) {
+		gui.contrastThresholdUpdate(input);
 	}
 }

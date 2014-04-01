@@ -189,8 +189,71 @@ public class ButtonPanel extends JPanel {
 			}
 		}
 	}
+	private class SetContrastThresholdAction implements ChangeListener{
 
-	/**
+		/**
+		 * Event which sets the size threshold when the slider is moved
+		 * 
+		 */
+		public void stateChanged(ChangeEvent e) {
+			JSlider Source = (JSlider) e.getSource();
+			if (!Source.getValueIsAdjusting()) {
+				analyzerPanel.contrastThresholdUpdate((int) Source.getValue());
+			}
+			if (Source.getValueIsAdjusting()) {
+				contrastThresholdText.setText("" + (int) Source.getValue());
+			}
+		}
+
+	}
+	private class SetContrastEntered implements DocumentListener {
+		public void changedUpdate(DocumentEvent e) {
+			reportchange(e);
+		}
+
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			reportchange(e);
+		}
+
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			reportchange(e);
+		}
+
+		public void reportchange(DocumentEvent e) {
+			Document Source = e.getDocument();
+			String text = "200";
+			try {
+				text = Source.getText(0, Source.getLength());
+			} catch (BadLocationException e1) {
+				e1.getStackTrace();
+				System.exit(1);
+				}
+
+			System.out.println(text);
+			System.out.println(text.length());
+			try {
+				int value = Integer.parseInt(text);
+				if(value>=MIN_SLIDER_THRESHOLD&&value<=MAX_SLIDER_THRESHHOLD){
+				analyzerPanel.contrastThresholdUpdate(value);
+				setContrastThreshold.setValue(value);
+				}
+				else{
+					analyzerPanel.contrastThresholdUpdate(DEFAULT_CONTRAST_THRESHOLD);
+					setContrastThreshold.setValue(DEFAULT_CONTRAST_THRESHOLD);
+				}
+			} catch (NumberFormatException E) {
+				E.getStackTrace();
+				analyzerPanel.contrastThresholdUpdate(DEFAULT_CONTRAST_THRESHOLD);
+				setContrastThreshold.setValue(DEFAULT_CONTRAST_THRESHOLD);
+				System.err.println("could not set value, did default");
+
+			}
+		}
+	}
+
+		/**
 	 * The file browser which allows the user to choose a file which contains an
 	 * image.
 	 */
@@ -205,7 +268,15 @@ public class ButtonPanel extends JPanel {
 	 * The button which lets the user specify what the Analyzer's size threshold
 	 * is.
 	 */
+
 	private JSlider setThreshold;
+	
+	/**
+	 * The button which lets the user specify what the Analyzer's contrast threshold
+	 * is.
+	 */
+	private JSlider setContrastThreshold;
+
 
 	/**
 	 * The button which advances the displayed image one frame forward.
@@ -227,6 +298,12 @@ public class ButtonPanel extends JPanel {
 	 * threshold is.
 	 */
 	private JTextField thresholdText;
+	
+	/**
+	 * The text field which lets the user specify what the Analyzer's contrast
+	 * threshold is.
+	 */
+	private JTextField contrastThresholdText;
 
 	/**
 	 * The button which lets the user toggle flydentifiers.
@@ -258,7 +335,7 @@ public class ButtonPanel extends JPanel {
 	/**
 	 * The Highest possible value for the pixel threshold;
 	 */
-	private static final int MAX_SLIDER_THRESHHOLD = 200;
+	private static final int MAX_SLIDER_THRESHHOLD = 255;
 	/**
 	 * The lowest possible value for the pixel theshold;
 	 */
@@ -266,9 +343,11 @@ public class ButtonPanel extends JPanel {
 	/**
 	 * The label for the Slider
 	 */
+	private static final int DEFAULT_CONTRAST_THRESHOLD=200;
+	
 	private JTextComponent SliderLabel;
 	
-
+	private JTextComponent ContrastLabel;
 	/**
 	 * The AnalyzerPanel object that this ImagePanel communicates with.
 	 */
@@ -321,43 +400,17 @@ public class ButtonPanel extends JPanel {
 		constraints.gridwidth = 1;
 		add(SliderLabel,constraints);
 		
-		thresholdText = new JTextField();
-		thresholdText.setPreferredSize(new Dimension(100, 500));
-		thresholdText.setText("" + DEFAULT_SLIDER_CONTRAST);
-		constraints.gridx = 3;
-		constraints.gridy = 1;
-		constraints.ipadx = 75;
-		constraints.ipady = 10;
-		constraints.gridwidth = 1;
-		SetThresholdEntered setThresholdEntered = new SetThresholdEntered();
-		thresholdText.getDocument().addDocumentListener(setThresholdEntered);
-		add(thresholdText, constraints);
-
-		setThreshold = new JSlider(JSlider.HORIZONTAL, MIN_SLIDER_THRESHOLD,
-				MAX_SLIDER_THRESHHOLD, DEFAULT_SLIDER_THRESHOLD);
-		setThreshold.setMajorTickSpacing(50);
-		setThreshold.setPaintLabels(true);
-		setThreshold.setPaintTicks(true);
-		setThreshold.setToolTipText("Sets the Pixel Threshold");
-		constraints.gridx = 1;
-		constraints.gridy = 1;
-		constraints.gridwidth = 2;
-		add(setThreshold, constraints);
-		SetContrastAction setContrastaAction = new SetContrastAction();
-		setThreshold.addChangeListener(setContrastAction);
-		analyzerPanel.sizeThresholdUpdate(DEFAULT_SLIDER_THRESHOLD);
-		
-		SliderLabel = new JTextArea("Contrast Slider");
-		SliderLabel.setEditable(false);
+		ContrastLabel = new JTextArea("Contrast Slider");
+		ContrastLabel.setEditable(false);
 		constraints.gridx = 0;
-		constraints.gridy = 1;
+		constraints.gridy = 2;
 		constraints.ipadx = 0;
 		constraints.ipady = 0;
 		constraints.weightx = 0;
 		constraints.gridwidth = 1;
-		add(SliderLabel,constraints);
+		add(ContrastLabel,constraints);
 		
-		thresholdText = new JTextField();
+		thresholdText = new JTextField("0");
 		thresholdText.setPreferredSize(new Dimension(100, 500));
 		thresholdText.setText("" + DEFAULT_SLIDER_THRESHOLD);
 		constraints.gridx = 3;
@@ -369,13 +422,35 @@ public class ButtonPanel extends JPanel {
 		thresholdText.getDocument().addDocumentListener(setThresholdEntered);
 		add(thresholdText, constraints);
 
+		setContrastThreshold = new JSlider(JSlider.HORIZONTAL, MIN_SLIDER_THRESHOLD,MAX_SLIDER_THRESHHOLD,DEFAULT_CONTRAST_THRESHOLD);
+		setContrastThreshold.setMajorTickSpacing(50);
+		setContrastThreshold.setPaintLabels(true);
+		setContrastThreshold.setPaintTicks(true);
+		constraints.gridx = 1;
+		constraints.gridy = 2;
+		constraints.ipadx = 0;
+		constraints.ipady = 0;
+		constraints.gridwidth = 2;
+		add(setContrastThreshold, constraints);
+		SetContrastThresholdAction setContrastThresholdAction = new SetContrastThresholdAction();
+		setContrastThreshold.addChangeListener(setContrastThresholdAction);
+		
+		contrastThresholdText = new JTextField("200");
+		contrastThresholdText.setPreferredSize(new Dimension(100, 500));
+		constraints.gridx = 3;
+		constraints.gridy = 2;
+		constraints.ipadx = 75;
+		constraints.ipady = 10;
+		constraints.gridwidth = 1;
+		add(contrastThresholdText, constraints);
+		SetContrastEntered setContrastEntered = new SetContrastEntered();
 		
 		drawFlydentifiers = new JButton("Draw fly locations");
 		constraints.fill = constraints.HORIZONTAL;
 		constraints.ipadx = 0;
 		constraints.ipady = 0;
 		constraints.gridx = 0;
-		constraints.gridy = 2;
+		constraints.gridy = 3;
 		constraints.gridwidth = 4;
 		add(drawFlydentifiers, constraints);
 		DrawFlydentifiersAction drawFlydentifiersAction = new DrawFlydentifiersAction();
@@ -384,7 +459,7 @@ public class ButtonPanel extends JPanel {
 		drawTrajectories = new JButton("Draw fly trajectories");
 		constraints.ipadx = 100;
 		constraints.gridx = 0;
-		constraints.gridy = 3;
+		constraints.gridy = 4;
 		constraints.gridwidth = 2;
 		add(drawTrajectories, constraints);
 		DrawTrajectoriesAction drawTrajectoriesAction = new DrawTrajectoriesAction();
@@ -410,7 +485,7 @@ public class ButtonPanel extends JPanel {
 		constraints.ipadx = 0;
 		constraints.ipady = 0;
 		constraints.gridx = 2;
-		constraints.gridy = 4;
+		constraints.gridy = 5;
 		constraints.gridwidth = 1;
 		add(backFrame, constraints);
 		BackFrameAction backFrameAction = new BackFrameAction();
@@ -426,7 +501,7 @@ public class ButtonPanel extends JPanel {
 		clearImages = new JButton("Clear all images");
 		constraints.gridx = 0;
 		constraints.gridwidth = 2;
-		constraints.gridy = 4;
+		constraints.gridy = 5;
 		constraints.fill = constraints.HORIZONTAL;
 		add(clearImages, constraints);
 		ClearImageAction clearImageAction = new ClearImageAction();
