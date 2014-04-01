@@ -228,7 +228,7 @@ public class ButtonPanel extends JPanel {
 	/**
 	 * The default preferred height of this panel.
 	 */
-	private static final int DEFAULT_HEIGHT = 500;
+	private static final int DEFAULT_HEIGHT = 400;
 
 	/**
 	 * The AnalyzerPanel object that this ImagePanel communicates with.

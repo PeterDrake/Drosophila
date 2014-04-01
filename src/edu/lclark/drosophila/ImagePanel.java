@@ -118,7 +118,15 @@ public class ImagePanel extends JPanel {
 		String filePath = analyzerPanel.passdownImage(imageIndex);
 		if (filePath != null) {
 			Image image = new ImageIcon(filePath).getImage();
-			g.drawImage(image, 0, 0, null);
+			int imgWidth = image.getWidth(null);
+			int imgHeight = image.getHeight(null);
+			
+			double xScale = this.getWidth()/(double)imgWidth;
+			double yScale = this.getHeight()/(double)imgHeight;
+			double scale = Math.min(xScale, yScale);
+			
+			g.drawImage(image, 0, 0, (int) (imgWidth * scale), (int)(imgHeight * scale), null);
+			//g.drawImage(image, 0, 0, null);
 			if (flydentifiers) {
 				List<Fly> flies = analyzerPanel.getFlyList();
 				int sizeFlies = flies.size();
@@ -127,8 +135,8 @@ public class ImagePanel extends JPanel {
 						g.setColor(new Color(Color.HSBtoRGB(
 								(float) ((i * 1.0) / sizeFlies), (float) 0.75,
 								(float) 0.95)));
-						g.fillOval((int) flies.get(i).getX(imageIndex) - 6,
-								(int) flies.get(i).getY(imageIndex) - 6, 12, 12);
+						g.fillOval((int)( (flies.get(i).getX(imageIndex) - 6)* scale ),
+								(int) ((flies.get(i).getY(imageIndex) - 6)* scale ), (int) (12 * scale),(int)(12* scale));
 					}
 				}
 			}
@@ -155,7 +163,7 @@ public class ImagePanel extends JPanel {
 																				// in
 																				// both
 																				// frames
-							g.drawLine(x1, y1, x2, y2);
+							g.drawLine((int)(x1* scale ), (int)(y1* scale ), (int)(x2* scale) , (int)(y2* scale) );
 						}
 					}
 					flyNumber++;

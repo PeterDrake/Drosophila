@@ -81,31 +81,42 @@ public class Analyzer {
 		movieLoaded = false;
 		totalFrames = 0;
 		flies = new LinkedList<Fly>();
+		images = new File[5];
+	}
+
+
+	public void flydentify(BufferedImage image) {
+		// just for a single image
+		flies = new LinkedList<Fly>();
+		totalFrames = 1;
+		flydentify(image, 0);
+
+		System.out.println("number of flies: " + flies.size());
 		images = new File[20];
 		frames = new ArrayList<BufferedImage>();
 		mLastPtsWrite = Global.NO_PTS;
 	}
 
+
 	/**
-	 * Calculates the mean velocity of the given fly within the time specified
-	 * by the starting and ending frames.
-	 * 
-	 * @param fly
-	 *            the fly whose average velocity is desired.
+	 * this method calls the above method on an array of flies and computes the average
+	 * @param flies
 	 * @param start
-	 *            the first frame you want the average velocity calculated from.
 	 * @param end
-	 *            the last frame you want the average velocity calculated from.
-	 * @return the mean velocity of the given fly within the given time frame.
+	 * @return average velocity of flies from start to end
 	 */
-	public double averageVelFly(Fly fly, int start, int end) {
-		double avgVel = 0;
-		double[] vx = fly.getVx();
-		double[] vy = fly.getVy();
-		for (int i = start; i <= end; i++) {
-			avgVel += vx[i] + vy[i];
+	
+	public double[] averageVelMultFlies(List<Fly> flies, int start, int end){
+		double [] avgVel= new double [end-start];
+		double tempAvg;
+		for (int i = start; i < end; i++) {
+			tempAvg =0;
+			for (int j = 0; j < flies.size(); j++) {
+				tempAvg += flies.get(j).averageVelFly(i, i);
+			}
+			avgVel[i-start] = tempAvg/flies.size();
 		}
-		avgVel = avgVel / (end - (start - 1));
+		
 		return avgVel;
 	}
 
@@ -266,6 +277,7 @@ public class Analyzer {
 			}
 			aNewFly.addFrameInfo(frameNumber, tempFlies.get(0)[0],
 					tempFlies.get(0)[1]);
+			aNewFly.setId(flies.size());
 			flies.add(aNewFly);
 			tempFlies.remove(0);
 		}

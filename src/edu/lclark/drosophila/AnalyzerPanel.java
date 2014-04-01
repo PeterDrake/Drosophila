@@ -3,6 +3,7 @@ package edu.lclark.drosophila;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.*;
@@ -13,11 +14,20 @@ public class AnalyzerPanel extends JPanel {
 	 * The AnalyzerGui object which this AnalyzerPanel communicates with.
 	 */
 	private AnalyzerGui gui;
+	
+	/**
+	 * The GraphPanel object which this AnalyzerPanel communicates with.
+	 */
+	private GraphPanel graphPanel;
 
 	/**
 	 * The ImagePanel object which this AnalyzerPanel communicates with.
 	 */
 	private ImagePanel ipanel;
+	/**
+	 * The Data Panel object which this AnalyzerPanel communicates with.
+	 */
+	private DataPanel dpanel;
 
 	/**
 	 * The constructor for AnalyzerPanel, which adds the button panel and image
@@ -33,16 +43,41 @@ public class AnalyzerPanel extends JPanel {
 		GridBagConstraints constraints = new GridBagConstraints();
 		ButtonPanel bpanel = new ButtonPanel(this);
 		constraints.gridx = 0;
-		constraints.gridy = 0;
+		constraints.gridy = 1;
 		constraints.weightx = 1;
-		constraints.insets = new Insets(0, 0, 0, 50);
+		constraints.insets = new Insets(150, 0, 0, 50);
+		constraints.anchor = constraints.NORTH;
 		add(bpanel, constraints);
+		constraints.insets = new Insets(0, 0, 0, 50);
 		ipanel = new ImagePanel(this);
 		constraints.anchor = constraints.EAST;
 		constraints.gridx = 1;
 		constraints.gridy = 0;
 		constraints.weightx = 1;
+		constraints.weighty = 1;
+		constraints.gridheight = 3;
 		add(ipanel, constraints);
+		dpanel = new DataPanel(this);
+		constraints.anchor = constraints.NORTH;
+		constraints.gridx = 0;
+		constraints.gridy = 0;
+		constraints.gridwidth= 1;
+		constraints.weightx = 1;
+		constraints.gridheight = 2;
+		add(dpanel, constraints);
+		
+		graphPanel = new GraphPanel(this, false, .10, "TITLE", "vertical label now this is longer ", "Xkljhfdsalkjfhasdkljfh" );
+		constraints.gridx = 0;
+		constraints.gridy = 2;
+		constraints.gridheight = 1;
+		//constraints.insets = new Insets(0, 50, 50, 0);
+		add(graphPanel, constraints);
+	}
+
+	public double[] getAverageVelocity() {
+		return gui.getAverageVelocity();
+
+
 	}
 
 	/**
@@ -50,6 +85,7 @@ public class AnalyzerPanel extends JPanel {
 	 */
 	public void clearImages() {
 		gui.clearImages();
+
 	}
 
 	/**
@@ -66,6 +102,9 @@ public class AnalyzerPanel extends JPanel {
 	 * @return a List of identified Fly objects.
 	 */
 	public List<Fly> getFlyList() {
+		if(gui.getFlies()==null){
+			return new LinkedList<Fly>();
+		}
 		return gui.getFlies();
 	}
 
@@ -120,7 +159,6 @@ public class AnalyzerPanel extends JPanel {
 	/**
 	 * Toggles the identifying dots drawn over the identified flies on the gui.
 	 */
-
 	public void setFlydentifiers() {
 		ipanel.setFlydentifiers();
 	}
