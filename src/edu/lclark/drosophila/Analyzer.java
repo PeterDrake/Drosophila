@@ -18,7 +18,7 @@ public class Analyzer {
 	/**
 	 * The threshold in pixel color contrast a pixel must pass to be identified.
 	 */
-	private static final int CONTRAST_THRESHOLD = 200;
+	private static final int CONTRAST_THRESHOLD = 50;
 
 	public static void main(String[] args) {
 		gui = new AnalyzerGui(new Analyzer());
@@ -53,7 +53,7 @@ public class Analyzer {
 		movieLoaded = false;
 		totalFrames = 0;
 		flies = new LinkedList<Fly>();
-		images = new File[5];
+		images = new File[20];
 	}
 
 	public void flydentify(BufferedImage image) {
@@ -280,7 +280,7 @@ public class Analyzer {
 										f.addFrameInfo(frameNumber, currentX, currentY);
 									}
 								}
-							} else {
+							} else if(!containsFalse(prevFliesMarked)) {
 								//If No previous flies are found:
 								newFlies.add(new double[] { currentX, currentY,
 										closestFlyIndex });
@@ -292,29 +292,41 @@ public class Analyzer {
 				//Search through the previous flies for the closest current flies.
 				if (containsFalse(prevFliesMarked)) {
 					for (int i = 0; i < fullPrevFlies.length; i++) {
-						if(!prevFliesMarked[i]) {							
+						if(!prevFliesMarked[i]) {
 							double dist = Double.MAX_VALUE;
 							int closestFlyIndex = -1;
 							double pastX = fullPrevFlies[i].getX(frameNumber - 1);
 							double pastY = fullPrevFlies[i].getY(frameNumber - 1);
-							for (int j = 0; j < fullTempFlies.length; j++) {
-								double thisDist = Math.sqrt(Math.pow(pastX
-										- fullTempFlies[j][0], 2)
-										+ Math.pow(pastY - fullTempFlies[j][1], 2));
-								if (thisDist < dist) {
-									dist = thisDist;
-									closestFlyIndex = j;
+							if(!containsFalse(tempFliesMarked)) {
+								for (int j = 0; j < fullTempFlies.length; j++) {
+									double thisDist = Math.sqrt(Math.pow(pastX
+											- fullTempFlies[j][0], 2)
+											+ Math.pow(pastY - fullTempFlies[j][1], 2));
+									if (thisDist < dist) {
+										dist = thisDist;
+										closestFlyIndex = j;
+									}
+								}
+							} else {								
+								for (int j = 0; j < fullTempFlies.length; j++) {
+									if(!tempFliesMarked[j]) {									
+										double thisDist = Math.sqrt(Math.pow(pastX
+												- fullTempFlies[j][0], 2)
+												+ Math.pow(pastY - fullTempFlies[j][1], 2));
+										if (thisDist < dist) {
+											dist = thisDist;
+											closestFlyIndex = j;
+										}
+									}
 								}
 							}
-							if(!tempFliesMarked[closestFlyIndex] || !containsFalse(tempFliesMarked)) {							
-								prevFliesMarked[i] = true;
-								tempFliesMarked[closestFlyIndex] = true;
-								for (Fly f : flies) {
-									if (f.getId() == i) {
-										f.addFrameInfo(frameNumber,
-												fullTempFlies[closestFlyIndex][0],
-												fullTempFlies[closestFlyIndex][1]);
-									}
+							prevFliesMarked[i] = true;
+							tempFliesMarked[closestFlyIndex] = true;
+							for (Fly f : flies) {
+								if (f.getId() == i) {
+									f.addFrameInfo(frameNumber,
+											fullTempFlies[closestFlyIndex][0],
+											fullTempFlies[closestFlyIndex][1]);
 								}
 							}
 						}
