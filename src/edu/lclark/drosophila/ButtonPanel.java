@@ -172,7 +172,7 @@ public class ButtonPanel extends JPanel {
 			System.out.println(text.length());
 			try {
 				int value = Integer.parseInt(text);
-				if(value>0&&value<200){
+				if(value>=MIN_SLIDER_THRESHOLD&&value<=MAX_SLIDER_THRESHHOLD){
 				analyzerPanel.sizeThresholdUpdate(value);
 				setThreshold.setValue(value);
 				}
@@ -390,7 +390,7 @@ public class ButtonPanel extends JPanel {
 		setThreshold.addChangeListener(setThresholdAction);
 		analyzerPanel.sizeThresholdUpdate(DEFAULT_SLIDER_THRESHOLD);
 		
-		SliderLabel = new JTextArea("Threshold Slider");
+		SliderLabel = new JTextArea("Pixel Threshold");
 		SliderLabel.setEditable(false);
 		constraints.gridx = 0;
 		constraints.gridy = 1;
@@ -400,7 +400,7 @@ public class ButtonPanel extends JPanel {
 		constraints.gridwidth = 1;
 		add(SliderLabel,constraints);
 		
-		ContrastLabel = new JTextArea("Contrast Slider");
+		ContrastLabel = new JTextArea("Contrast Threshold");
 		ContrastLabel.setEditable(false);
 		constraints.gridx = 0;
 		constraints.gridy = 2;
@@ -444,6 +444,7 @@ public class ButtonPanel extends JPanel {
 		constraints.gridwidth = 1;
 		add(contrastThresholdText, constraints);
 		SetContrastEntered setContrastEntered = new SetContrastEntered();
+		contrastThresholdText.getDocument().addDocumentListener(setContrastEntered);
 		
 		drawFlydentifiers = new JButton("Draw fly locations");
 		constraints.fill = constraints.HORIZONTAL;
