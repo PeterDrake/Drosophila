@@ -18,7 +18,7 @@ public class Analyzer {
 	/**
 	 * The threshold in pixel color contrast a pixel must pass to be identified.
 	 */
-	private static final int CONTRAST_THRESHOLD = 50;
+	private static final int CONTRAST_THRESHOLD = 200;
 
 	public static void main(String[] args) {
 		gui = new AnalyzerGui(new Analyzer());
