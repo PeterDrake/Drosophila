@@ -211,6 +211,7 @@ public class Analyzer {
 						if (numPixels >= sizeThreshold) // if the blob is large
 														// enough to be a fly
 						{
+							System.out.println(numPixels);
 							// create a new temporary fly object
 							double tempLocation[] = new double[2];
 							tempLocation[0] = (double) totalX / numPixels;
@@ -360,6 +361,18 @@ public class Analyzer {
 		red = (rgb >> 16) & 0xFF;
 		green = (rgb >> 8) & 0xFF;
 		blue = rgb & 0xFF;
+		red *= imageContrast;
+		green *= imageContrast;
+		blue *= imageContrast;
+		if(red > 255){
+			red = 255;
+		}
+		if(green > 255){
+			green = 255;
+		}
+		if(blue > 255){
+			blue = 255;
+		}
 		avg = red * 0.2989 + green * .587 + blue * .114;
 		boolean found = ((int) (Math.round(avg)) <= CONTRAST_THRESHOLD);
 		return found;

@@ -148,7 +148,8 @@ public class ImagePanel extends JPanel {
 						if(blue > 255){
 							blue = 255;
 						}
-						rgb = red << 16;
+						rgb = 255 << 24;
+						rgb += red << 16;
 						rgb += green << 8;
 						rgb += blue;
 						image.setRGB(i, j, rgb);

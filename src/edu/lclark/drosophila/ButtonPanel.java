@@ -263,13 +263,17 @@ public class ButtonPanel extends JPanel {
 		add(thresholdText, constraints);
 		
 		setImageContrast = new JSlider(JSlider.HORIZONTAL, 10, 30, 10);
-		setImageContrast.setMajorTickSpacing(50);
-		setImageContrast.setPaintLabels(true);
-		setImageContrast.setPaintTicks(true);
-		constraints.gridx = 0;
+		setImageContrast.setToolTipText("Sets Image Contrast");
+		setImageContrast.setMajorTickSpacing(5);
+//		setImageContrast.setPaintLabels(true);
+//		setImageContrast.setPaintTicks(false);
+		constraints.gridx = 1;
 		constraints.gridy = 10;
 		constraints.gridwidth = 3;
 		add(setImageContrast, constraints);
+		constraints.gridx = 0;
+		constraints.gridwidth = 1;
+		add(new JLabel("Contrast"), constraints);
 		SetImageContrastAction setImageContrastAction = new SetImageContrastAction();
 		setImageContrast.addChangeListener(setImageContrastAction);
 		//analyzerPanel.sizeImageContrastUpdate(1.0);
