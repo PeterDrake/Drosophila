@@ -2,6 +2,11 @@ package edu.lclark.drosophila;
 
 public class Fly {
 
+	/** Id number to be able to tell flies apart */
+	private int id;
+	
+	/** The number of frames this fly stores info for */
+	private int numFrames;
 	/**
 	 * Stores all x positions of the fly for all frames. For example, x[4]
 	 * stores the fly's x position in frame 4.
@@ -26,17 +31,18 @@ public class Fly {
 	 */
 	private double[] vy;
 	
-	private int id;
 	/**
 	 * A constructor for the Fly class, if an image or images are loaded. All
 	 * arrays are initialized to size 20
 	 */
 	public Fly() {
-		x = new double[20];
-		y = new double[20];
-		vx = new double[20];
-		vy = new double[20];
-		for (int i = 0; i < 20; i++) {
+		id = -1;
+		numFrames = 20;
+		x = new double[numFrames];
+		y = new double[numFrames];
+		vx = new double[numFrames];
+		vy = new double[numFrames];
+		for (int i = 0; i < numFrames; i++) {
 			x[i] = -1;
 			y[i] = -1;
 		}
@@ -51,7 +57,8 @@ public class Fly {
 	 *            the number of frames the fly must store data for.
 	 */
 	public Fly(int numFrames) {
-		id=-1;
+		id = -1;
+		this.numFrames = numFrames;
 		x = new double[numFrames];
 		y = new double[numFrames];
 		vx = new double[numFrames];
@@ -125,13 +132,25 @@ public class Fly {
 		this.x[frameNumber] = x;
 		this.y[frameNumber] = y;
 		if(frameNumber==0){
-			vx[frameNumber]=0;
-			vy[frameNumber]=0;
+			vx[frameNumber] = 0;
+			vy[frameNumber] = 0;
 		}
 		else{
-			vx[frameNumber]=Math.abs(this.x[frameNumber]-this.x[frameNumber-1]);
-			vy[frameNumber]=Math.abs(this.y[frameNumber]-this.y[frameNumber-1]);
+			vx[frameNumber] = Math.abs(this.x[frameNumber]-this.x[frameNumber-1]);
+			vy[frameNumber] = Math.abs(this.y[frameNumber]-this.y[frameNumber-1]);
 		}
+	}
+	
+	/** Copies the data from this fly to a new Fly */
+	public Fly copyThisFly(){
+		Fly newFly = new Fly(numFrames);
+		for(int i = 0; i < numFrames; i++){
+			if(x[i] == -1){
+				break;
+			}
+			newFly.addFrameInfo(i,  x[i], y[i]);
+		}
+		return newFly;
 	}
 
 	public double[] getVx() {
@@ -170,12 +189,23 @@ public class Fly {
 	public double getY(int frameNumber) {
 		return y[frameNumber];
 	}
+
+	/**
+	 * Returns the identification number of this fly.
+	 * @return the identification number of this fly.
+	 */
 	public int getId(){
 		return id;
 	}
+	
+	/**
+	 * Sets the id of this fly to the given integer.
+	 * @param id the integer which this fly's id number will be set to.
+	 */
 	public void setId(int id){
-		this.id=id;
+		this.id = id;
 	}
+
 	public void setVx(double[] vx) {
 		this.vx = vx;
 	}

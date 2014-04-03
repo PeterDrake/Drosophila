@@ -113,6 +113,10 @@ public class AnalyzerGui extends JFrame {
 	public void sizeThresholdUpdate(int input) {
 		analyzer.sizeThresholdUpdate(input);
 	}
+	
+	public void contrastThresholdUpdate(int input) {
+		analyzer.contrastThresholdUpdate(input);
+	}
 
 	public void setImageContrast(double d) {
 		analyzer.setImageContrast(d);		
