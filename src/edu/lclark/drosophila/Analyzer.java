@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,10 +25,9 @@ public class Analyzer {
 
 	private static AnalyzerGui gui;
 
-	/**
-	 * The threshold in pixel color contrast a pixel must pass to be identified.
-	 */
-	private static final int CONTRAST_THRESHOLD = 200;
+
+
+	private int contrastThreshold = 200;
 
 	public static void main(String[] args) {
 		gui = new AnalyzerGui(new Analyzer());
@@ -77,14 +77,18 @@ public class Analyzer {
 	 */
 	private List<BufferedImage> frames;
 
+	/**
+	 * A value for editing the contrast of the actual image
+	 */
+	private double imageContrast = 1.0;
+
 	public Analyzer() {
 		movieLoaded = false;
 		totalFrames = 0;
 		flies = new LinkedList<Fly>();
-		images = new File[5];
 		frames = new ArrayList<BufferedImage>();
+		images = new File[20];
 	}
-
 
 	public void flydentify(BufferedImage image) {
 		// just for a single image
@@ -98,26 +102,27 @@ public class Analyzer {
 		mLastPtsWrite = Global.NO_PTS;
 	}
 
-
 	/**
-	 * this method calls the above method on an array of flies and computes the average
+	 * this method calls the above method on an array of flies and computes the
+	 * average
+	 * 
 	 * @param flies
 	 * @param start
 	 * @param end
 	 * @return average velocity of flies from start to end
 	 */
-	
-	public double[] averageVelMultFlies(List<Fly> flies, int start, int end){
-		double [] avgVel= new double [end-start];
+
+	public double[] averageVelMultFlies(List<Fly> flies, int start, int end) {
+		double[] avgVel = new double[end - start];
 		double tempAvg;
 		for (int i = start; i < end; i++) {
-			tempAvg =0;
+			tempAvg = 0;
 			for (int j = 0; j < flies.size(); j++) {
 				tempAvg += flies.get(j).averageVelFly(i, i);
 			}
-			avgVel[i-start] = tempAvg/flies.size();
+			avgVel[i - start] = tempAvg / flies.size();
 		}
-		
+
 		return avgVel;
 	}
 
@@ -129,6 +134,25 @@ public class Analyzer {
 		totalFrames = 0;
 		flies = new LinkedList<Fly>();
 		images = new File[20];
+	}
+
+	/**
+	 * Checks to see if a boolean array of any size contains a false value.
+	 * <p>
+	 * Used by {@link #flydentify} to check if any flies have not been assigned
+	 * to flies on other frames.
+	 * 
+	 * @param array
+	 *            The boolean array being searched for any false values.
+	 * @return True if there are any false values in the array.
+	 */
+	public boolean containsFalse(boolean[] array) {
+		for (boolean b : array) {
+			if (!b) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -163,8 +187,20 @@ public class Analyzer {
 					int red = (rgb >> 16) & 0xFF;
 					int green = (rgb >> 8) & 0xFF;
 					int blue = rgb & 0xFF;
+					red *= imageContrast;
+					green *= imageContrast;
+					blue *= imageContrast;
+					if(red > 255){
+						red = 255;
+					}
+					if(green > 255){
+						green = 255;
+					}
+					if(blue > 255){
+						blue = 255;
+					}
 					double avg = red * 0.2989 + green * .587 + blue * .114;
-					if ((int) (Math.round(avg)) <= CONTRAST_THRESHOLD) { // if
+					if ((int) (Math.round(avg)) <= contrastThreshold) { // if
 																			// the
 																			// color
 																			// is
@@ -172,9 +208,9 @@ public class Analyzer {
 																			// enough
 						int totalX = 0;
 						int totalY = 0;
-						int numPixels = 0; // initialize values to find center
-											// of
-											// mass of fly
+						int numPixels = 0;
+						// initialize values to find the center of mass of the
+						// fly.
 						// searchPixel(i, j, searchArray, image);
 						curIdx = 0;
 						stack[curIdx][0] = i;
@@ -219,9 +255,10 @@ public class Analyzer {
 								}
 							}
 						}
-						if (numPixels >= sizeThreshold) // if the blob is large
-														// enough to be a fly
-						{
+
+						if (numPixels >= sizeThreshold) {
+							// if the blob is large enough to be a fly
+
 							// create a new temporary fly object
 							double tempLocation[] = new double[2];
 							tempLocation[0] = (double) totalX / numPixels;
@@ -236,52 +273,128 @@ public class Analyzer {
 				}
 			}
 		}
-		// create this variable because flies.size() is linear
-		int sizeFlies = flies.size();
-		for (int i = 0; i < sizeFlies && !tempFlies.isEmpty(); i++) {
-			// going through each existing fly and matching it to the closest
-			// temporary counterpart
-			Fly pastFly = flies.get(i);
-			double pastX = pastFly.getX(0);
-			double pastY = pastFly.getY(0);
-			double dist = Math.sqrt(Math.pow(pastX - tempFlies.get(0)[0], 2)
-					+ Math.pow(pastY - tempFlies.get(0)[1], 2));
-			int closestFlyIndex = 0;
-			int sizeTempFlies = tempFlies.size();
-			for (int j = 1; j < sizeTempFlies; j++) {
-				double thisDist = Math.sqrt(Math.pow(pastX
-						- tempFlies.get(j)[0], 2)
-						+ Math.pow(pastY - tempFlies.get(j)[1], 2));
-				if (thisDist < dist) {
-					dist = thisDist;
-					closestFlyIndex = j;
+		if (frameNumber == 0) {
+			//The first frame just creates all found flies.
+			for (double[] d : tempFlies) {
+				Fly f;
+				if (movieLoaded) {
+					f = new Fly(totalFrames);
+				} else {
+					f = new Fly();
+				}
+				f.addFrameInfo(frameNumber, d[0], d[1]);
+				f.setId(flies.size());
+				flies.add(f);
+
+			}
+		} else {
+			//If not the first frame, we do the checking algorithms. 
+			//(Algorithm sounds too proper for the duct-taped together thing that this is.)
+			Fly[] fullPrevFlies = new Fly[flies.size()];
+			int index = 0;
+			boolean[] prevFliesMarked = new boolean[flies.size()];
+			 for(Fly fly : flies){
+				 fullPrevFlies[index] = fly;
+				 index++;
+			 }
+			// Stores coordinates in indices 0 and 1 of array, stores id in
+			// index 2
+			double[][] fullTempFlies = new double[tempFlies.size()][3];
+			boolean[] tempFliesMarked = new boolean[tempFlies.size()];
+			for (int i = 0; i < fullTempFlies.length; i++) {
+				fullTempFlies[i][0] = tempFlies.get(i)[0];
+				fullTempFlies[i][1] = tempFlies.get(i)[1];
+				fullTempFlies[i][2] = i;
+			}
+			List<double[]> newFlies = new LinkedList<double[]>();
+			while (containsFalse(tempFliesMarked)
+					|| containsFalse(prevFliesMarked)) {
+				//Searches through the temp flies list to connect the closest fly.
+				if (containsFalse(tempFliesMarked)) {
+					for (int i = 0; i < tempFliesMarked.length; i++) {
+						if (!tempFliesMarked[i]) {
+							double dist = Double.MAX_VALUE;
+							int closestFlyIndex = -1;
+							double currentX = fullTempFlies[i][0];
+							double currentY = fullTempFlies[i][1];
+							for (int j = 0; j < fullPrevFlies.length; j++) {
+								double thisDist = Math.sqrt(
+										Math.pow(currentX - fullPrevFlies[j].getX(frameNumber - 1), 2) 
+										+ Math.pow(currentY - fullPrevFlies[j].getY(frameNumber - 1), 2));
+								if (thisDist < dist) {
+									dist = thisDist;
+									closestFlyIndex = j;
+								}
+							}
+							if(!prevFliesMarked[closestFlyIndex]) {								
+								prevFliesMarked[closestFlyIndex] = true;
+								tempFliesMarked[i] = true;
+								for(Fly f : flies) {
+									if(f.getId() == closestFlyIndex) {										
+										f.addFrameInfo(frameNumber, currentX, currentY);
+									}
+								}
+							} else if(!containsFalse(prevFliesMarked)) {
+								//If No previous flies are found:
+								newFlies.add(new double[] { currentX, currentY,
+										closestFlyIndex });
+								tempFliesMarked[i] = true;
+							}
+						}
+					}
+				}
+				//Search through the previous flies for the closest current flies.
+				if (containsFalse(prevFliesMarked)) {
+					for (int i = 0; i < fullPrevFlies.length; i++) {
+						if(!prevFliesMarked[i]) {
+							double dist = Double.MAX_VALUE;
+							int closestFlyIndex = -1;
+							double pastX = fullPrevFlies[i].getX(frameNumber - 1);
+							double pastY = fullPrevFlies[i].getY(frameNumber - 1);
+							if(!containsFalse(tempFliesMarked)) {
+								for (int j = 0; j < fullTempFlies.length; j++) {
+									double thisDist = Math.sqrt(Math.pow(pastX
+											- fullTempFlies[j][0], 2)
+											+ Math.pow(pastY - fullTempFlies[j][1], 2));
+									if (thisDist < dist) {
+										dist = thisDist;
+										closestFlyIndex = j;
+									}
+								}
+							} else {								
+								for (int j = 0; j < fullTempFlies.length; j++) {
+									if(!tempFliesMarked[j]) {									
+										double thisDist = Math.sqrt(Math.pow(pastX
+												- fullTempFlies[j][0], 2)
+												+ Math.pow(pastY - fullTempFlies[j][1], 2));
+										if (thisDist < dist) {
+											dist = thisDist;
+											closestFlyIndex = j;
+										}
+									}
+								}
+							}
+							prevFliesMarked[i] = true;
+							tempFliesMarked[closestFlyIndex] = true;
+							for (Fly f : flies) {
+								if (f.getId() == i) {
+									f.addFrameInfo(frameNumber,
+											fullTempFlies[closestFlyIndex][0],
+											fullTempFlies[closestFlyIndex][1]);
+								}
+							}
+						}
+					}
 				}
 			}
-			// augmenting the existing fly to contain information about location
-			// from the image
-			pastFly.addFrameInfo(frameNumber,
-					tempFlies.get(closestFlyIndex)[0],
-					tempFlies.get(closestFlyIndex)[1]);
-			// remove the temporary fly so two existing flies can't map to the
-			// same temporary one
-			tempFlies.remove(closestFlyIndex);
-		}
-		// in case there are more temporary flies than existing flies
-		sizeFlies = tempFlies.size();
-		while (!tempFlies.isEmpty()) {
-			// create a new fly for each fly left
-			Fly aNewFly;
-			if (movieLoaded) {
-				aNewFly = new Fly(totalFrames);
-			} else {
-				aNewFly = new Fly();
+			for (double[] d : newFlies) {
+				Fly aNewFly = flies.get((int) d[2]).copyThisFly();
+				aNewFly.addFrameInfo(frameNumber, d[0], d[1]);
+				aNewFly.setId(flies.size());
+				flies.add(aNewFly);
 			}
-			aNewFly.addFrameInfo(frameNumber, tempFlies.get(0)[0],
-					tempFlies.get(0)[1]);
-			aNewFly.setId(flies.size());
-			flies.add(aNewFly);
-			tempFlies.remove(0);
 		}
+
 	}
 
 	/**
@@ -371,8 +484,20 @@ public class Analyzer {
 		red = (rgb >> 16) & 0xFF;
 		green = (rgb >> 8) & 0xFF;
 		blue = rgb & 0xFF;
+		red *= imageContrast;
+		green *= imageContrast;
+		blue *= imageContrast;
+		if(red > 255){
+			red = 255;
+		}
+		if(green > 255){
+			green = 255;
+		}
+		if(blue > 255){
+			blue = 255;
+		}
 		avg = red * 0.2989 + green * .587 + blue * .114;
-		boolean found = ((int) (Math.round(avg)) <= CONTRAST_THRESHOLD);
+		boolean found = ((int) (Math.round(avg)) <= contrastThreshold);
 		return found;
 	}
 
@@ -388,6 +513,28 @@ public class Analyzer {
 		sizeThreshold = input;
 		if (totalFrames > 0) {
 			updateImages();
+		}
+	}
+	
+	/**
+	 * Updates the contrast threshold field. This is used to tell how dark a spot
+	 * has to be to be considered a fly. This will also analyze all stored image again
+	 * 
+	 * @param input
+	 * 			  the value which contrast threshold will be set to.
+	 */
+	public void contrastThresholdUpdate(int input) {
+		if (input > 255){
+			input = 255;
+		}
+		if (input < 0){
+			input = 0;
+		}
+		if(input >= 0 && input <= 255) {
+			contrastThreshold = input;
+			if (totalFrames > 0) {
+				updateImages();
+			}
 		}
 	}
 
@@ -408,7 +555,6 @@ public class Analyzer {
 		}
 	}
 
-	
 	
 	/**
 	 * Plays a selected movie in a new moviePanel 
@@ -454,6 +600,22 @@ public class Analyzer {
 		}
 	}
 	
+
+	public void setImageContrast(double d) {
+		imageContrast = d;
+		updateImages();
+	}
+
+
+	public double getImageContrast() {
+		return imageContrast;
+	}
+
+
+	public File passdownFile(int imageIndex) {
+		return images[imageIndex];
+	}
+
 }
 
 

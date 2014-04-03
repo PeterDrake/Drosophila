@@ -46,6 +46,8 @@ public class AnalyzerPanel extends JPanel {
 		constraints.gridy = 1;
 		constraints.weightx = 1;
 		constraints.insets = new Insets(150, 0, 0, 50);
+		constraints.weighty = 1;
+		constraints.insets = new Insets(150, 0, 0, 50);
 		constraints.anchor = constraints.NORTH;
 		add(bpanel, constraints);
 		constraints.insets = new Insets(0, 0, 0, 50);
@@ -56,13 +58,17 @@ public class AnalyzerPanel extends JPanel {
 		constraints.weightx = 1;
 		constraints.weighty = 1;
 		constraints.gridheight = 3;
+		constraints.gridheight = 2;
 		add(ipanel, constraints);
 		dpanel = new DataPanel(this);
 		constraints.anchor = constraints.NORTH;
 		constraints.gridx = 0;
 		constraints.gridy = 0;
 		constraints.gridwidth= 1;
+		constraints.weighty=1;
+		constraints.insets = new Insets(0, 0, 0, 0);
 		constraints.weightx = 1;
+		add(dpanel, constraints);
 		constraints.gridheight = 2;
 		add(dpanel, constraints);
 		
@@ -174,7 +180,6 @@ public class AnalyzerPanel extends JPanel {
 	public void sizeThresholdUpdate(int input) {
 		gui.sizeThresholdUpdate(input);
 	}
-
 	
 	/**
 	 * Daisy chain method to pass an opened movie file
@@ -223,5 +228,21 @@ public class AnalyzerPanel extends JPanel {
 	public void setMoviePlaying(boolean b){
 		ipanel.setMoviePlaying(b);
 	}
+
+	public void setImageContrast(double d) {
+		gui.setImageContrast(d);		
+	}
+
+	public double getImageContrast() {
+		return gui.getImageContrast();
+	}
+
+	public File passdownFile(int imageIndex) {
+		return gui.passdownFile(imageIndex);
+	}
 	
+	public void contrastThresholdUpdate(int input) {
+		gui.contrastThresholdUpdate(input);
+
+	}
 }
