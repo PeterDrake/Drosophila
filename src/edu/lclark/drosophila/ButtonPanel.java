@@ -129,9 +129,17 @@ public class ButtonPanel extends JPanel {
 		 * 
 		 */
 		public void stateChanged(ChangeEvent e) {
-			JSlider Source = (JSlider) e.getSource();
+			final JSlider Source = (JSlider) e.getSource();
 			if (!Source.getValueIsAdjusting()) {
+				SwingUtilities.invokeLater(new Runnable(){
+					@Override
+					public void run(){
+				
 				analyzerPanel.sizeThresholdUpdate((int) Source.getValue());
+				thresholdText.setText("" + (int) Source.getValue());
+					}
+				});
+				
 			}
 			if (Source.getValueIsAdjusting()) {
 				thresholdText.setText("" + (int) Source.getValue());
@@ -168,8 +176,7 @@ public class ButtonPanel extends JPanel {
 				System.exit(1);
 				}
 
-			System.out.println(text);
-			System.out.println(text.length());
+		
 			try {
 				int value = Integer.parseInt(text);
 				if(value>=MIN_SLIDER_THRESHOLD&&value<=MAX_SLIDER_THRESHHOLD){
@@ -182,9 +189,7 @@ public class ButtonPanel extends JPanel {
 				}
 			} catch (NumberFormatException E) {
 				E.getStackTrace();
-				analyzerPanel.sizeThresholdUpdate(DEFAULT_SLIDER_THRESHOLD);
-				setThreshold.setValue(DEFAULT_SLIDER_THRESHOLD);
-				System.err.println("could not set value, did default");
+				//does nothing waits for a valid argument
 
 			}
 		}
@@ -196,9 +201,16 @@ public class ButtonPanel extends JPanel {
 		 * 
 		 */
 		public void stateChanged(ChangeEvent e) {
-			JSlider Source = (JSlider) e.getSource();
+			final JSlider Source = (JSlider) e.getSource();
 			if (!Source.getValueIsAdjusting()) {
-				analyzerPanel.contrastThresholdUpdate((int) Source.getValue());
+				SwingUtilities.invokeLater(new Runnable(){
+					@Override
+					public void run(){
+						analyzerPanel.contrastThresholdUpdate((int) Source.getValue());
+						contrastThresholdText.setText("" + (int) Source.getValue());
+						
+					}
+				});
 			}
 			if (Source.getValueIsAdjusting()) {
 				contrastThresholdText.setText("" + (int) Source.getValue());
@@ -231,8 +243,7 @@ public class ButtonPanel extends JPanel {
 				System.exit(1);
 				}
 
-			System.out.println(text);
-			System.out.println(text.length());
+
 			try {
 				int value = Integer.parseInt(text);
 				if(value>=MIN_SLIDER_THRESHOLD&&value<=MAX_SLIDER_THRESHHOLD){
@@ -245,9 +256,7 @@ public class ButtonPanel extends JPanel {
 				}
 			} catch (NumberFormatException E) {
 				E.getStackTrace();
-				analyzerPanel.contrastThresholdUpdate(DEFAULT_CONTRAST_THRESHOLD);
-				setContrastThreshold.setValue(DEFAULT_CONTRAST_THRESHOLD);
-				System.err.println("could not set value, did default");
+	//does nothing waits for valid argument 
 
 			}
 		}
@@ -345,9 +354,9 @@ public class ButtonPanel extends JPanel {
 	 */
 	private static final int DEFAULT_CONTRAST_THRESHOLD=200;
 	
-	private JTextComponent SliderLabel;
+	private JLabel SliderLabel;
 	
-	private JTextComponent ContrastLabel;
+	private JLabel ContrastLabel;
 	/**
 	 * The AnalyzerPanel object that this ImagePanel communicates with.
 	 */
@@ -379,6 +388,7 @@ public class ButtonPanel extends JPanel {
 		setThreshold = new JSlider(JSlider.HORIZONTAL, MIN_SLIDER_THRESHOLD,
 				MAX_SLIDER_THRESHHOLD, DEFAULT_SLIDER_THRESHOLD);
 		setThreshold.setMajorTickSpacing(50);
+		setThreshold.setMinorTickSpacing(10);
 		setThreshold.setPaintLabels(true);
 		setThreshold.setPaintTicks(true);
 		setThreshold.setToolTipText("Sets the Pixel Threshold");
@@ -390,8 +400,7 @@ public class ButtonPanel extends JPanel {
 		setThreshold.addChangeListener(setThresholdAction);
 		analyzerPanel.sizeThresholdUpdate(DEFAULT_SLIDER_THRESHOLD);
 		
-		SliderLabel = new JTextArea("Pixel Threshold");
-		SliderLabel.setEditable(false);
+		SliderLabel = new JLabel("Pixel Threshold");
 		constraints.gridx = 0;
 		constraints.gridy = 1;
 		constraints.ipadx = 0;
@@ -400,8 +409,7 @@ public class ButtonPanel extends JPanel {
 		constraints.gridwidth = 1;
 		add(SliderLabel,constraints);
 		
-		ContrastLabel = new JTextArea("Contrast Threshold");
-		ContrastLabel.setEditable(false);
+		ContrastLabel = new JLabel("Contrast Threshold");
 		constraints.gridx = 0;
 		constraints.gridy = 2;
 		constraints.ipadx = 0;
@@ -424,6 +432,7 @@ public class ButtonPanel extends JPanel {
 
 		setContrastThreshold = new JSlider(JSlider.HORIZONTAL, MIN_SLIDER_THRESHOLD,MAX_SLIDER_THRESHHOLD,DEFAULT_CONTRAST_THRESHOLD);
 		setContrastThreshold.setMajorTickSpacing(50);
+		setContrastThreshold.setMinorTickSpacing(10);
 		setContrastThreshold.setPaintLabels(true);
 		setContrastThreshold.setPaintTicks(true);
 		constraints.gridx = 1;
