@@ -46,7 +46,7 @@ public class AnalyzerPanel extends JPanel {
 		constraints.weightx = 1;
 		constraints.insets = new Insets(150, 0, 0, 50);
 		constraints.weighty = 1;
-		constraints.insets = new Insets(0, 0, 0, 50);
+		constraints.insets = new Insets(150, 0, 0, 50);
 		constraints.anchor = constraints.NORTH;
 		add(bpanel, constraints);
 		constraints.insets = new Insets(0, 0, 0, 50);
@@ -64,6 +64,8 @@ public class AnalyzerPanel extends JPanel {
 		constraints.gridx = 0;
 		constraints.gridy = 0;
 		constraints.gridwidth= 1;
+		constraints.weighty=1;
+		constraints.insets = new Insets(0, 0, 0, 0);
 		constraints.weightx = 1;
 		add(dpanel, constraints);
 		constraints.gridheight = 2;
