@@ -185,7 +185,13 @@ public class AnalyzerPanel extends JPanel {
 	}
 
 	
-	
+	/**
+	 * Shows a loaded movie after clicking the "Open a movie" button. 
+	 * @param frames
+	 * 	         All of the frames of the selected file
+	 * @param l
+	 * 	      The wait time in milliseconds for a thread to sleep. 
+	 */
 	public void showMovie(final List<BufferedImage> frames, final long l) {
 		System.out.println("l is " + l);
 		ipanel.setMoviePlaying(true);
