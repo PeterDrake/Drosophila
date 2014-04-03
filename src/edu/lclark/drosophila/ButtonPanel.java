@@ -268,7 +268,7 @@ public class ButtonPanel extends JPanel {
 //		setImageContrast.setPaintLabels(true);
 //		setImageContrast.setPaintTicks(false);
 		constraints.gridx = 1;
-		constraints.gridy = 10;
+		constraints.gridy = 3;
 		constraints.gridwidth = 3;
 		add(setImageContrast, constraints);
 		constraints.gridx = 0;
