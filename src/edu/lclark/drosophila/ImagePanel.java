@@ -1,6 +1,9 @@
 package edu.lclark.drosophila;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -36,6 +39,8 @@ public class ImagePanel extends JPanel {
 	private int lastFrame;
 
 	private int numberOfImages;
+	private Point[] firstpoints;
+	private Point[] secondpoints;
 
 	/**
 	 * The AnalyzerPanel object that this ImagePanel communicates with.
@@ -47,16 +52,16 @@ public class ImagePanel extends JPanel {
 	 * Analyzer's Files array.
 	 */
 	private int imageIndex;
-	
-	/** 
+
+	/**
 	 * The current frame of the movie
 	 */
 	private BufferedImage image;
 
 	private boolean moviePlaying;
 
-	public void setMoviePlaying(boolean a){
-		moviePlaying = a; 
+	public void setMoviePlaying(boolean a) {
+		moviePlaying = a;
 	}
 
 	private double oldImageContrast;
@@ -74,6 +79,9 @@ public class ImagePanel extends JPanel {
 		this.analyzerPanel = a;
 		flydentifiers = false;
 		imageIndex = 0;
+		firstpoints = new Point[100];
+		secondpoints = new Point[100];
+		addMouseListener(new MouseHandler());
 	}
 
 	/**
@@ -109,125 +117,142 @@ public class ImagePanel extends JPanel {
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		if(moviePlaying){
+		if (moviePlaying) {
 			int imgWidth = image.getWidth(null);
 			int imgHeight = image.getHeight(null);
-			
-			double xScale = this.getWidth()/(double)imgWidth;
-			double yScale = this.getHeight()/(double)imgHeight;
+
+			double xScale = this.getWidth() / (double) imgWidth;
+			double yScale = this.getHeight() / (double) imgHeight;
 			double scale = Math.min(xScale, yScale);
-			
-			g.drawImage(image, 0, 0, (int) (imgWidth * scale), (int)(imgHeight * scale), null);
-		} else { 
-		
-		int totalImages = analyzerPanel.getTotalFrames();
-		if (imageIndex < 0) {
-			imageIndex = 0;
-		} else if (imageIndex >= totalImages) {
-			imageIndex = totalImages - 1;
-		}
-		//String filePath = analyzerPanel.passdownImage(imageIndex);
-		File file = null;
-		if(imageIndex >=0) {
-			file = analyzerPanel.passdownFile(imageIndex);
-		}
-		else
-		{
-			return;
-		}
-		if (file != null) {
-			//Image image = new ImageIcon(filePath).getImage();
-			BufferedImage image = null;
-			try {
-				image = ImageIO.read(file);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				System.exit(0);
+
+			g.drawImage(image, 0, 0, (int) (imgWidth * scale),
+					(int) (imgHeight * scale), null);
+		} else {
+
+			int totalImages = analyzerPanel.getTotalFrames();
+			if (imageIndex < 0) {
+				imageIndex = 0;
+			} else if (imageIndex >= totalImages) {
+				imageIndex = totalImages - 1;
 			}
-			int imgWidth = image.getWidth(null);
-			int imgHeight = image.getHeight(null);
-			
-			double xScale = this.getWidth()/(double)imgWidth;
-			double yScale = this.getHeight()/(double)imgHeight;
-			double scale = Math.min(xScale, yScale);
-			
-			double imageContrast = analyzerPanel.getImageContrast();
-			if(imageContrast != oldImageContrast) {
-				for(int i = 0; i < image.getWidth(null); i++){
-					for(int j = 0; j < image.getHeight(null); j++){
-						int rgb = image.getRGB(i, j);
-						int red = (rgb >> 16) & 0xFF;
-						int green = (rgb >> 8) & 0xFF;
-						int blue = rgb & 0xFF;
-						red *= imageContrast;
-						green *= imageContrast;
-						blue *= imageContrast;
-						if(red > 255){
-							red = 255;
+			// String filePath = analyzerPanel.passdownImage(imageIndex);
+			File file = null;
+			if (imageIndex >= 0) {
+				file = analyzerPanel.passdownFile(imageIndex);
+			} else {
+				return;
+			}
+			if (file != null) {
+				// Image image = new ImageIcon(filePath).getImage();
+				BufferedImage image = null;
+				try {
+					image = ImageIO.read(file);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					System.exit(0);
+				}
+				int imgWidth = image.getWidth(null);
+				int imgHeight = image.getHeight(null);
+
+				double xScale = this.getWidth() / (double) imgWidth;
+				double yScale = this.getHeight() / (double) imgHeight;
+				double scale = Math.min(xScale, yScale);
+
+				double imageContrast = analyzerPanel.getImageContrast();
+				if (imageContrast != oldImageContrast) {
+					for (int i = 0; i < image.getWidth(null); i++) {
+						for (int j = 0; j < image.getHeight(null); j++) {
+							int rgb = image.getRGB(i, j);
+							int red = (rgb >> 16) & 0xFF;
+							int green = (rgb >> 8) & 0xFF;
+							int blue = rgb & 0xFF;
+							red *= imageContrast;
+							green *= imageContrast;
+							blue *= imageContrast;
+							if (red > 255) {
+								red = 255;
+							}
+							if (green > 255) {
+								green = 255;
+							}
+							if (blue > 255) {
+								blue = 255;
+							}
+							rgb = 255 << 24;
+							rgb += red << 16;
+							rgb += green << 8;
+							rgb += blue;
+							image.setRGB(i, j, rgb);
 						}
-						if(green > 255){
-							green = 255;
+					}
+					oldImage = image;
+					oldImageContrast = imageContrast;
+				}
+
+				g.drawImage(oldImage, 0, 0, (int) (imgWidth * scale),
+						(int) (imgHeight * scale), null);
+				// g.drawImage(image, 0, 0, null);
+				if (flydentifiers) {
+					List<Fly> flies = analyzerPanel.getFlyList();
+					int sizeFlies = flies.size();
+					for (int i = 0; i < sizeFlies; i++) {
+						if (flies.get(i).getX(imageIndex) != -1) {
+							g.setColor(new Color(Color.HSBtoRGB(
+									(float) ((i * 1.0) / sizeFlies),
+									(float) 0.75, (float) 0.95)));
+							g.fillOval(
+									(int) ((flies.get(i).getX(imageIndex) - 6) * scale),
+									(int) ((flies.get(i).getY(imageIndex) - 6) * scale),
+									(int) (12 * scale), (int) (12 * scale));
 						}
-						if(blue > 255){
-							blue = 255;
-						}
-						rgb = 255 << 24;
-						rgb += red << 16;
-						rgb += green << 8;
-						rgb += blue;
-						image.setRGB(i, j, rgb);
 					}
 				}
-				oldImage = image;
-				oldImageContrast = imageContrast;
-			}
-			
-			g.drawImage(oldImage, 0, 0, (int) (imgWidth * scale), (int)(imgHeight * scale), null);
-			//g.drawImage(image, 0, 0, null);
-			if (flydentifiers) {
-				List<Fly> flies = analyzerPanel.getFlyList();
-				int sizeFlies = flies.size();
-				for (int i = 0; i < sizeFlies; i++) {
-					if (flies.get(i).getX(imageIndex) != -1) {
+				if (drawTrajectories) {
+					g.setColor(Color.RED);
+					List<Fly> flies = analyzerPanel.getFlyList();
+					int flyNumber = 0;
+					int sizeFlies = flies.size();
+					for (Fly fly : flies) {
 						g.setColor(new Color(Color.HSBtoRGB(
-								(float) ((i * 1.0) / sizeFlies), (float) 0.75,
-								(float) 0.95)));
-						g.fillOval((int)( (flies.get(i).getX(imageIndex) - 6)* scale ),
-								(int) ((flies.get(i).getY(imageIndex) - 6)* scale ), (int) (12 * scale),(int)(12* scale));
-					}
-				}
-			}
-			if (drawTrajectories) {
-				g.setColor(Color.RED);
-				List<Fly> flies = analyzerPanel.getFlyList();
-				int flyNumber = 0;
-				int sizeFlies = flies.size();
-				for (Fly fly : flies) {
-					g.setColor(new Color(Color.HSBtoRGB(
-							(float) ((flyNumber * 1.0) / sizeFlies),
-							(float) 0.75, (float) 0.95)));
-					for (int i = firstFrame; i < lastFrame; i++) {
-						int x1 = (int) fly.getX(i);
-						int y1 = (int) fly.getY(i);
-						int x2 = (int) fly.getX(i + 1);
-						int y2 = (int) fly.getY(i + 1);
-						if (!((x1 == 0 && y1 == 0) || (x2 == 0 && y2 == 0))) {// doesn't
-																				// draw
-																				// flies
-																				// that
-																				// don't
-																				// appear
-																				// in
-																				// both
-																				// frames
-							g.drawLine((int)(x1* scale ), (int)(y1* scale ), (int)(x2* scale) , (int)(y2* scale) );
+								(float) ((flyNumber * 1.0) / sizeFlies),
+								(float) 0.75, (float) 0.95)));
+						for (int i = firstFrame; i < lastFrame; i++) {
+							int x1 = (int) fly.getX(i);
+							int y1 = (int) fly.getY(i);
+							int x2 = (int) fly.getX(i + 1);
+							int y2 = (int) fly.getY(i + 1);
+							if (!((x1 == 0 && y1 == 0) || (x2 == 0 && y2 == 0))) {// doesn't
+																					// draw
+																					// flies
+																					// that
+																					// don't
+																					// appear
+																					// in
+																					// both
+																					// frames
+								g.drawLine((int) (x1 * scale),
+										(int) (y1 * scale), (int) (x2 * scale),
+										(int) (y2 * scale));
+							}
 						}
+						flyNumber++;
 					}
-					flyNumber++;
 				}
 			}
 		}
+		for (int sq = 0; sq < firstpoints.length; sq++) {
+			if (secondpoints[sq] != null) {
+				System.out.println("found a square");
+				g.setColor(Color.RED);
+				g.drawRect(firstpoints[sq].x, firstpoints[sq].y,
+						Math.abs(firstpoints[sq].x - secondpoints[sq].x),
+						Math.abs(firstpoints[sq].y - secondpoints[sq].y));
+				System.out.println("x: " + firstpoints[sq].x + "  y: "
+						+ firstpoints[sq].y + "  width: "
+						+ (firstpoints[sq].x - secondpoints[sq].x) + " height:"
+						+ (firstpoints[sq].y - secondpoints[sq].y));
+			}
 		}
 	}
 
@@ -263,6 +288,46 @@ public class ImagePanel extends JPanel {
 	}
 
 	public void setImage(BufferedImage b) {
-		image = b; 
+		image = b;
+	}
+
+	public class MouseHandler extends MouseAdapter {
+		public void mousePressed(MouseEvent event) {
+			System.out.println("point" + event.getPoint());
+			int i = 0;
+			while (firstpoints[i] != null) {
+				i++;
+			}
+			firstpoints[i] = event.getPoint();
+			System.out.println(firstpoints[i]);
+		}
+
+		public void mouseClicked(MouseEvent event) {
+		}
+
+		public void mouseReleased(MouseEvent event) {
+			System.out.println("release point" + event.getPoint());
+			int i = 0;
+			while (secondpoints[i] != null) {
+				i++;
+			}
+			secondpoints[i] = event.getPoint();
+			repaint();
+			repaint();
+		}
+
+		public class MouseMotionHandler implements MouseMotionListener {
+
+			@Override
+			public void mouseDragged(MouseEvent event) {
+
+			}
+
+			@Override
+			public void mouseMoved(MouseEvent event) {
+
+			}
+
+		}
 	}
 }
