@@ -76,7 +76,7 @@ public class DataPanel extends JPanel {
 	 * @return String FlyLine
 	 */
 	public String createFlyLine(Fly fly, int start, int end){
-		String Data =String.format("%-15s %-25f %-5f", fly.toString(), fly.averageVelFly(start, end), fly.totalDistance(start, end));
+		String Data =String.format("%-15s %-25f %-5f", fly.toString(), fly.averageVelFly(start - 1, end - 1), fly.totalDistance(start - 1, end - 1));
 		return Data;
 	}
 	
