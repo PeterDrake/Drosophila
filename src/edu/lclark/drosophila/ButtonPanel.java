@@ -405,7 +405,7 @@ public class ButtonPanel extends JPanel {
 	/**
 	 * The default preferred height of this panel.
 	 */
-	private static final int DEFAULT_HEIGHT = 400;
+	private static final int DEFAULT_HEIGHT = 600;
 	/**
 	 * the default pixel threshold for the slider;
 	 */

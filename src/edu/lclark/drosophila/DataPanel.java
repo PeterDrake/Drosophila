@@ -17,7 +17,7 @@ public class DataPanel extends JPanel {
 		
 		this.analyzerpanel=analyzerpanel;
 		flyList=analyzerpanel.getFlyList();
-		text= new JTextArea(12,30);
+		text= new JTextArea(7,30);
 		JScrollPane scrollpane= new JScrollPane(text);
 		add(scrollpane);
 		text.append(createLabels());
