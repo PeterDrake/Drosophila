@@ -67,7 +67,7 @@ public class Analyzer {
 	/**
 	 * The number of frames per second in a movie file.
 	 */
-	public static final int FRAMES_PER_SECOND = 10;
+	private int framesPerSecond = 10;
 	
 	/**
 	 * The number of microseconds between frames in a movie file 
@@ -567,8 +567,10 @@ public class Analyzer {
 			throw new IllegalArgumentException("Could not open file:" + filename);
 		}
 		long duration = container.getDuration();
+		framesPerSecond = (int)container.getStream(0).getFrameRate().getDouble();
+		System.out.println(framesPerSecond);
 		container.close();
-		return (int)(duration / 1000000.0 * FRAMES_PER_SECOND);
+		return (int)(duration / 1000000.0 * framesPerSecond);
 	}
 	
 	/**
