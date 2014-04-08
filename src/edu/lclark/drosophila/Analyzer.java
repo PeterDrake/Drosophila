@@ -17,6 +17,7 @@ import com.xuggle.mediatool.MediaListenerAdapter;
 import com.xuggle.mediatool.ToolFactory;
 import com.xuggle.mediatool.event.IVideoPictureEvent;
 import com.xuggle.xuggler.Global;
+import com.xuggle.xuggler.IContainer;
 
 
 public class Analyzer {
@@ -61,8 +62,13 @@ public class Analyzer {
 	/**
 	 * The number of seconds between frames in a movie file
 	 */
-	public static final double SECONDS_BETWEEN_FRAMES = 1 / 10.0;
+	public static final double SECONDS_BETWEEN_FRAMES = 1.0 / 10.0;
 
+	/**
+	 * The number of frames per second in a movie file.
+	 */
+	public static final int FRAMES_PER_SECOND = 10;
+	
 	/**
 	 * The number of microseconds between frames in a movie file 
 	 */
@@ -555,30 +561,44 @@ public class Analyzer {
 		}
 	}
 
+	public int getFramesInMovie(String filename) {
+		IContainer container = IContainer.make();
+		if(container.open(filename, IContainer.Type.READ, null) < 0) {
+			throw new IllegalArgumentException("Could not open file:" + filename);
+		}
+		long duration = container.getDuration();
+		container.close();
+		return (int)(duration / 1000000.0 * FRAMES_PER_SECOND);
+	}
 	
 	/**
 	 * Plays a selected movie in a new moviePanel 
 	 * @param file
 	 */
 	public void playMovie(File file) {
+		movieLoaded = true;
 		IMediaReader mediaReader = ToolFactory.makeReader(file.getAbsolutePath());
 		// stipulate that we want BufferedImages created in BGR 24bit color
 		// space
 		mediaReader
 				.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
+		totalFrames = getFramesInMovie(file.getAbsolutePath());
+		System.out.println("TotalFrames are " + totalFrames);
 		mediaReader.addListener(new ImageSnapListener());
 		// read out the contents of the media file and
 		// dispatch events to the attached listener
 		while (mediaReader.readPacket() == null) {
 			// Wait
 		}
-		gui.showMovie(frames, 100
+		//gui.showMovie(frames, 100
 				//MICRO_SECONDS_BETWEEN_FRAMES / 1000
-				); 
+			//	); 
 	}
 	
 	private class ImageSnapListener extends MediaListenerAdapter {
-
+		
+		private int increment;
+		
 		public void onVideoPicture(IVideoPictureEvent event) {
 			// if uninitialized, back date mLastPtsWrite to get the very first
 			// frame
@@ -590,7 +610,9 @@ public class Analyzer {
 			if (event.getTimeStamp() - mLastPtsWrite >= MICRO_SECONDS_BETWEEN_FRAMES) {
 				double seconds = ((double) event.getTimeStamp())
 						/ Global.DEFAULT_PTS_PER_SECOND;
-				frames.add(event.getImage());
+				//frames.add(event.getImage());
+				flydentify(event.getImage(), increment);
+				increment++;
 				System.out.printf(
 						"at elapsed time of %6.3f seconds wrote: %s\n",
 						seconds, "<imaginary file>");
