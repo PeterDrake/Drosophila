@@ -1,6 +1,8 @@
 package edu.lclark.drosophila;
 
+import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
@@ -97,7 +99,9 @@ public class AnalyzerGui extends JFrame {
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				frame.setVisible(true);
 				frame.add(analyzerPanel);
-				frame.pack();
+				Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+			    frame.setBounds(0,0,screenSize.width, screenSize.height);
+				//frame.pack();
 			}
 		});
 		analyzerPanel.repaint();
