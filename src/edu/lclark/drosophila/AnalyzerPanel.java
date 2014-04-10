@@ -50,7 +50,7 @@ public class AnalyzerPanel extends JPanel {
 		constraints.anchor = constraints.NORTH;
 		add(bpanel, constraints);
 		ipanel = new ImagePanel(this);
-		constraints.insets = new Insets(0, 0, 0, 50);
+		constraints.insets = new Insets(0, 0, 0, 0);
 		constraints.anchor = constraints.EAST;
 		constraints.gridx = 1;
 		constraints.gridy = 0;
