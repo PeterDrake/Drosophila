@@ -42,6 +42,7 @@ public class ImagePanel extends JPanel {
 	
 	private Point currentpoint1;
 	private Point currentpoint2;
+	private double scale;
 	
 
 	/**
@@ -102,7 +103,6 @@ public class ImagePanel extends JPanel {
 	public Dimension getMinimumSize() {
 		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 	}
-
 	/**
 	 * Increments the displayed image index by 1.
 	 */
@@ -123,7 +123,7 @@ public class ImagePanel extends JPanel {
 
 			double xScale = this.getWidth() / (double) imgWidth;
 			double yScale = this.getHeight() / (double) imgHeight;
-			double scale = Math.min(xScale, yScale);
+			scale = Math.min(xScale, yScale);
 
 			g.drawImage(image, 0, 0, (int) (imgWidth * scale),
 					(int) (imgHeight * scale), null);
@@ -152,12 +152,13 @@ public class ImagePanel extends JPanel {
 					e.printStackTrace();
 					System.exit(0);
 				}
-				int imgWidth = DEFAULT_WIDTH;
-				int imgHeight = DEFAULT_HEIGHT;
+				int imgWidth = image.getWidth(null);
+				int imgHeight = image.getHeight(null);
 
 				double xScale = this.getWidth() / (double) imgWidth;
 				double yScale = this.getHeight() / (double) imgHeight;
-				double scale = Math.min(xScale, yScale);
+				scale = Math.min(xScale, yScale);
+				System.out.println("scale is "+scale);
 
 				double imageContrast = analyzerPanel.getImageContrast();
 				if (imageContrast != oldImageContrast) {
@@ -285,10 +286,16 @@ public class ImagePanel extends JPanel {
 		image = b;
 	}
 	public Point getCurrentPoint1(){
-		return currentpoint1;
+		double x = (double)currentpoint1.x;
+		double scalemath = x/scale;
+		System.out.println("scale"+scale);
+		System.out.println("scaled math "+scalemath);
+		Point sent= new Point((int)(currentpoint1.x/scale),(int)(currentpoint1.y/scale));
+		return sent;
 	}
 	public Point getCurrentPoint2(){
-		return currentpoint2;
+		Point sent= new Point((int)(currentpoint2.x/scale),(int)(currentpoint2.y/scale));
+		return sent;
 	}
 
 	public class MouseHandler extends MouseAdapter {
