@@ -39,6 +39,11 @@ public class Analyzer {
 	 * The List of Fly objects in which fly data is stored.
 	 */
 	private List<Fly> flies;
+	
+	/**
+	 * Boolean for if the image snap listener should just find the first frame of the movie for option setting purposes
+	 */
+	private boolean loadingMovie;
 
 	/**
 	 * The total number of frames in the movie being analyzed. Or, the number of
@@ -58,6 +63,16 @@ public class Analyzer {
 	 * Stores all of the images being analyzed.
 	 */
 	private File[] images;
+	
+	/**
+	 * The name of the movie file that we have loaded
+	 */
+	private File movieFile;
+	
+	/**
+	 * The first frame in the movie, for displaying
+	 */
+	private BufferedImage firstMovieFrame;
 	
 	/**
 	 * The number of seconds between frames in a movie file
@@ -140,6 +155,7 @@ public class Analyzer {
 		totalFrames = 0;
 		flies = new LinkedList<Fly>();
 		images = new File[20];
+		movieLoaded=false;
 	}
 
 	/**
@@ -577,8 +593,9 @@ public class Analyzer {
 	 * Plays a selected movie in a new moviePanel 
 	 * @param file
 	 */
-	public void playMovie(File file) {
+	public void openMovie(File file) {
 		movieLoaded = true;
+		movieFile=file;
 		IMediaReader mediaReader = ToolFactory.makeReader(file.getAbsolutePath());
 		// stipulate that we want BufferedImages created in BGR 24bit color
 		// space
@@ -586,24 +603,55 @@ public class Analyzer {
 				.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
 		totalFrames = getFramesInMovie(file.getAbsolutePath());
 		System.out.println("TotalFrames are " + totalFrames);
-		mediaReader.addListener(new ImageSnapListener());
+		mediaReader.addListener(new ImageSnapListener(true));
+		// read out the contents of the media file and
+		// dispatch events to the attached listener
+		
+		loadingMovie=true;
+		while (mediaReader.readPacket() == null) {
+			if(firstMovieFrame!=null){
+				break;
+			}
+		}
+		mediaReader.close();
+		gui.repaint();
+		//gui.showMovie(frames, 100
+				//MICRO_SECONDS_BETWEEN_FRAMES / 1000
+			//	); 
+	}
+	
+	public void analyzeMovie(){
+		IMediaReader mediaReader = ToolFactory.makeReader(movieFile.getAbsolutePath());
+		// stipulate that we want BufferedImages created in BGR 24bit color
+		// space
+		mediaReader
+				.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
+		totalFrames = getFramesInMovie(movieFile.getAbsolutePath());
+		System.out.println("TotalFrames are " + totalFrames);
+		mediaReader.addListener(new ImageSnapListener(false));
 		// read out the contents of the media file and
 		// dispatch events to the attached listener
 		while (mediaReader.readPacket() == null) {
 			// Wait
 		}
-		//gui.showMovie(frames, 100
-				//MICRO_SECONDS_BETWEEN_FRAMES / 1000
-			//	); 
 	}
 	
 	private class ImageSnapListener extends MediaListenerAdapter {
 		
 		private int increment;
 		
+		public ImageSnapListener(boolean b){
+			loadingMovie=b;
+			System.err.println("Creating image snap listener with loadingMovie= " + loadingMovie);
+		}
+		
 		public void onVideoPicture(IVideoPictureEvent event) {
 			// if uninitialized, back date mLastPtsWrite to get the very first
 			// frame
+			if(loadingMovie){
+					firstMovieFrame=event.getImage();
+					System.err.println("SETTING FIRST IMAGE TO " +firstMovieFrame);
+				}else{
 			if (mLastPtsWrite == Global.NO_PTS) {
 				mLastPtsWrite = event.getTimeStamp()
 						- MICRO_SECONDS_BETWEEN_FRAMES;
@@ -613,6 +661,7 @@ public class Analyzer {
 				double seconds = ((double) event.getTimeStamp())
 						/ Global.DEFAULT_PTS_PER_SECOND;
 				//frames.add(event.getImage());
+				
 				flydentify(event.getImage(), increment);
 				increment++;
 				System.out.printf(
@@ -620,6 +669,7 @@ public class Analyzer {
 						seconds, "<imaginary file>");
 				// update last write time
 				mLastPtsWrite += MICRO_SECONDS_BETWEEN_FRAMES;
+				}
 			}
 		}
 	}
@@ -638,6 +688,17 @@ public class Analyzer {
 
 	public File passdownFile(int imageIndex) {
 		return images[imageIndex];
+	}
+
+	public BufferedImage getFirstFrameFromMovie() {
+		// TODO Auto-generated method stub
+		System.err.println("RETURNING FIRST FRAME FROM MOVIE");
+		return firstMovieFrame;
+	}
+
+	public boolean getMovieLoaded() {
+		// TODO Auto-generated method stub
+		return movieLoaded;
 	}
 
 }

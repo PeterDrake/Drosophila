@@ -245,4 +245,19 @@ public class AnalyzerPanel extends JPanel {
 		gui.contrastThresholdUpdate(input);
 
 	}
+
+	public BufferedImage getFirstFrameFromMovie() {
+		// TODO Auto-generated method stub
+		return gui.getFirstFrameFromMovie();
+	}
+
+	public void setMovieLoading(boolean b) {
+		ipanel.setMovieLoading(b);
+		
+	}
+
+	public boolean getMovieLoaded() {
+		// TODO Auto-generated method stub
+		return gui.getMovieLoaded();
+	}
 }

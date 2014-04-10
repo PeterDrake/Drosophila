@@ -137,12 +137,27 @@ public class AnalyzerGui extends JFrame {
 	 * @param file
 	 */
 	public void passMovie(File file) {
-		analyzer.playMovie(file);
+		analyzer.openMovie(file);
 		
 	}
 
 	public void showMovie(List<BufferedImage> frames, long l) {
 		analyzerPanel.showMovie(frames, l);
+	}
+
+	public BufferedImage getFirstFrameFromMovie() {
+		// TODO Auto-generated method stub
+		return analyzer.getFirstFrameFromMovie();
+	}
+
+	public void setMovieLoading(boolean b) {
+		analyzerPanel.setMovieLoading(b);
+		
+	}
+
+	public boolean getMovieLoaded() {
+		// TODO Auto-generated method stub
+		return analyzer.getMovieLoaded();
 	}
 
 }
