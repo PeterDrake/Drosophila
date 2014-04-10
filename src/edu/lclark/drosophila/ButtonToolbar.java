@@ -470,6 +470,7 @@ public class ButtonToolbar extends JToolBar {
 		setThreshold.setPaintLabels(true);
 		setThreshold.setPaintTicks(true);
 		setThreshold.setToolTipText("Sets the Pixel Threshold");
+		constraints.ipadx = 75;
 		constraints.gridx = 2;
 		constraints.gridy = 0;
 		constraints.gridwidth = 1;
@@ -478,28 +479,28 @@ public class ButtonToolbar extends JToolBar {
 		setThreshold.addChangeListener(setThresholdAction);
 		analyzerPanel.sizeThresholdUpdate(DEFAULT_SLIDER_THRESHOLD);
 		
-		SliderLabel = new JLabel("Pixel Threshold");
-		constraints.gridx = 3;
-		constraints.gridy = 0;
-		constraints.ipadx = 0;
-		constraints.ipady = 0;
-		constraints.weightx = 1;
-		constraints.gridwidth = 1;
-		add(SliderLabel,constraints);
+//		SliderLabel = new JLabel("Pixel Threshold");
+//		constraints.gridx = 3;
+//		constraints.gridy = 0;
+//		constraints.ipadx = 0;
+//		constraints.ipady = 0;
+//		constraints.weightx = 1;
+//		constraints.gridwidth = 1;
+//		add(SliderLabel,constraints);
 		
-		ContrastLabel = new JLabel("Contrast Threshold");
-		constraints.gridx = 4;
-		constraints.gridy = 0;
-		constraints.ipadx = 0;
-		constraints.ipady = 0;
-		constraints.weightx = 1;
-		constraints.gridwidth = 1;
-		add(ContrastLabel,constraints);
+//		ContrastLabel = new JLabel("Contrast Threshold");
+//		constraints.gridx = 4;
+//		constraints.gridy = 0;
+//		constraints.ipadx = 0;
+//		constraints.ipady = 0;
+//		constraints.weightx = 1;
+//		constraints.gridwidth = 1;
+//		add(ContrastLabel,constraints);
 		
 		thresholdText = new JTextField("0");
 		thresholdText.setPreferredSize(new Dimension(100, 500));
 		thresholdText.setText("" + DEFAULT_SLIDER_THRESHOLD);
-		constraints.gridx = 5;
+		constraints.gridx = 3;
 		constraints.gridy = 0;
 		constraints.ipadx = 75;
 		constraints.ipady = 10;
@@ -513,15 +514,16 @@ public class ButtonToolbar extends JToolBar {
 		setImageContrast.setMajorTickSpacing(5);
 //		setImageContrast.setPaintLabels(true);
 //		setImageContrast.setPaintTicks(false);
-		constraints.gridx = 6;
+		constraints.gridx = 4;
 		constraints.gridy = 0;
 		constraints.gridwidth = 1;
 		add(setImageContrast, constraints);
-		constraints.gridx = 7;
-		constraints.gridwidth = 1;
-		add(new JLabel("Image Contrast"), constraints);
 		SetImageContrastAction setImageContrastAction = new SetImageContrastAction();
 		setImageContrast.addChangeListener(setImageContrastAction);
+		
+//		constraints.gridx = 5;
+//		constraints.gridwidth = 1;
+//		add(new JLabel("Image Contrast"), constraints);
 		//analyzerPanel.sizeImageContrastUpdate(1.0);
 
 		setContrastThreshold = new JSlider(JSlider.HORIZONTAL, MIN_SLIDER_THRESHOLD,MAX_SLIDER_THRESHHOLD,DEFAULT_CONTRAST_THRESHOLD);
@@ -530,9 +532,9 @@ public class ButtonToolbar extends JToolBar {
 		setContrastThreshold.setPaintLabels(true);
 		setContrastThreshold.setPaintTicks(true);
 		setContrastThreshold.setToolTipText("Sets the contrast threshold");
-		constraints.gridx = 8;
+		constraints.gridx = 5;
 		constraints.gridy = 0;
-		constraints.ipadx = 0;
+		//constraints.ipadx = 0;
 		constraints.ipady = 0;
 		constraints.gridwidth = 1;
 		add(setContrastThreshold, constraints);
@@ -541,7 +543,7 @@ public class ButtonToolbar extends JToolBar {
 		
 		contrastThresholdText = new JTextField("200");
 		contrastThresholdText.setPreferredSize(new Dimension(100, 500));
-		constraints.gridx = 9;
+		constraints.gridx = 6;
 		constraints.gridy = 0;
 		constraints.ipadx = 75;
 		constraints.ipady = 10;
@@ -550,20 +552,24 @@ public class ButtonToolbar extends JToolBar {
 		SetContrastEntered setContrastEntered = new SetContrastEntered();
 		contrastThresholdText.getDocument().addDocumentListener(setContrastEntered);
 		
-		drawFlydentifiers = new JButton("Draw fly locations");
+		//drawFlydentifiers = new JButton("Draw fly locations");
+		drawFlydentifiers = new JButton(new ImageIcon("flydentify.png"));
+		drawFlydentifiers.setToolTipText("Draw fly locations");
 		constraints.fill = constraints.HORIZONTAL;
 		constraints.ipadx = 0;
 		constraints.ipady = 0;
-		constraints.gridx = 10;
+		constraints.gridx = 7;
 		constraints.gridy = 0;
 		constraints.gridwidth = 1;
 		add(drawFlydentifiers, constraints);
 		DrawFlydentifiersAction drawFlydentifiersAction = new DrawFlydentifiersAction();
 		drawFlydentifiers.addActionListener(drawFlydentifiersAction);
 
-		drawTrajectories = new JButton("Draw fly trajectories");
-		constraints.ipadx = 100;
-		constraints.gridx = 11;
+		//drawTrajectories = new JButton("Draw fly trajectories");
+		drawTrajectories = new JButton(new ImageIcon("DrawFlyTrajectoriesToggle.png"));
+		drawTrajectories.setToolTipText("Draw fly trajectories");
+		constraints.ipadx = 0;
+		constraints.gridx = 8;
 		constraints.gridy = 0;
 		constraints.gridwidth = 1;
 		add(drawTrajectories, constraints);
@@ -573,7 +579,7 @@ public class ButtonToolbar extends JToolBar {
 		firstFrame = new JTextField("First frame");
 		firstFrame.setPreferredSize(new Dimension(100, 50));
 		constraints.fill = constraints.NONE;
-		constraints.gridx = 12;
+		constraints.gridx = 9;
 		constraints.gridwidth = 1;
 		constraints.ipadx = 100;
 		constraints.ipady = 10;
@@ -581,7 +587,7 @@ public class ButtonToolbar extends JToolBar {
 
 		lastFrame = new JTextField("Last frame");
 		lastFrame.setPreferredSize(new Dimension(100, 50));
-		constraints.gridx = 13;
+		constraints.gridx = 10;
 		constraints.weightx = 1;
 		add(lastFrame, constraints);
 
@@ -589,7 +595,7 @@ public class ButtonToolbar extends JToolBar {
 		constraints.fill = constraints.HORIZONTAL;
 		constraints.ipadx = 0;
 		constraints.ipady = 0;
-		constraints.gridx = 14;
+		constraints.gridx = 11;
 		constraints.gridy = 0;
 		constraints.gridwidth = 1;
 		add(backFrame, constraints);
@@ -598,13 +604,13 @@ public class ButtonToolbar extends JToolBar {
 
 		forwardFrame = new JButton("\u25B6");
 		constraints.fill = constraints.HORIZONTAL;
-		constraints.gridx = 15;
+		constraints.gridx = 12;
 		add(forwardFrame, constraints);
 		ForwardFrameAction forwardFrameAction = new ForwardFrameAction();
 		forwardFrame.addActionListener(forwardFrameAction);
 
 		clearImages = new JButton("Clear all images");
-		constraints.gridx = 16;
+		constraints.gridx = 13;
 		constraints.gridwidth = 2;
 		constraints.gridy = 0;
 		constraints.fill = constraints.HORIZONTAL;
