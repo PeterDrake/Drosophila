@@ -243,6 +243,13 @@ public class AnalyzerPanel extends JPanel {
 	
 	public void contrastThresholdUpdate(int input) {
 		gui.contrastThresholdUpdate(input);
-
+		
+	}
+	public void passUpArenaParameters(){
+		int arena =2;
+		int frame =0;
+		Point point1 = ipanel.getCurrentPoint1();
+		Point point2 = ipanel.getCurrentPoint2();
+		gui.passupArenaParameters(arena, frame, point1, point2);
 	}
 }

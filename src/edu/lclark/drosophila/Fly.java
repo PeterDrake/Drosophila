@@ -30,11 +30,16 @@ public class Fly {
 	 * example, vy[3] stores the velocity of this fly in frame 3.
 	 */
 	private double[] vy;
-	
+	/**
+	 * A integer to check which region of interest this fly exists in.
+	 */
+	private int Arena;
 	/**
 	 * A constructor for the Fly class, if an image or images are loaded. All
 	 * arrays are initialized to size 20
 	 */
+	
+	
 	public Fly() {
 		id = -1;
 		numFrames = 20;
@@ -220,6 +225,9 @@ public class Fly {
 
 	protected void setY(double[] y) {
 		this.y = y;
+	}
+	protected void setArena(int Arena){
+		this.Arena=Arena;
 	}
 	public String toString(){
 		String str= ""+getId();

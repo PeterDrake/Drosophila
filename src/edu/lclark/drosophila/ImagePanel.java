@@ -39,8 +39,10 @@ public class ImagePanel extends JPanel {
 	private int lastFrame;
 
 	private int numberOfImages;
-	private Point[] firstpoints;
-	private Point[] secondpoints;
+	
+	private Point currentpoint1;
+	private Point currentpoint2;
+	
 
 	/**
 	 * The AnalyzerPanel object that this ImagePanel communicates with.
@@ -79,8 +81,6 @@ public class ImagePanel extends JPanel {
 		this.analyzerPanel = a;
 		flydentifiers = false;
 		imageIndex = 0;
-		firstpoints = new Point[100];
-		secondpoints = new Point[100];
 		addMouseListener(new MouseHandler());
 	}
 
@@ -152,8 +152,8 @@ public class ImagePanel extends JPanel {
 					e.printStackTrace();
 					System.exit(0);
 				}
-				int imgWidth = image.getWidth(null);
-				int imgHeight = image.getHeight(null);
+				int imgWidth = DEFAULT_WIDTH;
+				int imgHeight = DEFAULT_HEIGHT;
 
 				double xScale = this.getWidth() / (double) imgWidth;
 				double yScale = this.getHeight() / (double) imgHeight;
@@ -241,18 +241,12 @@ public class ImagePanel extends JPanel {
 				}
 			}
 		}
-		for (int sq = 0; sq < firstpoints.length; sq++) {
-			if (secondpoints[sq] != null) {
-				System.out.println("found a square");
-				g.setColor(Color.RED);
-				g.drawRect(firstpoints[sq].x, firstpoints[sq].y,
-						Math.abs(firstpoints[sq].x - secondpoints[sq].x),
-						Math.abs(firstpoints[sq].y - secondpoints[sq].y));
-				System.out.println("x: " + firstpoints[sq].x + "  y: "
-						+ firstpoints[sq].y + "  width: "
-						+ (firstpoints[sq].x - secondpoints[sq].x) + " height:"
-						+ (firstpoints[sq].y - secondpoints[sq].y));
-			}
+		if(currentpoint1!=null&&currentpoint2!=null){
+			System.out.println("drawing square");
+			g.setColor(Color.RED);
+			int xPoints[]= {currentpoint1.x,currentpoint2.x,currentpoint2.x,currentpoint1.x};
+			int yPoints[]={currentpoint1.y,currentpoint1.y,currentpoint2.y,currentpoint2.y};
+			g.drawPolygon(xPoints, yPoints, 4);
 		}
 	}
 
@@ -290,16 +284,17 @@ public class ImagePanel extends JPanel {
 	public void setImage(BufferedImage b) {
 		image = b;
 	}
+	public Point getCurrentPoint1(){
+		return currentpoint1;
+	}
+	public Point getCurrentPoint2(){
+		return currentpoint2;
+	}
 
 	public class MouseHandler extends MouseAdapter {
 		public void mousePressed(MouseEvent event) {
 			System.out.println("point" + event.getPoint());
-			int i = 0;
-			while (firstpoints[i] != null) {
-				i++;
-			}
-			firstpoints[i] = event.getPoint();
-			System.out.println(firstpoints[i]);
+			currentpoint1=event.getPoint();
 		}
 
 		public void mouseClicked(MouseEvent event) {
@@ -307,12 +302,8 @@ public class ImagePanel extends JPanel {
 
 		public void mouseReleased(MouseEvent event) {
 			System.out.println("release point" + event.getPoint());
-			int i = 0;
-			while (secondpoints[i] != null) {
-				i++;
-			}
-			secondpoints[i] = event.getPoint();
-			repaint();
+			currentpoint2=event.getPoint();
+			analyzerPanel.passUpArenaParameters();
 			repaint();
 		}
 
@@ -320,7 +311,8 @@ public class ImagePanel extends JPanel {
 
 			@Override
 			public void mouseDragged(MouseEvent event) {
-
+				currentpoint2=event.getPoint();
+				repaint();
 			}
 
 			@Override

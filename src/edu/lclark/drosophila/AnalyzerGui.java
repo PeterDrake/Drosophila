@@ -1,6 +1,7 @@
 package edu.lclark.drosophila;
 
 import java.awt.EventQueue;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
@@ -143,6 +144,9 @@ public class AnalyzerGui extends JFrame {
 
 	public void showMovie(List<BufferedImage> frames, long l) {
 		analyzerPanel.showMovie(frames, l);
+	}
+	public void passupArenaParameters(int arena, int frame, Point point1, Point point2){
+		analyzer.setFliestoArena(point1, point2, arena, frame);
 	}
 
 }

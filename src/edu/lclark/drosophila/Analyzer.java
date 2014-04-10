@@ -1,5 +1,6 @@
 package edu.lclark.drosophila;
 
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -18,14 +19,11 @@ import com.xuggle.mediatool.ToolFactory;
 import com.xuggle.mediatool.event.IVideoPictureEvent;
 import com.xuggle.xuggler.Global;
 
-
 public class Analyzer {
 
 	private int sizeThreshold;
 
 	private static AnalyzerGui gui;
-
-
 
 	private int contrastThreshold = 200;
 
@@ -57,14 +55,14 @@ public class Analyzer {
 	 * Stores all of the images being analyzed.
 	 */
 	private File[] images;
-	
+
 	/**
 	 * The number of seconds between frames in a movie file
 	 */
 	public static final double SECONDS_BETWEEN_FRAMES = 1 / 10.0;
 
 	/**
-	 * The number of microseconds between frames in a movie file 
+	 * The number of microseconds between frames in a movie file
 	 */
 	public static final long MICRO_SECONDS_BETWEEN_FRAMES = (long) (Global.DEFAULT_PTS_PER_SECOND * SECONDS_BETWEEN_FRAMES);
 
@@ -73,7 +71,7 @@ public class Analyzer {
 	private long mLastPtsWrite;
 
 	/**
-	 * The List of frames in a movie 
+	 * The List of frames in a movie
 	 */
 	private List<BufferedImage> frames;
 
@@ -82,12 +80,15 @@ public class Analyzer {
 	 */
 	private double imageContrast = 1.0;
 
+	private RegionMaker regionmaker;
+
 	public Analyzer() {
 		movieLoaded = false;
 		totalFrames = 0;
 		flies = new LinkedList<Fly>();
 		frames = new ArrayList<BufferedImage>();
 		images = new File[20];
+		regionmaker = new RegionMaker(this);
 	}
 
 	public void flydentify(BufferedImage image) {
@@ -98,7 +99,7 @@ public class Analyzer {
 
 		System.out.println("number of flies: " + flies.size());
 		images = new File[20];
-		
+
 		mLastPtsWrite = Global.NO_PTS;
 	}
 
@@ -190,22 +191,22 @@ public class Analyzer {
 					red *= imageContrast;
 					green *= imageContrast;
 					blue *= imageContrast;
-					if(red > 255){
+					if (red > 255) {
 						red = 255;
 					}
-					if(green > 255){
+					if (green > 255) {
 						green = 255;
 					}
-					if(blue > 255){
+					if (blue > 255) {
 						blue = 255;
 					}
 					double avg = red * 0.2989 + green * .587 + blue * .114;
 					if ((int) (Math.round(avg)) <= contrastThreshold) { // if
-																			// the
-																			// color
-																			// is
-																			// dark
-																			// enough
+																		// the
+																		// color
+																		// is
+																		// dark
+																		// enough
 						int totalX = 0;
 						int totalY = 0;
 						int numPixels = 0;
@@ -274,7 +275,7 @@ public class Analyzer {
 			}
 		}
 		if (frameNumber == 0) {
-			//The first frame just creates all found flies.
+			// The first frame just creates all found flies.
 			for (double[] d : tempFlies) {
 				Fly f;
 				if (movieLoaded) {
@@ -288,15 +289,16 @@ public class Analyzer {
 
 			}
 		} else {
-			//If not the first frame, we do the checking algorithms. 
-			//(Algorithm sounds too proper for the duct-taped together thing that this is.)
+			// If not the first frame, we do the checking algorithms.
+			// (Algorithm sounds too proper for the duct-taped together thing
+			// that this is.)
 			Fly[] fullPrevFlies = new Fly[flies.size()];
 			int index = 0;
 			boolean[] prevFliesMarked = new boolean[flies.size()];
-			 for(Fly fly : flies){
-				 fullPrevFlies[index] = fly;
-				 index++;
-			 }
+			for (Fly fly : flies) {
+				fullPrevFlies[index] = fly;
+				index++;
+			}
 			// Stores coordinates in indices 0 and 1 of array, stores id in
 			// index 2
 			double[][] fullTempFlies = new double[tempFlies.size()][3];
@@ -309,7 +311,8 @@ public class Analyzer {
 			List<double[]> newFlies = new LinkedList<double[]>();
 			while (containsFalse(tempFliesMarked)
 					|| containsFalse(prevFliesMarked)) {
-				//Searches through the temp flies list to connect the closest fly.
+				// Searches through the temp flies list to connect the closest
+				// fly.
 				if (containsFalse(tempFliesMarked)) {
 					for (int i = 0; i < tempFliesMarked.length; i++) {
 						if (!tempFliesMarked[i]) {
@@ -318,24 +321,33 @@ public class Analyzer {
 							double currentX = fullTempFlies[i][0];
 							double currentY = fullTempFlies[i][1];
 							for (int j = 0; j < fullPrevFlies.length; j++) {
-								double thisDist = Math.sqrt(
-										Math.pow(currentX - fullPrevFlies[j].getX(frameNumber - 1), 2) 
-										+ Math.pow(currentY - fullPrevFlies[j].getY(frameNumber - 1), 2));
+								double thisDist = Math
+										.sqrt(Math.pow(
+												currentX
+														- fullPrevFlies[j]
+																.getX(frameNumber - 1),
+												2)
+												+ Math.pow(
+														currentY
+																- fullPrevFlies[j]
+																		.getY(frameNumber - 1),
+														2));
 								if (thisDist < dist) {
 									dist = thisDist;
 									closestFlyIndex = j;
 								}
 							}
-							if(!prevFliesMarked[closestFlyIndex]) {								
+							if (!prevFliesMarked[closestFlyIndex]) {
 								prevFliesMarked[closestFlyIndex] = true;
 								tempFliesMarked[i] = true;
-								for(Fly f : flies) {
-									if(f.getId() == closestFlyIndex) {										
-										f.addFrameInfo(frameNumber, currentX, currentY);
+								for (Fly f : flies) {
+									if (f.getId() == closestFlyIndex) {
+										f.addFrameInfo(frameNumber, currentX,
+												currentY);
 									}
 								}
-							} else if(!containsFalse(prevFliesMarked)) {
-								//If No previous flies are found:
+							} else if (!containsFalse(prevFliesMarked)) {
+								// If No previous flies are found:
 								newFlies.add(new double[] { currentX, currentY,
 										closestFlyIndex });
 								tempFliesMarked[i] = true;
@@ -343,30 +355,36 @@ public class Analyzer {
 						}
 					}
 				}
-				//Search through the previous flies for the closest current flies.
+				// Search through the previous flies for the closest current
+				// flies.
 				if (containsFalse(prevFliesMarked)) {
 					for (int i = 0; i < fullPrevFlies.length; i++) {
-						if(!prevFliesMarked[i]) {
+						if (!prevFliesMarked[i]) {
 							double dist = Double.MAX_VALUE;
 							int closestFlyIndex = -1;
-							double pastX = fullPrevFlies[i].getX(frameNumber - 1);
-							double pastY = fullPrevFlies[i].getY(frameNumber - 1);
-							if(!containsFalse(tempFliesMarked)) {
+							double pastX = fullPrevFlies[i]
+									.getX(frameNumber - 1);
+							double pastY = fullPrevFlies[i]
+									.getY(frameNumber - 1);
+							if (!containsFalse(tempFliesMarked)) {
 								for (int j = 0; j < fullTempFlies.length; j++) {
 									double thisDist = Math.sqrt(Math.pow(pastX
 											- fullTempFlies[j][0], 2)
-											+ Math.pow(pastY - fullTempFlies[j][1], 2));
+											+ Math.pow(pastY
+													- fullTempFlies[j][1], 2));
 									if (thisDist < dist) {
 										dist = thisDist;
 										closestFlyIndex = j;
 									}
 								}
-							} else {								
+							} else {
 								for (int j = 0; j < fullTempFlies.length; j++) {
-									if(!tempFliesMarked[j]) {									
-										double thisDist = Math.sqrt(Math.pow(pastX
-												- fullTempFlies[j][0], 2)
-												+ Math.pow(pastY - fullTempFlies[j][1], 2));
+									if (!tempFliesMarked[j]) {
+										double thisDist = Math.sqrt(Math.pow(
+												pastX - fullTempFlies[j][0], 2)
+												+ Math.pow(pastY
+														- fullTempFlies[j][1],
+														2));
 										if (thisDist < dist) {
 											dist = thisDist;
 											closestFlyIndex = j;
@@ -487,13 +505,13 @@ public class Analyzer {
 		red *= imageContrast;
 		green *= imageContrast;
 		blue *= imageContrast;
-		if(red > 255){
+		if (red > 255) {
 			red = 255;
 		}
-		if(green > 255){
+		if (green > 255) {
 			green = 255;
 		}
-		if(blue > 255){
+		if (blue > 255) {
 			blue = 255;
 		}
 		avg = red * 0.2989 + green * .587 + blue * .114;
@@ -515,22 +533,23 @@ public class Analyzer {
 			updateImages();
 		}
 	}
-	
+
 	/**
-	 * Updates the contrast threshold field. This is used to tell how dark a spot
-	 * has to be to be considered a fly. This will also analyze all stored image again
+	 * Updates the contrast threshold field. This is used to tell how dark a
+	 * spot has to be to be considered a fly. This will also analyze all stored
+	 * image again
 	 * 
 	 * @param input
-	 * 			  the value which contrast threshold will be set to.
+	 *            the value which contrast threshold will be set to.
 	 */
 	public void contrastThresholdUpdate(int input) {
-		if (input > 255){
+		if (input > 255) {
 			input = 255;
 		}
-		if (input < 0){
+		if (input < 0) {
 			input = 0;
 		}
-		if(input >= 0 && input <= 255) {
+		if (input >= 0 && input <= 255) {
 			contrastThreshold = input;
 			if (totalFrames > 0) {
 				updateImages();
@@ -555,13 +574,14 @@ public class Analyzer {
 		}
 	}
 
-	
 	/**
-	 * Plays a selected movie in a new moviePanel 
+	 * Plays a selected movie in a new moviePanel
+	 * 
 	 * @param file
 	 */
 	public void playMovie(File file) {
-		IMediaReader mediaReader = ToolFactory.makeReader(file.getAbsolutePath());
+		IMediaReader mediaReader = ToolFactory.makeReader(file
+				.getAbsolutePath());
 		// stipulate that we want BufferedImages created in BGR 24bit color
 		// space
 		mediaReader
@@ -573,10 +593,10 @@ public class Analyzer {
 			// Wait
 		}
 		gui.showMovie(frames, 100
-				//MICRO_SECONDS_BETWEEN_FRAMES / 1000
-				); 
+		// MICRO_SECONDS_BETWEEN_FRAMES / 1000
+		);
 	}
-	
+
 	private class ImageSnapListener extends MediaListenerAdapter {
 
 		public void onVideoPicture(IVideoPictureEvent event) {
@@ -599,38 +619,21 @@ public class Analyzer {
 			}
 		}
 	}
-	
 
 	public void setImageContrast(double d) {
 		imageContrast = d;
 		updateImages();
 	}
 
-
 	public double getImageContrast() {
 		return imageContrast;
 	}
-
 
 	public File passdownFile(int imageIndex) {
 		return images[imageIndex];
 	}
 
+	public void setFliestoArena(Point point1, Point point2, int Arena, int frame) {
+		regionmaker.setFliesToRegions(point1, point2, Arena, frame);
+	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
