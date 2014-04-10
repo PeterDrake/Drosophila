@@ -152,8 +152,10 @@ public class ImagePanel extends JPanel {
 					}
 				}
 			} else {
-				image = analyzerPanel.getFirstFrameFromMovie();
-				System.err.println("IMAGE = " + image);
+				BufferedImage tempImage = analyzerPanel.getFirstFrameFromMovie();
+				image = new BufferedImage(tempImage.getColorModel(), tempImage.copyData(null), tempImage.getColorModel().isAlphaPremultiplied(), null);
+				oldImage = image;
+				imageIndex=0;
 			}
 			int imgWidth = image.getWidth(null);
 			int imgHeight = image.getHeight(null);

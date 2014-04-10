@@ -159,5 +159,10 @@ public class AnalyzerGui extends JFrame {
 		// TODO Auto-generated method stub
 		return analyzer.getMovieLoaded();
 	}
+	
+	@Override
+	public void repaint(){
+		analyzerPanel.repaint();
+	}
 
 }
