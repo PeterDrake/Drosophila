@@ -129,11 +129,10 @@ public class ImagePanel extends JPanel {
 			}
 			// String filePath = analyzerPanel.passdownImage(imageIndex);
 			File file = null;
-			if (imageIndex >= 0) {
+			if (imageIndex >= 0 && analyzerPanel.passdownFile(0) != null) {
 				file = analyzerPanel.passdownFile(imageIndex);
-			} else {
-				return;
-			}
+			} 
+			double scale = .5; //to scale images/data drawn on images
 			if (file != null) {
 				// Image image = new ImageIcon(filePath).getImage();
 				BufferedImage image = null;
@@ -149,7 +148,7 @@ public class ImagePanel extends JPanel {
 
 				double xScale = this.getWidth() / (double) imgWidth;
 				double yScale = this.getHeight() / (double) imgHeight;
-				double scale = Math.min(xScale, yScale);
+				scale = Math.min(xScale, yScale);
 
 				double imageContrast = analyzerPanel.getImageContrast();
 				// if(imageContrast != oldImageContrast) {
@@ -185,51 +184,44 @@ public class ImagePanel extends JPanel {
 				g.drawImage(oldImage, 0, 0, (int) (imgWidth * scale),
 						(int) (imgHeight * scale), null);
 				// g.drawImage(image, 0, 0, null);
-				if (flydentifiers) {
-					List<Fly> flies = analyzerPanel.getFlyList();
-					int sizeFlies = flies.size();
-					for (int i = 0; i < sizeFlies; i++) {
-						if (flies.get(i).getX(imageIndex) != -1) {
-							g.setColor(new Color(Color.HSBtoRGB(
-									(float) ((i * 1.0) / sizeFlies),
-									(float) 0.75, (float) 0.95)));
-							g.fillOval(
-									(int) ((flies.get(i).getX(imageIndex) - 6) * scale),
-									(int) ((flies.get(i).getY(imageIndex) - 6) * scale),
-									(int) (12 * scale), (int) (12 * scale));
-						}
+			}
+			if (flydentifiers) {
+				List<Fly> flies = analyzerPanel.getFlyList();
+				int sizeFlies = flies.size();
+				for (int i = 0; i < sizeFlies; i++) {
+					if (flies.get(i).getX(imageIndex) != -1) {
+						g.setColor(new Color(Color.HSBtoRGB(
+								(float) ((i * 1.0) / sizeFlies),
+								(float) 0.75, (float) 0.95)));
+						g.fillOval(
+								(int) ((flies.get(i).getX(imageIndex) - 6) * scale),
+								(int) ((flies.get(i).getY(imageIndex) - 6) * scale),
+								(int) (12 * scale), (int) (12 * scale));
 					}
 				}
-				if (drawTrajectories) {
-					g.setColor(Color.RED);
-					List<Fly> flies = analyzerPanel.getFlyList();
-					int flyNumber = 0;
-					int sizeFlies = flies.size();
-					for (Fly fly : flies) {
-						g.setColor(new Color(Color.HSBtoRGB(
-								(float) ((flyNumber * 1.0) / sizeFlies),
-								(float) 0.75, (float) 0.95)));
-						for (int i = firstFrame; i < lastFrame; i++) {
-							int x1 = (int) fly.getX(i);
-							int y1 = (int) fly.getY(i);
-							int x2 = (int) fly.getX(i + 1);
-							int y2 = (int) fly.getY(i + 1);
-							if (!((x1 == 0 && y1 == 0) || (x2 == 0 && y2 == 0))) {// doesn't
-																					// draw
-																					// flies
-																					// that
-																					// don't
-																					// appear
-																					// in
-																					// both
-																					// frames
-								g.drawLine((int) (x1 * scale),
-										(int) (y1 * scale), (int) (x2 * scale),
-										(int) (y2 * scale));
-							}
+			}
+			if (drawTrajectories) {
+				g.setColor(Color.RED);
+				List<Fly> flies = analyzerPanel.getFlyList();
+				int flyNumber = 0;
+				int sizeFlies = flies.size();
+				for (Fly fly : flies) {
+					g.setColor(new Color(Color.HSBtoRGB(
+							(float) ((flyNumber * 1.0) / sizeFlies),
+							(float) 0.75, (float) 0.95)));
+					for (int i = firstFrame; i < lastFrame; i++) {
+						int x1 = (int) fly.getX(i);
+						int y1 = (int) fly.getY(i);
+						int x2 = (int) fly.getX(i + 1);
+						int y2 = (int) fly.getY(i + 1);
+						if (!((x1 == 0 && y1 == 0) || (x2 == 0 && y2 == 0))) {
+							// doesn't draw flies that don't appear in both frames
+							g.drawLine((int) (x1 * scale),
+									(int) (y1 * scale), (int) (x2 * scale),
+									(int) (y2 * scale));
 						}
-						flyNumber++;
 					}
+					flyNumber++;
 				}
 			}
 		}

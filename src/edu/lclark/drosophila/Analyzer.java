@@ -262,7 +262,7 @@ public class Analyzer {
 							}
 						}
 
-						if (numPixels >= sizeThreshold) {
+						if (numPixels >= sizeThreshold && numPixels <= 500) {
 							// if the blob is large enough to be a fly
 
 							// create a new temporary fly object
