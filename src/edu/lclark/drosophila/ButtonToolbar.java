@@ -20,7 +20,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.TextEvent;
 import java.awt.event.TextListener;
 
-public class ButtonPanel extends JPanel {
+public class ButtonToolbar extends JToolBar {
 
 	/**
 	 * The action listener which decrements the ImagePanel's displayed image
@@ -96,9 +96,9 @@ public class ButtonPanel extends JPanel {
 	 */
 	private class GetImageAction implements ActionListener {
 
-		private ButtonPanel bpanel;
+		private ButtonToolbar bpanel;
 
-		public GetImageAction(ButtonPanel bpanel) {
+		public GetImageAction(ButtonToolbar bpanel) {
 			this.bpanel = bpanel;
 		}
 		
@@ -124,9 +124,9 @@ public class ButtonPanel extends JPanel {
 	 */
 	private class OpenMovieAction implements ActionListener {
 
-		private ButtonPanel bpanel; 
+		private ButtonToolbar bpanel; 
 		
-		public OpenMovieAction(ButtonPanel bpanel) { 
+		public OpenMovieAction(ButtonToolbar bpanel) { 
 			this.bpanel = bpanel; 
 		}
 		
@@ -401,12 +401,12 @@ public class ButtonPanel extends JPanel {
 	/**
 	 * The default preferred width of this panel.
 	 */
-	private static final int DEFAULT_WIDTH = 400;
+	private static final int DEFAULT_WIDTH = 1000;
 
 	/**
 	 * The default preferred height of this panel.
 	 */
-	private static final int DEFAULT_HEIGHT = 600;
+	private static final int DEFAULT_HEIGHT = 20;
 	/**
 	 * the default pixel threshold for the slider;
 	 */
@@ -439,7 +439,7 @@ public class ButtonPanel extends JPanel {
 	 * @param analyzerPanel
 	 *            the AnalyzerPanel object which this panel is attached to.
 	 */
-	public ButtonPanel(AnalyzerPanel a) {
+	public ButtonToolbar(AnalyzerPanel a) {
 		this.analyzerPanel = a;
 		this.setLayout(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
@@ -449,7 +449,7 @@ public class ButtonPanel extends JPanel {
 		constraints.fill = constraints.HORIZONTAL;
 		constraints.gridx = 0;
 		constraints.gridy = 0;
-		constraints.gridwidth = 2;
+		constraints.gridwidth = 1;
 		constraints.weightx = 1;
 		add(getImage, constraints);
 		GetImageAction getImageAction = new GetImageAction(this);
@@ -457,7 +457,7 @@ public class ButtonPanel extends JPanel {
 		
 		fileChooser = new JFileChooser(); // unsure if we need a new variable to open a movie vs. opening an image
 		openMovie = new JButton("Open a movie"); 
-		constraints.gridx = 2; 
+		constraints.gridx = 1; 
 		add(openMovie, constraints); 
 		OpenMovieAction openMovieAction = new OpenMovieAction(this); 
 		openMovie.addActionListener(openMovieAction); 
@@ -470,37 +470,37 @@ public class ButtonPanel extends JPanel {
 		setThreshold.setPaintLabels(true);
 		setThreshold.setPaintTicks(true);
 		setThreshold.setToolTipText("Sets the Pixel Threshold");
-		constraints.gridx = 1;
-		constraints.gridy = 1;
-		constraints.gridwidth = 2;
+		constraints.gridx = 2;
+		constraints.gridy = 0;
+		constraints.gridwidth = 1;
 		add(setThreshold, constraints);
 		SetThresholdAction setThresholdAction = new SetThresholdAction();
 		setThreshold.addChangeListener(setThresholdAction);
 		analyzerPanel.sizeThresholdUpdate(DEFAULT_SLIDER_THRESHOLD);
 		
 		SliderLabel = new JLabel("Pixel Threshold");
-		constraints.gridx = 0;
-		constraints.gridy = 1;
+		constraints.gridx = 3;
+		constraints.gridy = 0;
 		constraints.ipadx = 0;
 		constraints.ipady = 0;
-		constraints.weightx = 0;
+		constraints.weightx = 1;
 		constraints.gridwidth = 1;
 		add(SliderLabel,constraints);
 		
 		ContrastLabel = new JLabel("Contrast Threshold");
-		constraints.gridx = 0;
-		constraints.gridy = 2;
+		constraints.gridx = 4;
+		constraints.gridy = 0;
 		constraints.ipadx = 0;
 		constraints.ipady = 0;
-		constraints.weightx = 0;
+		constraints.weightx = 1;
 		constraints.gridwidth = 1;
 		add(ContrastLabel,constraints);
 		
 		thresholdText = new JTextField("0");
 		thresholdText.setPreferredSize(new Dimension(100, 500));
 		thresholdText.setText("" + DEFAULT_SLIDER_THRESHOLD);
-		constraints.gridx = 3;
-		constraints.gridy = 1;
+		constraints.gridx = 5;
+		constraints.gridy = 0;
 		constraints.ipadx = 75;
 		constraints.ipady = 10;
 		constraints.gridwidth = 1;
@@ -513,11 +513,11 @@ public class ButtonPanel extends JPanel {
 		setImageContrast.setMajorTickSpacing(5);
 //		setImageContrast.setPaintLabels(true);
 //		setImageContrast.setPaintTicks(false);
-		constraints.gridx = 1;
-		constraints.gridy = 3;
-		constraints.gridwidth = 3;
+		constraints.gridx = 6;
+		constraints.gridy = 0;
+		constraints.gridwidth = 1;
 		add(setImageContrast, constraints);
-		constraints.gridx = 0;
+		constraints.gridx = 7;
 		constraints.gridwidth = 1;
 		add(new JLabel("Image Contrast"), constraints);
 		SetImageContrastAction setImageContrastAction = new SetImageContrastAction();
@@ -530,19 +530,19 @@ public class ButtonPanel extends JPanel {
 		setContrastThreshold.setPaintLabels(true);
 		setContrastThreshold.setPaintTicks(true);
 		setContrastThreshold.setToolTipText("Sets the contrast threshold");
-		constraints.gridx = 1;
-		constraints.gridy = 2;
+		constraints.gridx = 8;
+		constraints.gridy = 0;
 		constraints.ipadx = 0;
 		constraints.ipady = 0;
-		constraints.gridwidth = 2;
+		constraints.gridwidth = 1;
 		add(setContrastThreshold, constraints);
 		SetContrastThresholdAction setContrastThresholdAction = new SetContrastThresholdAction();
 		setContrastThreshold.addChangeListener(setContrastThresholdAction);
 		
 		contrastThresholdText = new JTextField("200");
 		contrastThresholdText.setPreferredSize(new Dimension(100, 500));
-		constraints.gridx = 3;
-		constraints.gridy = 2;
+		constraints.gridx = 9;
+		constraints.gridy = 0;
 		constraints.ipadx = 75;
 		constraints.ipady = 10;
 		constraints.gridwidth = 1;
@@ -554,18 +554,18 @@ public class ButtonPanel extends JPanel {
 		constraints.fill = constraints.HORIZONTAL;
 		constraints.ipadx = 0;
 		constraints.ipady = 0;
-		constraints.gridx = 0;
-		constraints.gridy = 4;
-		constraints.gridwidth = 4;
+		constraints.gridx = 10;
+		constraints.gridy = 0;
+		constraints.gridwidth = 1;
 		add(drawFlydentifiers, constraints);
 		DrawFlydentifiersAction drawFlydentifiersAction = new DrawFlydentifiersAction();
 		drawFlydentifiers.addActionListener(drawFlydentifiersAction);
 
 		drawTrajectories = new JButton("Draw fly trajectories");
 		constraints.ipadx = 100;
-		constraints.gridx = 0;
-		constraints.gridy = 5;
-		constraints.gridwidth = 2;
+		constraints.gridx = 11;
+		constraints.gridy = 0;
+		constraints.gridwidth = 1;
 		add(drawTrajectories, constraints);
 		DrawTrajectoriesAction drawTrajectoriesAction = new DrawTrajectoriesAction();
 		drawTrajectories.addActionListener(drawTrajectoriesAction);
@@ -573,7 +573,7 @@ public class ButtonPanel extends JPanel {
 		firstFrame = new JTextField("First frame");
 		firstFrame.setPreferredSize(new Dimension(100, 50));
 		constraints.fill = constraints.NONE;
-		constraints.gridx = 2;
+		constraints.gridx = 12;
 		constraints.gridwidth = 1;
 		constraints.ipadx = 100;
 		constraints.ipady = 10;
@@ -581,7 +581,7 @@ public class ButtonPanel extends JPanel {
 
 		lastFrame = new JTextField("Last frame");
 		lastFrame.setPreferredSize(new Dimension(100, 50));
-		constraints.gridx = 3;
+		constraints.gridx = 13;
 		constraints.weightx = 1;
 		add(lastFrame, constraints);
 
@@ -589,8 +589,8 @@ public class ButtonPanel extends JPanel {
 		constraints.fill = constraints.HORIZONTAL;
 		constraints.ipadx = 0;
 		constraints.ipady = 0;
-		constraints.gridx = 2;
-		constraints.gridy = 6;
+		constraints.gridx = 14;
+		constraints.gridy = 0;
 		constraints.gridwidth = 1;
 		add(backFrame, constraints);
 		BackFrameAction backFrameAction = new BackFrameAction();
@@ -598,15 +598,15 @@ public class ButtonPanel extends JPanel {
 
 		forwardFrame = new JButton("\u25B6");
 		constraints.fill = constraints.HORIZONTAL;
-		constraints.gridx = 3;
+		constraints.gridx = 15;
 		add(forwardFrame, constraints);
 		ForwardFrameAction forwardFrameAction = new ForwardFrameAction();
 		forwardFrame.addActionListener(forwardFrameAction);
 
 		clearImages = new JButton("Clear all images");
-		constraints.gridx = 0;
+		constraints.gridx = 16;
 		constraints.gridwidth = 2;
-		constraints.gridy = 6;
+		constraints.gridy = 0;
 		constraints.fill = constraints.HORIZONTAL;
 		add(clearImages, constraints);
 		ClearImageAction clearImageAction = new ClearImageAction();
@@ -627,14 +627,14 @@ public class ButtonPanel extends JPanel {
 	/**
 	 * Returns the preferred size of this panel as a Dimension object.
 	 */
-	public Dimension getPreferredSize() {
-		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-	}
+//	public Dimension getPreferredSize() {
+//		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+//	}
 
 	/** Returns the minimum size of this panel as a Dimension object. */
-	public Dimension getMinimumSize() {
-		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-	}
+//	public Dimension getMinimumSize() {
+//		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+//	}
 
 	/**
 	 * Draws any components on this panel.

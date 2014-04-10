@@ -41,27 +41,34 @@ public class AnalyzerPanel extends JPanel {
 		this.gui = gui;
 		this.setLayout(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
-		ButtonPanel bpanel = new ButtonPanel(this);
+		ButtonToolbar btoolbar = new ButtonToolbar(this);
+		btoolbar.setFloatable(false);
 		constraints.gridx = 0;
-		constraints.gridy = 1;
+		constraints.gridy = 0;
 		constraints.weightx = 1;
 		//constraints.insets = new Insets(150, 0, 0, 50);
-		constraints.weighty = 1;
-		constraints.anchor = constraints.NORTH;
-		add(bpanel, constraints);
+		constraints.weighty = 0;
+		constraints.gridwidth = 2;
+		constraints.anchor = constraints.WEST;
+		add(btoolbar, constraints);
+		
+		
 		ipanel = new ImagePanel(this);
 		constraints.insets = new Insets(0, 0, 0, 0);
 		constraints.anchor = constraints.EAST;
 		constraints.gridx = 1;
-		constraints.gridy = 0;
+		constraints.gridy = 1;
 		constraints.weightx = 1;
 		constraints.weighty = 1;
 		constraints.gridheight = 3;
+		constraints.gridwidth = 1;
 		add(ipanel, constraints);
+		
+		
 		dpanel = new DataPanel(this);
 		constraints.anchor = constraints.NORTH;
 		constraints.gridx = 0;
-		constraints.gridy = 0;
+		constraints.gridy = 1;
 		constraints.gridwidth= 1;
 		constraints.weighty=1;
 		constraints.insets = new Insets(0, 0, 0, 0);
