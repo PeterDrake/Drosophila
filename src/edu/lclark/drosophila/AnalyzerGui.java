@@ -99,8 +99,7 @@ public class AnalyzerGui extends JFrame {
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				frame.setVisible(true);
 				frame.add(analyzerPanel);
-				Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-			    frame.setBounds(0,0,screenSize.width, screenSize.height);
+			    frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 				//frame.pack();
 			}
 		});
