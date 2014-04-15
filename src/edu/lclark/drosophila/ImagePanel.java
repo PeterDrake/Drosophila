@@ -134,6 +134,9 @@ public class ImagePanel extends JPanel {
 			
 
 			if (!analyzerPanel.getMovieLoaded()) {
+				
+				
+			
 				int totalImages = analyzerPanel.getTotalFrames();
 				if (imageIndex < 0) {
 					imageIndex = 0;
@@ -144,13 +147,16 @@ public class ImagePanel extends JPanel {
 				File file = null;
 				if (imageIndex >= 0) {
 					file = analyzerPanel.passdownFile(imageIndex);
+					
 				} else {
 					return;
 				}
-				if (file != null) {
+				if (file != null) {	
+					
 					// Image image = new ImageIcon(filePath).getImage();
-					BufferedImage image = null;
+					image = null;
 					try {
+						
 						image = ImageIO.read(file);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
@@ -159,7 +165,6 @@ public class ImagePanel extends JPanel {
 					}
 				}
 			} else {
-				
 				BufferedImage tempImage = analyzerPanel.getFirstFrameFromMovie();
 				image = new BufferedImage(tempImage.getColorModel(), tempImage.copyData(null), tempImage.getColorModel().isAlphaPremultiplied(), null);
 				imageIndex=0;
@@ -172,7 +177,7 @@ public class ImagePanel extends JPanel {
 			double scale = Math.min(xScale, yScale);
 
 			double imageContrast = analyzerPanel.getImageContrast();
-//			if (imageContrast != oldImageContrast) {
+			//if (analyzerPanel.getMovieLoaded() || imageContrast != oldImageContrast) {
 				for (int i = 0; i < image.getWidth(null); i++) {
 					for (int j = 0; j < image.getHeight(null); j++) {
 						int rgb = image.getRGB(i, j);
@@ -200,15 +205,13 @@ public class ImagePanel extends JPanel {
 				}
 				oldImage = image;
 				oldImageContrast = imageContrast;
-//			}
+			//}
 
 			g.drawImage(oldImage, 0, 0, (int) (imgWidth * scale),
 					(int) (imgHeight * scale), null);
 			// g.drawImage(image, 0, 0, null);
 			if (flydentifiers) {
-				System.err.println("DRWAING FLIES");
 				List<Fly> flies = analyzerPanel.getFlyList();
-				System.err.println(flies.size());
 				int sizeFlies = flies.size();
 				for (int i = 0; i < sizeFlies; i++) {
 					if (flies.get(i).getX(imageIndex) != -1) {

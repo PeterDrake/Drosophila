@@ -665,6 +665,7 @@ public class ButtonPanel extends JPanel {
 	 * Draws any components on this panel.
 	 */
 	public void paintComponent(Graphics g) {
+		analyzeMovie.setEnabled(analyzerPanel.getMovieLoaded());
 	}
 
 	/**

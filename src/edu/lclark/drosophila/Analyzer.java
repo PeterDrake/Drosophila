@@ -163,7 +163,7 @@ public class Analyzer {
 	 * to flies on other frames.
 	 * 
 	 * @param array
-	 *            The boolean array being searched for any false values.
+	 *            The boolean array being searched for any false values. 
 	 * @return True if there are any false values in the array.
 	 */
 	public boolean containsFalse(boolean[] array) {
@@ -186,7 +186,6 @@ public class Analyzer {
 	 *            which frame out of all frames the given image is.
 	 */
 	public void flydentify(BufferedImage image, int frameNumber) {
-		System.err.println("really flydentifying");
 		if (frameNumber == 0) {
 			flies = new LinkedList<Fly>();
 		}
@@ -608,7 +607,6 @@ public class Analyzer {
 		long duration = container.getDuration();
 		framesPerSecond = (int) container.getStream(0).getFrameRate()
 				.getDouble();
-		System.out.println(framesPerSecond);
 		container.close();
 		return (int) (duration / 1000000.0 * framesPerSecond);
 	}
@@ -631,7 +629,6 @@ public class Analyzer {
 		mediaReader
 				.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
 		totalFrames = getFramesInMovie(file.getAbsolutePath());
-		System.out.println("TotalFrames are " + totalFrames);
 		mediaReader.addListener(new ImageSnapListener(true));
 		// read out the contents of the media file and
 		// dispatch events to the attached listener
@@ -658,7 +655,6 @@ public class Analyzer {
 		mediaReader
 				.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
 		totalFrames = getFramesInMovie(movieFile.getAbsolutePath());
-		System.out.println("TotalFrames are " + totalFrames);
 		mediaReader.addListener(new ImageSnapListener(false));
 		// read out the contents of the media file and
 		// dispatch events to the attached listener
