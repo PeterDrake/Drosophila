@@ -104,8 +104,7 @@ public class AnalyzerGui extends JFrame {
 				frame.setVisible(true);
 				frame.add(analyzerPanel);
 				frame.setJMenuBar(ButtonMenuBar);
-				Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-			    frame.setBounds(0,0,screenSize.width, screenSize.height);
+			    frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 				//frame.pack();
 			}
 		});
@@ -146,12 +145,36 @@ public class AnalyzerGui extends JFrame {
 	 * @param file
 	 */
 	public void passMovie(File file) {
-		analyzer.playMovie(file);
+		analyzer.openMovie(file);
 		
 	}
 
 	public void showMovie(List<BufferedImage> frames, long l) {
 		analyzerPanel.showMovie(frames, l);
+	}
+
+	public BufferedImage getFirstFrameFromMovie() {
+		// TODO Auto-generated method stub
+		return analyzer.getFirstFrameFromMovie();
+	}
+
+	public void setMovieLoading(boolean b) {
+		analyzerPanel.setMovieLoading(b);
+		
+	}
+
+	public boolean getMovieLoaded() {
+		// TODO Auto-generated method stub
+		return analyzer.getMovieLoaded();
+	}
+	
+	@Override
+	public void repaint(){
+		analyzerPanel.repaint();
+	}
+
+	public void analyzeMovie() {
+		analyzer.analyzeMovie();
 	}
 
 }

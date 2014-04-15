@@ -58,6 +58,16 @@ public class ButtonToolbar extends JMenuBar {
 			analyzerPanel.setFlydentifiers();
 		}
 	}
+	
+	private class AnalyzeMovieAction implements ActionListener {
+
+		/**
+		 * Tells the AnalyzerPanel to toggle the flydentifiers.
+		 */
+		public void actionPerformed(ActionEvent e) {
+			analyzerPanel.analyzeMovie();
+		}
+	}
 
 	/**
 	 * The action listener that keeps track of when the DrawTrajectories button
@@ -399,6 +409,12 @@ public class ButtonToolbar extends JMenuBar {
 
 	/** Last frame to draw trajectories for */
 	private JTextField lastFrame;
+	
+	/**
+	 * Button for analyzing the movie already opened
+	 */
+	private JMenuItem analyzeMovie;
+	
 
 	/**
 	 * The default preferred width of this panel.
@@ -467,6 +483,11 @@ public class ButtonToolbar extends JMenuBar {
 		fileMenu.add(openMovie);
 		OpenMovieAction openMovieAction = new OpenMovieAction(this); 
 		openMovie.addActionListener(openMovieAction); 
+		
+		analyzeMovie = new JMenuItem("Analyze the movie");
+		fileMenu.add(analyzeMovie);
+		AnalyzeMovieAction analyzeMovieAction = new AnalyzeMovieAction();
+		analyzeMovie.addActionListener(analyzeMovieAction);
 		
 
 		editMenu = new JMenu("Edit");
@@ -612,6 +633,7 @@ public class ButtonToolbar extends JMenuBar {
 	 * Draws any components on this panel.
 	 */
 	public void paintComponent(Graphics g) {
+		analyzeMovie.setEnabled(analyzerPanel.getMovieLoaded());
 	}
 
 	/**

@@ -17,15 +17,13 @@ import com.xuggle.mediatool.MediaListenerAdapter;
 import com.xuggle.mediatool.ToolFactory;
 import com.xuggle.mediatool.event.IVideoPictureEvent;
 import com.xuggle.xuggler.Global;
-
+import com.xuggle.xuggler.IContainer;
 
 public class Analyzer {
 
 	private int sizeThreshold;
 
 	private static AnalyzerGui gui;
-
-
 
 	private int contrastThreshold = 200;
 
@@ -38,6 +36,12 @@ public class Analyzer {
 	 * The List of Fly objects in which fly data is stored.
 	 */
 	private List<Fly> flies;
+
+	/**
+	 * Boolean for if the image snap listener should just find the first frame
+	 * of the movie for option setting purposes
+	 */
+	private boolean loadingMovie;
 
 	/**
 	 * The total number of frames in the movie being analyzed. Or, the number of
@@ -57,14 +61,29 @@ public class Analyzer {
 	 * Stores all of the images being analyzed.
 	 */
 	private File[] images;
-	
+
+	/**
+	 * The name of the movie file that we have loaded
+	 */
+	private File movieFile;
+
+	/**
+	 * The first frame in the movie, for displaying
+	 */
+	private BufferedImage firstMovieFrame;
+
 	/**
 	 * The number of seconds between frames in a movie file
 	 */
-	public static final double SECONDS_BETWEEN_FRAMES = 1 / 10.0;
+	public static final double SECONDS_BETWEEN_FRAMES = 1.0 / 10.0;
 
 	/**
-	 * The number of microseconds between frames in a movie file 
+	 * The number of frames per second in a movie file.
+	 */
+	private int framesPerSecond = 10;
+
+	/**
+	 * The number of microseconds between frames in a movie file
 	 */
 	public static final long MICRO_SECONDS_BETWEEN_FRAMES = (long) (Global.DEFAULT_PTS_PER_SECOND * SECONDS_BETWEEN_FRAMES);
 
@@ -73,7 +92,7 @@ public class Analyzer {
 	private long mLastPtsWrite;
 
 	/**
-	 * The List of frames in a movie 
+	 * The List of frames in a movie
 	 */
 	private List<BufferedImage> frames;
 
@@ -98,7 +117,7 @@ public class Analyzer {
 
 		System.out.println("number of flies: " + flies.size());
 		images = new File[20];
-		
+
 		mLastPtsWrite = Global.NO_PTS;
 	}
 
@@ -134,6 +153,7 @@ public class Analyzer {
 		totalFrames = 0;
 		flies = new LinkedList<Fly>();
 		images = new File[20];
+		loadingMovie = false;
 	}
 
 	/**
@@ -143,7 +163,7 @@ public class Analyzer {
 	 * to flies on other frames.
 	 * 
 	 * @param array
-	 *            The boolean array being searched for any false values.
+	 *            The boolean array being searched for any false values. 
 	 * @return True if there are any false values in the array.
 	 */
 	public boolean containsFalse(boolean[] array) {
@@ -190,22 +210,22 @@ public class Analyzer {
 					red *= imageContrast;
 					green *= imageContrast;
 					blue *= imageContrast;
-					if(red > 255){
+					if (red > 255) {
 						red = 255;
 					}
-					if(green > 255){
+					if (green > 255) {
 						green = 255;
 					}
-					if(blue > 255){
+					if (blue > 255) {
 						blue = 255;
 					}
 					double avg = red * 0.2989 + green * .587 + blue * .114;
 					if ((int) (Math.round(avg)) <= contrastThreshold) { // if
-																			// the
-																			// color
-																			// is
-																			// dark
-																			// enough
+																		// the
+																		// color
+																		// is
+																		// dark
+																		// enough
 						int totalX = 0;
 						int totalY = 0;
 						int numPixels = 0;
@@ -274,7 +294,7 @@ public class Analyzer {
 			}
 		}
 		if (frameNumber == 0) {
-			//The first frame just creates all found flies.
+			// The first frame just creates all found flies.
 			for (double[] d : tempFlies) {
 				Fly f;
 				if (movieLoaded) {
@@ -288,15 +308,16 @@ public class Analyzer {
 
 			}
 		} else {
-			//If not the first frame, we do the checking algorithms. 
-			//(Algorithm sounds too proper for the duct-taped together thing that this is.)
+			// If not the first frame, we do the checking algorithms.
+			// (Algorithm sounds too proper for the duct-taped together thing
+			// that this is.)
 			Fly[] fullPrevFlies = new Fly[flies.size()];
 			int index = 0;
 			boolean[] prevFliesMarked = new boolean[flies.size()];
-			 for(Fly fly : flies){
-				 fullPrevFlies[index] = fly;
-				 index++;
-			 }
+			for (Fly fly : flies) {
+				fullPrevFlies[index] = fly;
+				index++;
+			}
 			// Stores coordinates in indices 0 and 1 of array, stores id in
 			// index 2
 			double[][] fullTempFlies = new double[tempFlies.size()][3];
@@ -309,7 +330,8 @@ public class Analyzer {
 			List<double[]> newFlies = new LinkedList<double[]>();
 			while (containsFalse(tempFliesMarked)
 					|| containsFalse(prevFliesMarked)) {
-				//Searches through the temp flies list to connect the closest fly.
+				// Searches through the temp flies list to connect the closest
+				// fly.
 				if (containsFalse(tempFliesMarked)) {
 					for (int i = 0; i < tempFliesMarked.length; i++) {
 						if (!tempFliesMarked[i]) {
@@ -318,24 +340,33 @@ public class Analyzer {
 							double currentX = fullTempFlies[i][0];
 							double currentY = fullTempFlies[i][1];
 							for (int j = 0; j < fullPrevFlies.length; j++) {
-								double thisDist = Math.sqrt(
-										Math.pow(currentX - fullPrevFlies[j].getX(frameNumber - 1), 2) 
-										+ Math.pow(currentY - fullPrevFlies[j].getY(frameNumber - 1), 2));
+								double thisDist = Math
+										.sqrt(Math.pow(
+												currentX
+														- fullPrevFlies[j]
+																.getX(frameNumber - 1),
+												2)
+												+ Math.pow(
+														currentY
+																- fullPrevFlies[j]
+																		.getY(frameNumber - 1),
+														2));
 								if (thisDist < dist) {
 									dist = thisDist;
 									closestFlyIndex = j;
 								}
 							}
-							if(!prevFliesMarked[closestFlyIndex]) {								
+							if (!prevFliesMarked[closestFlyIndex]) {
 								prevFliesMarked[closestFlyIndex] = true;
 								tempFliesMarked[i] = true;
-								for(Fly f : flies) {
-									if(f.getId() == closestFlyIndex) {										
-										f.addFrameInfo(frameNumber, currentX, currentY);
+								for (Fly f : flies) {
+									if (f.getId() == closestFlyIndex) {
+										f.addFrameInfo(frameNumber, currentX,
+												currentY);
 									}
 								}
-							} else if(!containsFalse(prevFliesMarked)) {
-								//If No previous flies are found:
+							} else if (!containsFalse(prevFliesMarked)) {
+								// If No previous flies are found:
 								newFlies.add(new double[] { currentX, currentY,
 										closestFlyIndex });
 								tempFliesMarked[i] = true;
@@ -343,30 +374,36 @@ public class Analyzer {
 						}
 					}
 				}
-				//Search through the previous flies for the closest current flies.
+				// Search through the previous flies for the closest current
+				// flies.
 				if (containsFalse(prevFliesMarked)) {
 					for (int i = 0; i < fullPrevFlies.length; i++) {
-						if(!prevFliesMarked[i]) {
+						if (!prevFliesMarked[i]) {
 							double dist = Double.MAX_VALUE;
 							int closestFlyIndex = -1;
-							double pastX = fullPrevFlies[i].getX(frameNumber - 1);
-							double pastY = fullPrevFlies[i].getY(frameNumber - 1);
-							if(!containsFalse(tempFliesMarked)) {
+							double pastX = fullPrevFlies[i]
+									.getX(frameNumber - 1);
+							double pastY = fullPrevFlies[i]
+									.getY(frameNumber - 1);
+							if (!containsFalse(tempFliesMarked)) {
 								for (int j = 0; j < fullTempFlies.length; j++) {
 									double thisDist = Math.sqrt(Math.pow(pastX
 											- fullTempFlies[j][0], 2)
-											+ Math.pow(pastY - fullTempFlies[j][1], 2));
+											+ Math.pow(pastY
+													- fullTempFlies[j][1], 2));
 									if (thisDist < dist) {
 										dist = thisDist;
 										closestFlyIndex = j;
 									}
 								}
-							} else {								
+							} else {
 								for (int j = 0; j < fullTempFlies.length; j++) {
-									if(!tempFliesMarked[j]) {									
-										double thisDist = Math.sqrt(Math.pow(pastX
-												- fullTempFlies[j][0], 2)
-												+ Math.pow(pastY - fullTempFlies[j][1], 2));
+									if (!tempFliesMarked[j]) {
+										double thisDist = Math.sqrt(Math.pow(
+												pastX - fullTempFlies[j][0], 2)
+												+ Math.pow(pastY
+														- fullTempFlies[j][1],
+														2));
 										if (thisDist < dist) {
 											dist = thisDist;
 											closestFlyIndex = j;
@@ -487,13 +524,13 @@ public class Analyzer {
 		red *= imageContrast;
 		green *= imageContrast;
 		blue *= imageContrast;
-		if(red > 255){
+		if (red > 255) {
 			red = 255;
 		}
-		if(green > 255){
+		if (green > 255) {
 			green = 255;
 		}
-		if(blue > 255){
+		if (blue > 255) {
 			blue = 255;
 		}
 		avg = red * 0.2989 + green * .587 + blue * .114;
@@ -515,22 +552,23 @@ public class Analyzer {
 			updateImages();
 		}
 	}
-	
+
 	/**
-	 * Updates the contrast threshold field. This is used to tell how dark a spot
-	 * has to be to be considered a fly. This will also analyze all stored image again
+	 * Updates the contrast threshold field. This is used to tell how dark a
+	 * spot has to be to be considered a fly. This will also analyze all stored
+	 * image again
 	 * 
 	 * @param input
-	 * 			  the value which contrast threshold will be set to.
+	 *            the value which contrast threshold will be set to.
 	 */
 	public void contrastThresholdUpdate(int input) {
-		if (input > 255){
+		if (input > 255) {
 			input = 255;
 		}
-		if (input < 0){
+		if (input < 0) {
 			input = 0;
 		}
-		if(input >= 0 && input <= 255) {
+		if (input >= 0 && input <= 255) {
 			contrastThreshold = input;
 			if (totalFrames > 0) {
 				updateImages();
@@ -542,95 +580,146 @@ public class Analyzer {
 	 * This runs flydentify on all stored images.
 	 */
 	public void updateImages() {
-		try {
-			for (int i = 0; i < totalFrames; i++) {
-				// TODO this should probably create a new flies List, since it
-				// is re running flydentify on all images.
-				BufferedImage image = ImageIO.read(images[i]);
-				flydentify(image, i);
+		if (movieLoaded) {
+			flydentify(firstMovieFrame, 0);
+		} else {
+			try {
+				for (int i = 0; i < totalFrames; i++) {
+					// TODO this should probably create a new flies List, since
+					// it
+					// is re running flydentify on all images.
+					BufferedImage image = ImageIO.read(images[i]);
+					flydentify(image, i);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.exit(1);
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1);
 		}
 	}
 
-	
+	public int getFramesInMovie(String filename) {
+		IContainer container = IContainer.make();
+		if (container.open(filename, IContainer.Type.READ, null) < 0) {
+			throw new IllegalArgumentException("Could not open file:"
+					+ filename);
+		}
+		long duration = container.getDuration();
+		framesPerSecond = (int) container.getStream(0).getFrameRate()
+				.getDouble();
+		container.close();
+		return (int) (duration / 1000000.0 * framesPerSecond);
+	}
+
 	/**
-	 * Plays a selected movie in a new moviePanel 
+	 * Plays a selected movie in a new moviePanel
+	 * 
 	 * @param file
 	 */
-	public void playMovie(File file) {
-		IMediaReader mediaReader = ToolFactory.makeReader(file.getAbsolutePath());
+	public void openMovie(File file) {
+		clearImages();
+		mLastPtsWrite = Global.NO_PTS;
+		movieLoaded = true;
+		movieFile = file;
+		firstMovieFrame=null;
+		IMediaReader mediaReader = ToolFactory.makeReader(file
+				.getAbsolutePath());
 		// stipulate that we want BufferedImages created in BGR 24bit color
 		// space
 		mediaReader
 				.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
-		mediaReader.addListener(new ImageSnapListener());
+		totalFrames = getFramesInMovie(file.getAbsolutePath());
+		mediaReader.addListener(new ImageSnapListener(true));
+		// read out the contents of the media file and
+		// dispatch events to the attached listener
+
+		loadingMovie = true;
+		while (mediaReader.readPacket() == null) {
+			if (firstMovieFrame != null) {
+				mediaReader.close();
+				break;
+			}
+		}
+		
+		gui.repaint();
+		// gui.showMovie(frames, 100
+		// MICRO_SECONDS_BETWEEN_FRAMES / 1000
+		// );
+	}
+
+	public void analyzeMovie() {
+		IMediaReader mediaReader = ToolFactory.makeReader(movieFile
+				.getAbsolutePath());
+		// stipulate that we want BufferedImages created in BGR 24bit color
+		// space
+		mediaReader
+				.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
+		totalFrames = getFramesInMovie(movieFile.getAbsolutePath());
+		mediaReader.addListener(new ImageSnapListener(false));
 		// read out the contents of the media file and
 		// dispatch events to the attached listener
 		while (mediaReader.readPacket() == null) {
 			// Wait
 		}
-		gui.showMovie(frames, 100
-				//MICRO_SECONDS_BETWEEN_FRAMES / 1000
-				); 
+		gui.repaint();
 	}
-	
+
 	private class ImageSnapListener extends MediaListenerAdapter {
+
+		private int increment;
+
+		public ImageSnapListener(boolean b) {
+			loadingMovie = b;
+		}
 
 		public void onVideoPicture(IVideoPictureEvent event) {
 			// if uninitialized, back date mLastPtsWrite to get the very first
 			// frame
-			if (mLastPtsWrite == Global.NO_PTS) {
-				mLastPtsWrite = event.getTimeStamp()
-						- MICRO_SECONDS_BETWEEN_FRAMES;
-			}
-			// if it's time to write the next frame
-			if (event.getTimeStamp() - mLastPtsWrite >= MICRO_SECONDS_BETWEEN_FRAMES) {
-				double seconds = ((double) event.getTimeStamp())
-						/ Global.DEFAULT_PTS_PER_SECOND;
-				frames.add(event.getImage());
-				System.out.printf(
-						"at elapsed time of %6.3f seconds wrote: %s\n",
-						seconds, "<imaginary file>");
-				// update last write time
-				mLastPtsWrite += MICRO_SECONDS_BETWEEN_FRAMES;
+			if (loadingMovie) {
+				firstMovieFrame = event.getImage();
+				flydentify(event.getImage(), 0);
+			} else {
+				if (mLastPtsWrite == Global.NO_PTS) {
+					mLastPtsWrite = event.getTimeStamp()
+							- MICRO_SECONDS_BETWEEN_FRAMES;
+				}
+				// if it's time to write the next frame
+				if (event.getTimeStamp() - mLastPtsWrite >= MICRO_SECONDS_BETWEEN_FRAMES) {
+					double seconds = ((double) event.getTimeStamp())
+							/ Global.DEFAULT_PTS_PER_SECOND;
+					// frames.add(event.getImage());
+
+					flydentify(event.getImage(), increment);
+					increment++;
+					System.out.printf(
+							"at elapsed time of %6.3f seconds wrote: %s\n",
+							seconds, "<imaginary file>");
+					// update last write time
+					mLastPtsWrite += MICRO_SECONDS_BETWEEN_FRAMES;
+				}
 			}
 		}
 	}
-	
 
 	public void setImageContrast(double d) {
 		imageContrast = d;
 		updateImages();
 	}
 
-
 	public double getImageContrast() {
 		return imageContrast;
 	}
-
 
 	public File passdownFile(int imageIndex) {
 		return images[imageIndex];
 	}
 
+	public BufferedImage getFirstFrameFromMovie() {
+		return firstMovieFrame;
+	}
+
+	public boolean getMovieLoaded() {
+		return movieLoaded;
+	}
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
