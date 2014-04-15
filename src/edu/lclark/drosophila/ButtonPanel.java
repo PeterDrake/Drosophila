@@ -472,12 +472,8 @@ public class ButtonPanel extends JPanel {
 		getImage.addActionListener(getImageAction);
 		
 		fileChooser = new JFileChooser(); // unsure if we need a new variable to open a movie vs. opening an image
-		openMovie = new JButton("Open a movie"); 
-		constraints.ipadx = 0;
-		constraints.ipady = 0;
-		constraints.gridx = 1;
-		constraints.gridy = 0;
-		constraints.gridwidth = 2;
+		openMovie = new JButton("Open Mov"); 
+		constraints.gridx=1;
 		add(openMovie, constraints);
 		OpenMovieAction openMovieAction = new OpenMovieAction(this); 
 		openMovie.addActionListener(openMovieAction); 

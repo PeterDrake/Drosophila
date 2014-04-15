@@ -36,7 +36,7 @@ public class ImagePanel extends JPanel {
 	private int lastFrame;
 
 	private int numberOfImages;
-	
+
 	/**
 	 * Boolean for if we are trying to load the first frame from a movie.
 	 */
@@ -67,10 +67,10 @@ public class ImagePanel extends JPanel {
 	private double oldImageContrast;
 
 	private BufferedImage oldImage;
-	
-	
+
 	/**
-	 * Image saved without changing contrast so we can compare it to a new image we load
+	 * Image saved without changing contrast so we can compare it to a new image
+	 * we load
 	 */
 	private BufferedImage savedImage;
 
@@ -131,12 +131,9 @@ public class ImagePanel extends JPanel {
 			g.drawImage(image, 0, 0, (int) (imgWidth * scale),
 					(int) (imgHeight * scale), null);
 		} else {
-			
 
 			if (!analyzerPanel.getMovieLoaded()) {
-				
-				
-			
+
 				int totalImages = analyzerPanel.getTotalFrames();
 				if (imageIndex < 0) {
 					imageIndex = 0;
@@ -147,16 +144,16 @@ public class ImagePanel extends JPanel {
 				File file = null;
 				if (imageIndex >= 0) {
 					file = analyzerPanel.passdownFile(imageIndex);
-					
+
 				} else {
 					return;
 				}
-				if (file != null) {	
-					
+				if (file != null) {
+
 					// Image image = new ImageIcon(filePath).getImage();
 					image = null;
 					try {
-						
+
 						image = ImageIO.read(file);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
@@ -165,22 +162,26 @@ public class ImagePanel extends JPanel {
 					}
 				}
 			} else {
-				BufferedImage tempImage = analyzerPanel.getFirstFrameFromMovie();
-				image = new BufferedImage(tempImage.getColorModel(), tempImage.copyData(null), tempImage.getColorModel().isAlphaPremultiplied(), null);
-				imageIndex=0;
+				BufferedImage tempImage = analyzerPanel
+						.getFirstFrameFromMovie();
+				image = new BufferedImage(tempImage.getColorModel(),
+						tempImage.copyData(null), tempImage.getColorModel()
+								.isAlphaPremultiplied(), null);
+				imageIndex = 0;
 			}
-			int imgWidth = image.getWidth(null);
-			int imgHeight = image.getHeight(null);
+			if (image != null) {
+				int imgWidth = image.getWidth(null);
+				int imgHeight = image.getHeight(null);
 
-			double xScale = this.getWidth() / (double) imgWidth;
-			double yScale = this.getHeight() / (double) imgHeight;
-			double scale = Math.min(xScale, yScale);
+				double xScale = this.getWidth() / (double) imgWidth;
+				double yScale = this.getHeight() / (double) imgHeight;
+				double scale = Math.min(xScale, yScale);
 
-			double imageContrast = analyzerPanel.getImageContrast();
+				double imageContrast = analyzerPanel.getImageContrast();
 
-			//if(imageContrast != oldImageContrast) {
-				for(int i = 0; i < image.getWidth(null); i++){
-					for(int j = 0; j < image.getHeight(null); j++){
+				// if(imageContrast != oldImageContrast) {
+				for (int i = 0; i < image.getWidth(null); i++) {
+					for (int j = 0; j < image.getHeight(null); j++) {
 						int rgb = image.getRGB(i, j);
 						int red = (rgb >> 16) & 0xFF;
 						int green = (rgb >> 8) & 0xFF;
@@ -206,54 +207,57 @@ public class ImagePanel extends JPanel {
 				}
 				oldImage = image;
 				oldImageContrast = imageContrast;
-			//}
+				// }
 
-			g.drawImage(oldImage, 0, 0, (int) (imgWidth * scale), (int)(imgHeight * scale), null);
-			//g.drawImage(image, 0, 0, null);
+				g.drawImage(oldImage, 0, 0, (int) (imgWidth * scale),
+						(int) (imgHeight * scale), null);
+				// g.drawImage(image, 0, 0, null);
 
-			if (flydentifiers) {
-				List<Fly> flies = analyzerPanel.getFlyList();
-				int sizeFlies = flies.size();
-				for (int i = 0; i < sizeFlies; i++) {
-					if (flies.get(i).getX(imageIndex) != -1) {
-						g.setColor(new Color(Color.HSBtoRGB(
-								(float) ((i * 1.0) / sizeFlies), (float) 0.75,
-								(float) 0.95)));
-						g.fillOval(
-								(int) ((flies.get(i).getX(imageIndex) - 6) * scale),
-								(int) ((flies.get(i).getY(imageIndex) - 6) * scale),
-								(int) (12 * scale), (int) (12 * scale));
-					}
-				}
-			}
-			if (drawTrajectories) {
-				g.setColor(Color.RED);
-				List<Fly> flies = analyzerPanel.getFlyList();
-				int flyNumber = 0;
-				int sizeFlies = flies.size();
-				for (Fly fly : flies) {
-					g.setColor(new Color(Color.HSBtoRGB(
-							(float) ((flyNumber * 1.0) / sizeFlies),
-							(float) 0.75, (float) 0.95)));
-					for (int i = firstFrame; i < lastFrame; i++) {
-						int x1 = (int) fly.getX(i);
-						int y1 = (int) fly.getY(i);
-						int x2 = (int) fly.getX(i + 1);
-						int y2 = (int) fly.getY(i + 1);
-						if (!((x1 == 0 && y1 == 0) || (x2 == 0 && y2 == 0))) {// doesn't
-																				// draw
-																				// flies
-																				// that
-																				// don't
-																				// appear
-																				// in
-																				// both
-																				// frames
-							g.drawLine((int) (x1 * scale), (int) (y1 * scale),
-									(int) (x2 * scale), (int) (y2 * scale));
+				if (flydentifiers) {
+					List<Fly> flies = analyzerPanel.getFlyList();
+					int sizeFlies = flies.size();
+					for (int i = 0; i < sizeFlies; i++) {
+						if (flies.get(i).getX(imageIndex) != -1) {
+							g.setColor(new Color(Color.HSBtoRGB(
+									(float) ((i * 1.0) / sizeFlies),
+									(float) 0.75, (float) 0.95)));
+							g.fillOval(
+									(int) ((flies.get(i).getX(imageIndex) - 6) * scale),
+									(int) ((flies.get(i).getY(imageIndex) - 6) * scale),
+									(int) (12 * scale), (int) (12 * scale));
 						}
 					}
-					flyNumber++;
+				}
+				if (drawTrajectories) {
+					g.setColor(Color.RED);
+					List<Fly> flies = analyzerPanel.getFlyList();
+					int flyNumber = 0;
+					int sizeFlies = flies.size();
+					for (Fly fly : flies) {
+						g.setColor(new Color(Color.HSBtoRGB(
+								(float) ((flyNumber * 1.0) / sizeFlies),
+								(float) 0.75, (float) 0.95)));
+						for (int i = firstFrame; i < lastFrame; i++) {
+							int x1 = (int) fly.getX(i);
+							int y1 = (int) fly.getY(i);
+							int x2 = (int) fly.getX(i + 1);
+							int y2 = (int) fly.getY(i + 1);
+							if (!((x1 == 0 && y1 == 0) || (x2 == 0 && y2 == 0))) {// doesn't
+																					// draw
+																					// flies
+																					// that
+																					// don't
+																					// appear
+																					// in
+																					// both
+																					// frames
+								g.drawLine((int) (x1 * scale),
+										(int) (y1 * scale), (int) (x2 * scale),
+										(int) (y2 * scale));
+							}
+						}
+						flyNumber++;
+					}
 				}
 			}
 		}
@@ -295,7 +299,7 @@ public class ImagePanel extends JPanel {
 	}
 
 	public void setMovieLoading(boolean b) {
-		movieLoading=b;
-		
+		movieLoading = b;
+
 	}
 }
