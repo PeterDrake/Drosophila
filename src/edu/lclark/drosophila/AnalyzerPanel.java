@@ -40,24 +40,13 @@ public class AnalyzerPanel extends JPanel {
 	AnalyzerPanel(AnalyzerGui gui) {
 		this.gui = gui;
 		this.setLayout(new GridBagLayout());
-		GridBagConstraints constraints = new GridBagConstraints();
-		ButtonToolbar btoolbar = new ButtonToolbar(this);
-		//btoolbar.setFloatable(false);
-		constraints.gridx = 0;
-		constraints.gridy = 0;
-		constraints.weightx = 1;
-		//constraints.insets = new Insets(150, 0, 0, 50);
-		constraints.weighty = 0;
-		constraints.gridwidth = 2;
-		constraints.anchor = constraints.WEST;
-		add(btoolbar, constraints);
-		
+		GridBagConstraints constraints = new GridBagConstraints();		
 		
 		ipanel = new ImagePanel(this);
 		constraints.insets = new Insets(0, 0, 0, 0);
 		constraints.anchor = constraints.EAST;
 		constraints.gridx = 1;
-		constraints.gridy = 1;
+		constraints.gridy = 0;
 		constraints.weightx = 1;
 		constraints.weighty = 1;
 		constraints.gridheight = 3;
@@ -68,7 +57,7 @@ public class AnalyzerPanel extends JPanel {
 		dpanel = new DataPanel(this);
 		constraints.anchor = constraints.NORTH;
 		constraints.gridx = 0;
-		constraints.gridy = 1;
+		constraints.gridy = 0;
 		constraints.gridwidth= 1;
 		constraints.weighty=1;
 		constraints.insets = new Insets(0, 0, 0, 0);
@@ -79,7 +68,7 @@ public class AnalyzerPanel extends JPanel {
 		
 		graphPanel = new GraphPanel(this, false, .10, "TITLE", "vertical label now this is longer ", "Xkljhfdsalkjfhasdkljfh" );
 		constraints.gridx = 0;
-		constraints.gridy = 2;
+		constraints.gridy = 1;
 		constraints.gridheight = 1;
 		//constraints.insets = new Insets(0, 50, 50, 0);
 		add(graphPanel, constraints);
