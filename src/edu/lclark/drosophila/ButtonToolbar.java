@@ -80,10 +80,20 @@ public class ButtonToolbar extends JMenuBar {
 			try {
 				int startFrame = Integer.parseInt(firstFrame.getText());
 				int endFrame = Integer.parseInt(lastFrame.getText());
-				analyzerPanel.setDrawTrajectories(startFrame, endFrame);
+				if(startFrame > endFrame) {
+					analyzerPanel.displayMessagePopup(
+							"Start frame must be smaller than end frame.");
+				} else if(startFrame <= 0 || endFrame <= 0){
+					analyzerPanel.displayMessagePopup(
+							"Frame numbers must be larger than 0.");
+				} else {
+					analyzerPanel.setDrawTrajectories(startFrame, endFrame);
+				}
 			} catch (NumberFormatException error) {
-				error.printStackTrace();
-				System.exit(1);
+				analyzerPanel.displayMessagePopup(
+						"Only enter whole numbers into the start and end frame boxes.");
+//				error.printStackTrace();
+//				System.exit(1);
 			}
 		}
 

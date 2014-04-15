@@ -124,6 +124,12 @@ public class AnalyzerPanel extends JPanel {
 	public void incrementIndex() {
 		ipanel.incrementIndex();
 	}
+	
+	public void displayMessagePopup(String s) {
+		JOptionPane.showMessageDialog(null, s, "Error", 
+				JOptionPane.INFORMATION_MESSAGE, 
+				new ImageIcon("DrawFlyTrajectoriesToggle.png"));
+	}
 
 	/**
 	 * Returns the file path of specified image that is stored in the Analyzer.
