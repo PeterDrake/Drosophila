@@ -13,6 +13,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Caret;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,6 +31,7 @@ public class ButtonPanel extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 			analyzerPanel.decrementIndex();
 			analyzerPanel.repaint();
+			imageIndex--;
 		}
 	}
 
@@ -87,6 +89,7 @@ public class ButtonPanel extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 			analyzerPanel.incrementIndex();
 			analyzerPanel.repaint();
+			imageIndex++;
 		}
 	}
 
@@ -117,6 +120,23 @@ public class ButtonPanel extends JPanel {
 		}
 	}
 	
+	/**
+	 * The action listener which will set the arena ID of flies in the current
+	 * rectangular selection.
+	 */
+	private class SetRegionsAction implements ActionListener {
+
+		private ButtonPanel bpanel;
+		
+		public SetRegionsAction(ButtonPanel bpanel){
+			this.bpanel = bpanel;
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			bpanel.analyzerPanel.passUpArenaParameters(Integer.parseInt(arenaID.getText()), imageIndex);
+		}
+	}
+	
 	
 	/**
 	 * The action listener which opens a file browsing window when the open movie
@@ -143,10 +163,7 @@ public class ButtonPanel extends JPanel {
 			}
 			
 		} 
-		
-		
-		
-		
+						
 		
 		
 	}
@@ -390,12 +407,23 @@ public class ButtonPanel extends JPanel {
 
 	/** Button that lets user toggle drawing trajectories */
 	private JButton drawTrajectories;
+	
+	/** Button that lets user set areas of interest */
+	private JButton setRegions;
+	
+	/** Arena identification number */
+	private JTextField arenaID;
 
 	/** First frame to draw trajectories for */
 	private JTextField firstFrame;
 
 	/** Last frame to draw trajectories for */
 	private JTextField lastFrame;
+	
+	/**
+	 * Current image index
+	 */
+	private int imageIndex;
 
 	/**
 	 * The default preferred width of this panel.
@@ -567,6 +595,22 @@ public class ButtonPanel extends JPanel {
 		add(drawTrajectories, constraints);
 		DrawTrajectoriesAction drawTrajectoriesAction = new DrawTrajectoriesAction();
 		drawTrajectories.addActionListener(drawTrajectoriesAction);
+		
+		setRegions = new JButton("Set area of interest");
+		constraints.insets = new Insets(50, 0, 0, 30);
+		constraints.gridy = 8;
+		add(setRegions, constraints);
+		SetRegionsAction setRegionsAction = new SetRegionsAction(this);
+		setRegions.addActionListener(setRegionsAction);
+		
+		constraints.insets = new Insets(50, 20, 0, 0);
+		arenaID = new JTextField("1");
+		constraints.gridx = 2;
+		constraints.gridwidth = 1;
+		add(arenaID, constraints);
+		
+		constraints.insets = new Insets(0, 0, 0, 0);
+		
 
 		firstFrame = new JTextField("First frame");
 		firstFrame.setPreferredSize(new Dimension(100, 50));

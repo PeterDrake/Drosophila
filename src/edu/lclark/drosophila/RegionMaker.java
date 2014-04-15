@@ -8,6 +8,18 @@ public class RegionMaker {
 	public final static int MAXSQUARES = 50;
 	Analyzer analyzer;
 	List<Point> pastfirstpoints;
+	
+	
+	public List<Point> getPastfirstpoints() {
+		return pastfirstpoints;
+	}
+
+	
+	public List<Point> getPastsecondpoints() {
+		return pastsecondpoints;
+	}
+
+
 	List<Point> pastsecondpoints;
 	List<Fly> flies;
 
@@ -38,6 +50,7 @@ public class RegionMaker {
 		}
 		pastfirstpoints.add(topleft);
 		pastsecondpoints.add(bottomright);
+		analyzer.passDownPoints();
 	}
 
 	private Point gettopleft(Point point1, Point point2) {

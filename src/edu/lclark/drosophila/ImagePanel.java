@@ -7,6 +7,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -39,11 +40,10 @@ public class ImagePanel extends JPanel {
 	private int lastFrame;
 
 	private int numberOfImages;
-	
+
 	private Point currentpoint1;
 	private Point currentpoint2;
 	private double scale;
-	
 
 	/**
 	 * The AnalyzerPanel object that this ImagePanel communicates with.
@@ -60,6 +60,16 @@ public class ImagePanel extends JPanel {
 	 * The current frame of the movie
 	 */
 	private BufferedImage image;
+
+	/**
+	 * Past first points of region rectangles
+	 */
+	private List<Point> pastFirstPoints;
+
+	/**
+	 * Past second points of region rectangles
+	 */
+	private List<Point> pastSecondPoints;
 
 	private boolean moviePlaying;
 
@@ -83,6 +93,9 @@ public class ImagePanel extends JPanel {
 		flydentifiers = false;
 		imageIndex = 0;
 		addMouseListener(new MouseHandler());
+		pastFirstPoints= new LinkedList<Point>();
+		pastSecondPoints= new LinkedList<Point>();
+		
 	}
 
 	/**
@@ -103,11 +116,16 @@ public class ImagePanel extends JPanel {
 	public Dimension getMinimumSize() {
 		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 	}
+
 	/**
 	 * Increments the displayed image index by 1.
 	 */
 	public void incrementIndex() {
 		imageIndex++;
+	}
+
+	public int getImageIndex() {
+		return imageIndex;
 	}
 
 	/**
@@ -158,7 +176,7 @@ public class ImagePanel extends JPanel {
 				double xScale = this.getWidth() / (double) imgWidth;
 				double yScale = this.getHeight() / (double) imgHeight;
 				scale = Math.min(xScale, yScale);
-				System.out.println("scale is "+scale);
+				System.out.println("scale is " + scale);
 
 				double imageContrast = analyzerPanel.getImageContrast();
 				if (imageContrast != oldImageContrast) {
@@ -242,11 +260,26 @@ public class ImagePanel extends JPanel {
 				}
 			}
 		}
-		if(currentpoint1!=null&&currentpoint2!=null){
+		if (currentpoint1 != null && currentpoint2 != null) {
 			System.out.println("drawing square");
+			g.setColor(Color.BLACK);
+			// Point first[] = (Point[]) pastFirstPoints.toArray();
+			// Point second[] = (Point[]) pastSecondPoints.toArray();
+			if (!pastFirstPoints.isEmpty()) {
+				for (int i = 0; i < pastFirstPoints.size(); i++) {
+					System.out.println(pastFirstPoints.get(i));
+					g.drawRect((int)(pastFirstPoints.get(i).x*scale),
+							(int)(pastFirstPoints.get(i).y*scale), (int)(Math.abs(pastFirstPoints.get(i).x
+									- pastSecondPoints.get(i).x)*scale),
+							(int)(Math.abs(pastSecondPoints.get(i).y
+									- pastFirstPoints.get(i).y)*scale));
+				}
+			}
 			g.setColor(Color.RED);
-			int xPoints[]= {currentpoint1.x,currentpoint2.x,currentpoint2.x,currentpoint1.x};
-			int yPoints[]={currentpoint1.y,currentpoint1.y,currentpoint2.y,currentpoint2.y};
+			int xPoints[] = { currentpoint1.x, currentpoint2.x,
+					currentpoint2.x, currentpoint1.x };
+			int yPoints[] = { currentpoint1.y, currentpoint1.y,
+					currentpoint2.y, currentpoint2.y };
 			g.drawPolygon(xPoints, yPoints, 4);
 		}
 	}
@@ -273,6 +306,12 @@ public class ImagePanel extends JPanel {
 		analyzerPanel.repaint();
 	}
 
+	public void passDownPoints(List<Point> tempFirst, List<Point> tempSecond) {
+		System.out.println("list is being set");
+		pastFirstPoints = tempFirst;
+		pastSecondPoints = tempSecond;
+	}
+
 	/**
 	 * Sets this ImagePanel's displayed image index to the given
 	 * 
@@ -285,23 +324,27 @@ public class ImagePanel extends JPanel {
 	public void setImage(BufferedImage b) {
 		image = b;
 	}
-	public Point getCurrentPoint1(){
-		double x = (double)currentpoint1.x;
-		double scalemath = x/scale;
-		System.out.println("scale"+scale);
-		System.out.println("scaled math "+scalemath);
-		Point sent= new Point((int)(currentpoint1.x/scale),(int)(currentpoint1.y/scale));
+
+	public Point getCurrentPoint1() {
+		double x = (double) currentpoint1.x;
+		double scalemath = x / scale;
+		System.out.println("scale" + scale);
+		System.out.println("scaled math " + scalemath);
+		Point sent = new Point((int) (currentpoint1.x / scale),
+				(int) (currentpoint1.y / scale));
 		return sent;
 	}
-	public Point getCurrentPoint2(){
-		Point sent= new Point((int)(currentpoint2.x/scale),(int)(currentpoint2.y/scale));
+
+	public Point getCurrentPoint2() {
+		Point sent = new Point((int) (currentpoint2.x / scale),
+				(int) (currentpoint2.y / scale));
 		return sent;
 	}
 
 	public class MouseHandler extends MouseAdapter {
 		public void mousePressed(MouseEvent event) {
 			System.out.println("point" + event.getPoint());
-			currentpoint1=event.getPoint();
+			currentpoint1 = event.getPoint();
 		}
 
 		public void mouseClicked(MouseEvent event) {
@@ -309,8 +352,8 @@ public class ImagePanel extends JPanel {
 
 		public void mouseReleased(MouseEvent event) {
 			System.out.println("release point" + event.getPoint());
-			currentpoint2=event.getPoint();
-			analyzerPanel.passUpArenaParameters();
+			currentpoint2 = event.getPoint();
+			// analyzerPanel.passUpArenaParameters();
 			repaint();
 		}
 
@@ -318,7 +361,7 @@ public class ImagePanel extends JPanel {
 
 			@Override
 			public void mouseDragged(MouseEvent event) {
-				currentpoint2=event.getPoint();
+				currentpoint2 = event.getPoint();
 				repaint();
 			}
 

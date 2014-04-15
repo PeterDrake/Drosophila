@@ -89,6 +89,7 @@ public class Analyzer {
 		frames = new ArrayList<BufferedImage>();
 		images = new File[20];
 		regionmaker = new RegionMaker(this);
+		//passDownPoints();
 	}
 
 	public void flydentify(BufferedImage image) {
@@ -101,6 +102,12 @@ public class Analyzer {
 		images = new File[20];
 
 		mLastPtsWrite = Global.NO_PTS;
+	}
+	
+	public void passDownPoints(){
+		List<Point> tempFirst = regionmaker.getPastfirstpoints();
+		List<Point> tempSecond = regionmaker.getPastsecondpoints();
+		gui.passDownPoints(tempFirst, tempSecond);
 	}
 
 	/**

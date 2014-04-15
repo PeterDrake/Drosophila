@@ -228,6 +228,11 @@ public class AnalyzerPanel extends JPanel {
 	public void setMoviePlaying(boolean b){
 		ipanel.setMoviePlaying(b);
 	}
+	
+	public void passDownPoints(List<Point> tempFirst, List<Point> tempSecond ){
+		
+		ipanel.passDownPoints(tempFirst, tempSecond);
+	}
 
 	public void setImageContrast(double d) {
 		gui.setImageContrast(d);		
@@ -245,9 +250,7 @@ public class AnalyzerPanel extends JPanel {
 		gui.contrastThresholdUpdate(input);
 		
 	}
-	public void passUpArenaParameters(){
-		int arena =2;
-		int frame =0;
+	public void passUpArenaParameters(int arena, int frame){
 		Point point1 = ipanel.getCurrentPoint1();
 		Point point2 = ipanel.getCurrentPoint2();
 		gui.passupArenaParameters(arena, frame, point1, point2);

@@ -131,6 +131,12 @@ public class AnalyzerGui extends JFrame {
 	public File passdownFile(int imageIndex) {
 		return analyzer.passdownFile(imageIndex);
 	}
+	
+	public void passDownPoints(List<Point> tempFirst, List<Point> tempSecond ){
+	
+		analyzerPanel.passDownPoints(tempFirst, tempSecond);
+	}
+
 
 	
 	/**
