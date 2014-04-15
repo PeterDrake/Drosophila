@@ -20,7 +20,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.TextEvent;
 import java.awt.event.TextListener;
 
-public class ButtonToolbar extends JToolBar {
+public class ButtonToolbar extends JMenuBar {
 
 	/**
 	 * The action listener which decrements the ImagePanel's displayed image
@@ -321,6 +321,8 @@ public class ButtonToolbar extends JToolBar {
 		}
 	}
 
+	private JMenu menuFile;
+	
 		/**
 	 * The file browser which allows the user to choose a file which contains an
 	 * image.
@@ -330,7 +332,7 @@ public class ButtonToolbar extends JToolBar {
 	/**
 	 * The button which lets the user specify an image to display and analyze.
 	 */
-	private JButton getImage;
+	private JMenuItem getImage;
 
 	/**
 	 * The button which lets the user specify what the Analyzer's size threshold
@@ -364,7 +366,7 @@ public class ButtonToolbar extends JToolBar {
 	/**
 	 * This button opens and plays a movie.
 	 */
-	private JButton openMovie; 
+	private JMenuItem openMovie; 
 	/**
 	 * A slider for editing the contrast of the actual image
 	 */
@@ -427,6 +429,8 @@ public class ButtonToolbar extends JToolBar {
 	private JLabel SliderLabel;
 	
 	private JLabel ContrastLabel;
+	
+	private JMenu FileMenu;
 	/**
 	 * The AnalyzerPanel object that this ImagePanel communicates with.
 	 */
@@ -435,34 +439,36 @@ public class ButtonToolbar extends JToolBar {
 	/**
 	 * The constructor which initializes all fields and adds the buttons to this
 	 * panel.
+	 * @param editMenu 
 	 * 
 	 * @param analyzerPanel
 	 *            the AnalyzerPanel object which this panel is attached to.
 	 */
-	public ButtonToolbar(AnalyzerPanel a) {
+	public ButtonToolbar(AnalyzerPanel a, JMenu editMenu) {
 		this.analyzerPanel = a;
-		this.setLayout(new GridBagLayout());
-		GridBagConstraints constraints = new GridBagConstraints();
+//		this.setLayout(new GridBagLayout());
+//		GridBagConstraints constraints = new GridBagConstraints();
 
+		FileMenu = new JMenu("File");
+		this.add(FileMenu);//, constraints);
+		
+		
 		fileChooser = new JFileChooser();
-		getImage = new JButton("Open an Image");
-		constraints.fill = constraints.HORIZONTAL;
-		constraints.gridx = 0;
-		constraints.gridy = 0;
-		constraints.gridwidth = 1;
-		constraints.weightx = 1;
-		add(getImage, constraints);
+		getImage = new JMenuItem("Open an Image");
+		FileMenu.add(getImage);
 		GetImageAction getImageAction = new GetImageAction(this);
 		getImage.addActionListener(getImageAction);
-		
+	
 		fileChooser = new JFileChooser(); // unsure if we need a new variable to open a movie vs. opening an image
-		openMovie = new JButton("Open a movie"); 
-		constraints.gridx = 1; 
-		add(openMovie, constraints); 
+		openMovie = new JMenuItem("Open a movie");
+		FileMenu.add(openMovie);
 		OpenMovieAction openMovieAction = new OpenMovieAction(this); 
 		openMovie.addActionListener(openMovieAction); 
 		
 
+		editMenu = new JMenu("Edit");
+		this.add(editMenu);
+		
 		setThreshold = new JSlider(JSlider.HORIZONTAL, MIN_SLIDER_THRESHOLD,
 				MAX_SLIDER_THRESHHOLD, DEFAULT_SLIDER_THRESHOLD);
 		setThreshold.setMajorTickSpacing(50);
@@ -470,11 +476,12 @@ public class ButtonToolbar extends JToolBar {
 		setThreshold.setPaintLabels(true);
 		setThreshold.setPaintTicks(true);
 		setThreshold.setToolTipText("Sets the Pixel Threshold");
-		constraints.ipadx = 75;
-		constraints.gridx = 2;
-		constraints.gridy = 0;
-		constraints.gridwidth = 1;
-		add(setThreshold, constraints);
+//		constraints.ipadx = 75;
+//		constraints.gridx = 2;
+//		constraints.gridy = 0;
+//		constraints.gridwidth = 1;
+//		add(setThreshold);//, constraints);
+		editMenu.add(setThreshold);
 		SetThresholdAction setThresholdAction = new SetThresholdAction();
 		setThreshold.addChangeListener(setThresholdAction);
 		analyzerPanel.sizeThresholdUpdate(DEFAULT_SLIDER_THRESHOLD);
@@ -500,24 +507,24 @@ public class ButtonToolbar extends JToolBar {
 		thresholdText = new JTextField("0");
 		thresholdText.setPreferredSize(new Dimension(100, 500));
 		thresholdText.setText("" + DEFAULT_SLIDER_THRESHOLD);
-		constraints.gridx = 3;
-		constraints.gridy = 0;
-		constraints.ipadx = 75;
-		constraints.ipady = 10;
-		constraints.gridwidth = 1;
+//		constraints.gridx = 3;
+//		constraints.gridy = 0;
+//		constraints.ipadx = 75;
+//		constraints.ipady = 10;
+//		constraints.gridwidth = 1;
 		SetThresholdEntered setThresholdEntered = new SetThresholdEntered();
 		thresholdText.getDocument().addDocumentListener(setThresholdEntered);
-		add(thresholdText, constraints);
+//		add(thresholdText);//, constraints);
 		
 		setImageContrast = new JSlider(JSlider.HORIZONTAL, 10, 30, 10);
 		setImageContrast.setToolTipText("Sets Image Contrast");
 		setImageContrast.setMajorTickSpacing(5);
 //		setImageContrast.setPaintLabels(true);
 //		setImageContrast.setPaintTicks(false);
-		constraints.gridx = 4;
-		constraints.gridy = 0;
-		constraints.gridwidth = 1;
-		add(setImageContrast, constraints);
+//		constraints.gridx = 4;
+//		constraints.gridy = 0;
+//		constraints.gridwidth = 1;
+//		add(setImageContrast);//, constraints);
 		SetImageContrastAction setImageContrastAction = new SetImageContrastAction();
 		setImageContrast.addChangeListener(setImageContrastAction);
 		
@@ -532,91 +539,100 @@ public class ButtonToolbar extends JToolBar {
 		setContrastThreshold.setPaintLabels(true);
 		setContrastThreshold.setPaintTicks(true);
 		setContrastThreshold.setToolTipText("Sets the contrast threshold");
-		constraints.gridx = 5;
-		constraints.gridy = 0;
-		//constraints.ipadx = 0;
-		constraints.ipady = 0;
-		constraints.gridwidth = 1;
-		add(setContrastThreshold, constraints);
+//		constraints.gridx = 5;
+//		constraints.gridy = 0;
+//		//constraints.ipadx = 0;
+//		constraints.ipady = 0;
+//		constraints.gridwidth = 1;
+//		add(setContrastThreshold);//, constraints);
 		SetContrastThresholdAction setContrastThresholdAction = new SetContrastThresholdAction();
 		setContrastThreshold.addChangeListener(setContrastThresholdAction);
 		
 		contrastThresholdText = new JTextField("200");
 		contrastThresholdText.setPreferredSize(new Dimension(100, 500));
-		constraints.gridx = 6;
-		constraints.gridy = 0;
-		constraints.ipadx = 75;
-		constraints.ipady = 10;
-		constraints.gridwidth = 1;
-		add(contrastThresholdText, constraints);
+//		constraints.gridx = 6;
+//		constraints.gridy = 0;
+//		constraints.ipadx = 75;
+//		constraints.ipady = 10;
+//		constraints.gridwidth = 1;
+//		add(contrastThresholdText);//, constraints);
 		SetContrastEntered setContrastEntered = new SetContrastEntered();
 		contrastThresholdText.getDocument().addDocumentListener(setContrastEntered);
 		
 		//drawFlydentifiers = new JButton("Draw fly locations");
 		drawFlydentifiers = new JButton(new ImageIcon("flydentify.png"));
 		drawFlydentifiers.setToolTipText("Draw fly locations");
-		constraints.fill = constraints.HORIZONTAL;
-		constraints.ipadx = 0;
-		constraints.ipady = 0;
-		constraints.gridx = 7;
-		constraints.gridy = 0;
-		constraints.gridwidth = 1;
-		add(drawFlydentifiers, constraints);
+//		constraints.fill = constraints.HORIZONTAL;
+//		constraints.ipadx = 0;
+//		constraints.ipady = 0;
+//		constraints.gridx = 7;
+//		constraints.gridy = 0;
+//		constraints.gridwidth = 1;
+//		add(drawFlydentifiers);//, constraints);
 		DrawFlydentifiersAction drawFlydentifiersAction = new DrawFlydentifiersAction();
 		drawFlydentifiers.addActionListener(drawFlydentifiersAction);
 
 		//drawTrajectories = new JButton("Draw fly trajectories");
 		drawTrajectories = new JButton(new ImageIcon("DrawFlyTrajectoriesToggle.png"));
 		drawTrajectories.setToolTipText("Draw fly trajectories");
-		constraints.ipadx = 0;
-		constraints.gridx = 8;
-		constraints.gridy = 0;
-		constraints.gridwidth = 1;
-		add(drawTrajectories, constraints);
+//		constraints.ipadx = 0;
+//		constraints.gridx = 8;
+//		constraints.gridy = 0;
+//		constraints.gridwidth = 1;
+//		add(drawTrajectories);//, constraints);
 		DrawTrajectoriesAction drawTrajectoriesAction = new DrawTrajectoriesAction();
 		drawTrajectories.addActionListener(drawTrajectoriesAction);
 
 		firstFrame = new JTextField("First frame");
 		firstFrame.setPreferredSize(new Dimension(100, 50));
-		constraints.fill = constraints.NONE;
-		constraints.gridx = 9;
-		constraints.gridwidth = 1;
-		constraints.ipadx = 100;
-		constraints.ipady = 10;
-		add(firstFrame, constraints);
+//		constraints.fill = constraints.NONE;
+//		constraints.gridx = 9;
+//		constraints.gridwidth = 1;
+//		constraints.ipadx = 100;
+//		constraints.ipady = 10;
+//		add(firstFrame);//, constraints);
 
 		lastFrame = new JTextField("Last frame");
 		lastFrame.setPreferredSize(new Dimension(100, 50));
-		constraints.gridx = 10;
-		constraints.weightx = 1;
-		add(lastFrame, constraints);
+//		constraints.gridx = 10;
+//		constraints.weightx = 1;
+//		add(lastFrame);//, constraints);
 
 		backFrame = new JButton("\u25C0");
-		constraints.fill = constraints.HORIZONTAL;
-		constraints.ipadx = 0;
-		constraints.ipady = 0;
-		constraints.gridx = 11;
-		constraints.gridy = 0;
-		constraints.gridwidth = 1;
-		add(backFrame, constraints);
+//		constraints.fill = constraints.HORIZONTAL;
+//		constraints.ipadx = 0;
+//		constraints.ipady = 0;
+//		constraints.gridx = 11;
+//		constraints.gridy = 0;
+//		constraints.gridwidth = 1;
+//		add(backFrame);//, constraints);
 		BackFrameAction backFrameAction = new BackFrameAction();
 		backFrame.addActionListener(backFrameAction);
 
 		forwardFrame = new JButton("\u25B6");
-		constraints.fill = constraints.HORIZONTAL;
-		constraints.gridx = 12;
-		add(forwardFrame, constraints);
+//		constraints.fill = constraints.HORIZONTAL;
+//		constraints.gridx = 12;
+//		add(forwardFrame);//, constraints);
 		ForwardFrameAction forwardFrameAction = new ForwardFrameAction();
 		forwardFrame.addActionListener(forwardFrameAction);
 
 		clearImages = new JButton("Clear all images");
-		constraints.gridx = 13;
-		constraints.gridwidth = 2;
-		constraints.gridy = 0;
-		constraints.fill = constraints.HORIZONTAL;
-		add(clearImages, constraints);
+//		constraints.gridx = 13;
+//		constraints.gridwidth = 1;
+//		constraints.fill = constraints.HORIZONTAL;
+//		add(clearImages);//, constraints);
 		ClearImageAction clearImageAction = new ClearImageAction();
 		clearImages.addActionListener(clearImageAction);
+		
+//		menuFile = new JMenu("File1");
+//		menuFile.add(new JMenuItem("Open"));
+//		menuFile.add(new JMenuItem("Save"));
+//		menuFile.add(new JMenuItem("Close"));
+//		JMenuBar tempMenuBar = new JMenuBar();
+//		tempMenuBar.add(menuFile);
+////		constraints.gridx = 14;
+//		add(tempMenuBar);//, constraints);
+		
 
 	}
 

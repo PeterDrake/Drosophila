@@ -42,7 +42,7 @@ public class AnalyzerPanel extends JPanel {
 		this.setLayout(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
 		ButtonToolbar btoolbar = new ButtonToolbar(this);
-		btoolbar.setFloatable(false);
+		//btoolbar.setFloatable(false);
 		constraints.gridx = 0;
 		constraints.gridy = 0;
 		constraints.weightx = 1;

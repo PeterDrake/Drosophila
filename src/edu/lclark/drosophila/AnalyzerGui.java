@@ -2,12 +2,14 @@ package edu.lclark.drosophila;
 
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.MenuBar;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
 
 import javax.swing.JFrame;
+import javax.swing.JMenuBar;
 
 public class AnalyzerGui extends JFrame {
 
@@ -18,7 +20,8 @@ public class AnalyzerGui extends JFrame {
 	 */
 	private Analyzer analyzer;
 
-
+	private JMenuBar ButtonMenuBar;
+	
 	/**
 	 * The AnalyzerPanel object which this AnalyzerGui communicates with.
 	 */
@@ -33,6 +36,7 @@ public class AnalyzerGui extends JFrame {
 	public AnalyzerGui(Analyzer a) {
 		this.analyzer = a;
 		this.analyzerPanel = new AnalyzerPanel(this);
+		this.ButtonMenuBar = new ButtonToolbar(analyzerPanel);
 	}
 
 	public double[] getAverageVelocity() {
@@ -99,6 +103,7 @@ public class AnalyzerGui extends JFrame {
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				frame.setVisible(true);
 				frame.add(analyzerPanel);
+				frame.setJMenuBar(ButtonMenuBar);
 				Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 			    frame.setBounds(0,0,screenSize.width, screenSize.height);
 				//frame.pack();
