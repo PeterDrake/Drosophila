@@ -186,6 +186,7 @@ public class Analyzer {
 	 *            which frame out of all frames the given image is.
 	 */
 	public void flydentify(BufferedImage image, int frameNumber) {
+		System.err.println("really flydentifying");
 		if (frameNumber == 0) {
 			flies = new LinkedList<Fly>();
 		}
@@ -619,6 +620,7 @@ public class Analyzer {
 	 */
 	public void openMovie(File file) {
 		clearImages();
+		mLastPtsWrite = Global.NO_PTS;
 		movieLoaded = true;
 		movieFile = file;
 		firstMovieFrame=null;
@@ -663,6 +665,7 @@ public class Analyzer {
 		while (mediaReader.readPacket() == null) {
 			// Wait
 		}
+		gui.repaint();
 	}
 
 	private class ImageSnapListener extends MediaListenerAdapter {
@@ -678,7 +681,7 @@ public class Analyzer {
 			// frame
 			if (loadingMovie) {
 				firstMovieFrame = event.getImage();
-				System.err.println("SETTING FIRST IMAGE TO " + firstMovieFrame);
+				flydentify(event.getImage(), 0);
 			} else {
 				if (mLastPtsWrite == Global.NO_PTS) {
 					mLastPtsWrite = event.getTimeStamp()

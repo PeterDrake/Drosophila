@@ -67,6 +67,12 @@ public class ImagePanel extends JPanel {
 	private double oldImageContrast;
 
 	private BufferedImage oldImage;
+	
+	
+	/**
+	 * Image saved without changing contrast so we can compare it to a new image we load
+	 */
+	private BufferedImage savedImage;
 
 	/**
 	 * The constructor which sets the AnalyzerPanel this ImagePanel is connected
@@ -125,6 +131,7 @@ public class ImagePanel extends JPanel {
 			g.drawImage(image, 0, 0, (int) (imgWidth * scale),
 					(int) (imgHeight * scale), null);
 		} else {
+			
 
 			if (!analyzerPanel.getMovieLoaded()) {
 				int totalImages = analyzerPanel.getTotalFrames();
@@ -152,9 +159,9 @@ public class ImagePanel extends JPanel {
 					}
 				}
 			} else {
+				
 				BufferedImage tempImage = analyzerPanel.getFirstFrameFromMovie();
 				image = new BufferedImage(tempImage.getColorModel(), tempImage.copyData(null), tempImage.getColorModel().isAlphaPremultiplied(), null);
-				oldImage = image;
 				imageIndex=0;
 			}
 			int imgWidth = image.getWidth(null);
@@ -165,7 +172,7 @@ public class ImagePanel extends JPanel {
 			double scale = Math.min(xScale, yScale);
 
 			double imageContrast = analyzerPanel.getImageContrast();
-			if (imageContrast != oldImageContrast) {
+//			if (imageContrast != oldImageContrast) {
 				for (int i = 0; i < image.getWidth(null); i++) {
 					for (int j = 0; j < image.getHeight(null); j++) {
 						int rgb = image.getRGB(i, j);
@@ -193,13 +200,15 @@ public class ImagePanel extends JPanel {
 				}
 				oldImage = image;
 				oldImageContrast = imageContrast;
-			}
+//			}
 
 			g.drawImage(oldImage, 0, 0, (int) (imgWidth * scale),
 					(int) (imgHeight * scale), null);
 			// g.drawImage(image, 0, 0, null);
 			if (flydentifiers) {
+				System.err.println("DRWAING FLIES");
 				List<Fly> flies = analyzerPanel.getFlyList();
+				System.err.println(flies.size());
 				int sizeFlies = flies.size();
 				for (int i = 0; i < sizeFlies; i++) {
 					if (flies.get(i).getX(imageIndex) != -1) {

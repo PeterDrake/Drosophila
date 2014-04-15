@@ -58,6 +58,16 @@ public class ButtonPanel extends JPanel {
 			analyzerPanel.setFlydentifiers();
 		}
 	}
+	
+	private class AnalyzeMovieAction implements ActionListener {
+
+		/**
+		 * Tells the AnalyzerPanel to toggle the flydentifiers.
+		 */
+		public void actionPerformed(ActionEvent e) {
+			analyzerPanel.analyzeMovie();
+		}
+	}
 
 	/**
 	 * The action listener that keeps track of when the DrawTrajectories button
@@ -396,6 +406,12 @@ public class ButtonPanel extends JPanel {
 
 	/** Last frame to draw trajectories for */
 	private JTextField lastFrame;
+	
+	/**
+	 * Button for analyzing the movie already opened
+	 */
+	private JButton analyzeMovie;
+	
 
 	/**
 	 * The default preferred width of this panel.
@@ -448,7 +464,7 @@ public class ButtonPanel extends JPanel {
 		constraints.fill = constraints.HORIZONTAL;
 		constraints.gridx = 0;
 		constraints.gridy = 0;
-		constraints.gridwidth = 2;
+		constraints.gridwidth = 1;
 		constraints.weightx = 1;
 		add(getImage, constraints);
 		GetImageAction getImageAction = new GetImageAction(this);
@@ -456,10 +472,21 @@ public class ButtonPanel extends JPanel {
 		
 		fileChooser = new JFileChooser(); // unsure if we need a new variable to open a movie vs. opening an image
 		openMovie = new JButton("Open a movie"); 
-		constraints.gridx = 2; 
+		constraints.gridx = 1; 
 		add(openMovie, constraints); 
 		OpenMovieAction openMovieAction = new OpenMovieAction(this); 
 		openMovie.addActionListener(openMovieAction); 
+		
+		analyzeMovie = new JButton("Analyze the movie");
+		constraints.fill = constraints.HORIZONTAL;
+		constraints.ipadx = 0;
+		constraints.ipady = 0;
+		constraints.gridx = 2;
+		constraints.gridy = 0;
+		constraints.gridwidth = 1;
+		add(analyzeMovie, constraints);
+		AnalyzeMovieAction analyzeMovieAction = new AnalyzeMovieAction();
+		analyzeMovie.addActionListener(analyzeMovieAction);
 		
 
 		setThreshold = new JSlider(JSlider.HORIZONTAL, MIN_SLIDER_THRESHOLD,

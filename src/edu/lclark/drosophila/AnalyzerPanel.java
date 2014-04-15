@@ -260,4 +260,9 @@ public class AnalyzerPanel extends JPanel {
 		// TODO Auto-generated method stub
 		return gui.getMovieLoaded();
 	}
+
+	public void analyzeMovie() {
+		gui.analyzeMovie();
+		
+	}
 }
