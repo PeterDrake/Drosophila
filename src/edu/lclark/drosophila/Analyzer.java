@@ -75,17 +75,17 @@ public class Analyzer {
 	/**
 	 * The number of seconds between frames in a movie file
 	 */
-	public static final double SECONDS_BETWEEN_FRAMES = 1.0 / 10.0;
+	private double SECONDS_BETWEEN_FRAMES;
 
 	/**
 	 * The number of frames per second in a movie file.
 	 */
-	private int framesPerSecond = 10;
+	private int framesPerSecond;
 
 	/**
 	 * The number of microseconds between frames in a movie file
 	 */
-	public static final long MICRO_SECONDS_BETWEEN_FRAMES = (long) (Global.DEFAULT_PTS_PER_SECOND * SECONDS_BETWEEN_FRAMES);
+	private long MICRO_SECONDS_BETWEEN_FRAMES;
 
 	// Time of last frame write
 	// PTS means ... picture time stamp?
@@ -100,6 +100,8 @@ public class Analyzer {
 	 * A value for editing the contrast of the actual image
 	 */
 	private double imageContrast = 1.0;
+
+	private double duration;
 
 	public Analyzer() {
 		movieLoaded = false;
@@ -604,7 +606,7 @@ public class Analyzer {
 			throw new IllegalArgumentException("Could not open file:"
 					+ filename);
 		}
-		long duration = container.getDuration();
+		duration = container.getDuration();
 		framesPerSecond = (int) container.getStream(0).getFrameRate()
 				.getDouble();
 		container.close();
@@ -629,10 +631,12 @@ public class Analyzer {
 		mediaReader
 				.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
 		totalFrames = getFramesInMovie(file.getAbsolutePath());
+		SECONDS_BETWEEN_FRAMES = duration/totalFrames;
+		MICRO_SECONDS_BETWEEN_FRAMES = (long) (Global.DEFAULT_PTS_PER_SECOND * SECONDS_BETWEEN_FRAMES);
 		mediaReader.addListener(new ImageSnapListener(true));
 		// read out the contents of the media file and
 		// dispatch events to the attached listener
-
+		
 		loadingMovie = true;
 		while (mediaReader.readPacket() == null) {
 			if (firstMovieFrame != null) {
@@ -655,6 +659,8 @@ public class Analyzer {
 		mediaReader
 				.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
 		totalFrames = getFramesInMovie(movieFile.getAbsolutePath());
+		SECONDS_BETWEEN_FRAMES = duration/totalFrames;
+		MICRO_SECONDS_BETWEEN_FRAMES = (long) (Global.DEFAULT_PTS_PER_SECOND * SECONDS_BETWEEN_FRAMES);
 		mediaReader.addListener(new ImageSnapListener(false));
 		// read out the contents of the media file and
 		// dispatch events to the attached listener

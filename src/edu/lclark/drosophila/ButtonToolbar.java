@@ -13,6 +13,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Caret;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -466,6 +467,8 @@ public class ButtonToolbar extends JMenuBar {
 	 * The AnalyzerPanel object that this ImagePanel communicates with.
 	 */
 	private AnalyzerPanel analyzerPanel;
+
+	private JLabel totalFrames;
 	/**
 	 * The constructor which initializes all fields and adds the buttons to this
 	 * panel.
@@ -612,6 +615,12 @@ public class ButtonToolbar extends JMenuBar {
 		ClearImageAction clearImageAction = new ClearImageAction();
 		clearImages.addActionListener(clearImageAction);
 		
+		totalFrames = new JLabel("0");
+		totalFrames.setPreferredSize(new Dimension(75, 25));
+		totalFrames.setMaximumSize(new Dimension(75, 25));
+		totalFrames.setToolTipText("Total frames in the movie");
+		this.add(totalFrames);
+		
 		fileMenu.addSeparator();
 		fileMenu.add(clearImages);
 
@@ -644,6 +653,7 @@ public class ButtonToolbar extends JMenuBar {
 	 */
 	public void paintComponent(Graphics g) {
 		analyzeMovie.setEnabled(analyzerPanel.getMovieLoaded());
+		totalFrames.setText(""+analyzerPanel.getTotalFrames());
 	}
 
 	/**
