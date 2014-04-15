@@ -6,9 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class DataPanel extends JPanel {
-	private AnalyzerPanel analyzerpanel;
-	private List<Fly> flyList;
-	private JTextArea text;
+	protected AnalyzerPanel analyzerpanel;
+	protected List<Fly> flyList;
+	protected JTextArea text;
 	/**
 	 * creates this panel which at the moment displays all the data for the analytical stories we want to show
 	 * @param analyzerpanel

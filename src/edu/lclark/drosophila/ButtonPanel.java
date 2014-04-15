@@ -134,6 +134,7 @@ public class ButtonPanel extends JPanel {
 		
 		public void actionPerformed(ActionEvent e) {
 			bpanel.analyzerPanel.passUpArenaParameters(Integer.parseInt(arenaID.getText()), imageIndex);
+			bpanel.analyzerPanel.repaint();
 		}
 	}
 	

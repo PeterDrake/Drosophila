@@ -27,7 +27,7 @@ public class AnalyzerPanel extends JPanel {
 	/**
 	 * The Data Panel object which this AnalyzerPanel communicates with.
 	 */
-	private DataPanel dpanel;
+	private DataTabbs dpanel;
 
 	/**
 	 * The constructor for AnalyzerPanel, which adds the button panel and image
@@ -60,7 +60,7 @@ public class AnalyzerPanel extends JPanel {
 		constraints.gridheight = 3;
 		constraints.gridheight = 2;
 		add(ipanel, constraints);
-		dpanel = new DataPanel(this);
+		dpanel = new DataTabbs(this);
 		constraints.anchor = constraints.NORTH;
 		constraints.gridx = 0;
 		constraints.gridy = 0;

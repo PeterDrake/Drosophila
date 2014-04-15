@@ -1,6 +1,7 @@
 package edu.lclark.drosophila;
 
 import java.awt.*;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -8,7 +9,7 @@ public class RegionMaker {
 	public final static int MAXSQUARES = 50;
 	Analyzer analyzer;
 	List<Point> pastfirstpoints;
-	
+	List<PointArena> ArenaAssignment;
 	
 	public List<Point> getPastfirstpoints() {
 		return pastfirstpoints;
@@ -25,6 +26,7 @@ public class RegionMaker {
 
 	public RegionMaker(Analyzer a) {
 		analyzer = a;
+		ArenaAssignment = new LinkedList<PointArena>();
 		pastfirstpoints = new LinkedList<Point>();
 		pastsecondpoints = new LinkedList<Point>();
 	}
@@ -50,6 +52,8 @@ public class RegionMaker {
 		}
 		pastfirstpoints.add(topleft);
 		pastsecondpoints.add(bottomright);
+		PointArena pointarenapair = new PointArena(topleft,bottomright,arena);
+		ArenaAssignment.add(pointarenapair);
 		analyzer.passDownPoints();
 	}
 
@@ -92,4 +96,26 @@ public class RegionMaker {
 		}
 		return new Point(fx, fy);
 	}
+	private List<PointArena> getArenaAssignment(){
+		return ArenaAssignment;
+	}
+	public class PointArena{
+		private Point topleft;
+		private Point bottomright;
+		public Point getTopleft() {
+			return topleft;
+		}
+		public Point getBottomright() {
+			return bottomright;
+		}
+		public int getArena() {
+			return Arena;
+		}
+		private  int Arena;
+		public PointArena( Point tl,Point br, int arena){
+			topleft=tl;
+			bottomright=br;
+			Arena=arena;
+		}
+		}
 }

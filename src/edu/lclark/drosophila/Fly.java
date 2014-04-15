@@ -1,5 +1,8 @@
 package edu.lclark.drosophila;
 
+import java.awt.Point;
+import java.util.Hashtable;
+import java.util.List;
 public class Fly {
 
 	/** Id number to be able to tell flies apart */
@@ -34,6 +37,10 @@ public class Fly {
 	 * A integer to check which region of interest this fly exists in.
 	 */
 	private int Arena;
+	public int getArena() {
+		return Arena;
+	}
+
 	/**
 	 * A constructor for the Fly class, if an image or images are loaded. All
 	 * arrays are initialized to size 20
@@ -228,6 +235,19 @@ public class Fly {
 	}
 	protected void setArena(int Arena){
 		this.Arena=Arena;
+	}
+	protected void setArena(List<RegionMaker.PointArena> arenamap,int frame){
+		Fly f = this;
+		for(RegionMaker.PointArena  i : arenamap){
+			if (f.getX(frame) >= i.getTopleft().x && f.getX(frame) <= i.getBottomright().x
+					&& f.getY(frame) >= i.getTopleft().y
+					&& f.getY(frame) <= i.getBottomright().y) {
+				f.setArena(i.getArena());
+				System.out.println("set fly " + f + " at " + f.getX(frame)
+						+ " and " + f.getY(frame) + " to Arena " + i.getArena());
+			}
+			
+		}
 	}
 	public String toString(){
 		String str= ""+getId();
