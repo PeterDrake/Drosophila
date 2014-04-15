@@ -177,9 +177,10 @@ public class ImagePanel extends JPanel {
 			double scale = Math.min(xScale, yScale);
 
 			double imageContrast = analyzerPanel.getImageContrast();
-			//if (analyzerPanel.getMovieLoaded() || imageContrast != oldImageContrast) {
-				for (int i = 0; i < image.getWidth(null); i++) {
-					for (int j = 0; j < image.getHeight(null); j++) {
+
+			//if(imageContrast != oldImageContrast) {
+				for(int i = 0; i < image.getWidth(null); i++){
+					for(int j = 0; j < image.getHeight(null); j++){
 						int rgb = image.getRGB(i, j);
 						int red = (rgb >> 16) & 0xFF;
 						int green = (rgb >> 8) & 0xFF;
@@ -207,9 +208,9 @@ public class ImagePanel extends JPanel {
 				oldImageContrast = imageContrast;
 			//}
 
-			g.drawImage(oldImage, 0, 0, (int) (imgWidth * scale),
-					(int) (imgHeight * scale), null);
-			// g.drawImage(image, 0, 0, null);
+			g.drawImage(oldImage, 0, 0, (int) (imgWidth * scale), (int)(imgHeight * scale), null);
+			//g.drawImage(image, 0, 0, null);
+
 			if (flydentifiers) {
 				List<Fly> flies = analyzerPanel.getFlyList();
 				int sizeFlies = flies.size();

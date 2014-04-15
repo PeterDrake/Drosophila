@@ -182,6 +182,7 @@ public class ButtonPanel extends JPanel {
 				
 				analyzerPanel.sizeThresholdUpdate((int) Source.getValue());
 				thresholdText.setText("" + (int) Source.getValue());
+				analyzerPanel.repaint();
 					}
 				});
 				
@@ -276,7 +277,7 @@ public class ButtonPanel extends JPanel {
 					public void run(){
 						analyzerPanel.contrastThresholdUpdate((int) Source.getValue());
 						contrastThresholdText.setText("" + (int) Source.getValue());
-						
+						analyzerPanel.repaint();
 					}
 				});
 			}
@@ -421,7 +422,7 @@ public class ButtonPanel extends JPanel {
 	/**
 	 * The default preferred height of this panel.
 	 */
-	private static final int DEFAULT_HEIGHT = 400;
+	private static final int DEFAULT_HEIGHT = 600;
 	/**
 	 * the default pixel threshold for the slider;
 	 */
@@ -559,6 +560,7 @@ public class ButtonPanel extends JPanel {
 		setContrastThreshold.setMinorTickSpacing(10);
 		setContrastThreshold.setPaintLabels(true);
 		setContrastThreshold.setPaintTicks(true);
+		setContrastThreshold.setToolTipText("Sets the contrast threshold");
 		constraints.gridx = 1;
 		constraints.gridy = 2;
 		constraints.ipadx = 0;
