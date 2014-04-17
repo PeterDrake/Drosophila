@@ -65,7 +65,16 @@ public class ButtonToolbar extends JMenuBar {
 		 * Tells the AnalyzerPanel to toggle the flydentifiers.
 		 */
 		public void actionPerformed(ActionEvent e) {
-			analyzerPanel.analyzeMovie(Integer.parseInt(sampleRate.getText()));
+			analyzerPanel.displayLoadingPopup("Movie is loading");
+			new Thread(
+				new Runnable() {
+					public void run() {
+						analyzerPanel.analyzeMovie(Integer.parseInt(sampleRate.getText()));		
+						analyzerPanel.disposeLoadingDialog();
+					}
+				}
+			).start();
+			
 		}
 	}
 
