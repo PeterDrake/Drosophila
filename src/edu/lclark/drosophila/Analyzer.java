@@ -19,6 +19,9 @@ import com.xuggle.mediatool.ToolFactory;
 import com.xuggle.mediatool.event.IVideoPictureEvent;
 import com.xuggle.xuggler.Global;
 
+import com.xuggle.xuggler.IContainer;
+
+
 public class Analyzer {
 
 	private int sizeThreshold;
@@ -36,6 +39,12 @@ public class Analyzer {
 	 * The List of Fly objects in which fly data is stored.
 	 */
 	private List<Fly> flies;
+
+	/**
+	 * Boolean for if the image snap listener should just find the first frame
+	 * of the movie for option setting purposes
+	 */
+	private boolean loadingMovie;
 
 	/**
 	 * The total number of frames in the movie being analyzed. Or, the number of
@@ -56,12 +65,31 @@ public class Analyzer {
 	 */
 	private File[] images;
 
+
+	/**
+	 * The name of the movie file that we have loaded
+	 */
+	private File movieFile;
+
+	/**
+	 * The first frame in the movie, for displaying
+	 */
+	private BufferedImage firstMovieFrame;
+
 	/**
 	 * The number of seconds between frames in a movie file
 	 */
-	public static final double SECONDS_BETWEEN_FRAMES = 1 / 10.0;
+	public static final double SECONDS_BETWEEN_FRAMES = 1.0 / 10.0;
 
 	/**
+<<<<<<< HEAD
+=======
+	 * The number of frames per second in a movie file.
+	 */
+	private int framesPerSecond = 10;
+
+	/**
+>>>>>>> master
 	 * The number of microseconds between frames in a movie file
 	 */
 	public static final long MICRO_SECONDS_BETWEEN_FRAMES = (long) (Global.DEFAULT_PTS_PER_SECOND * SECONDS_BETWEEN_FRAMES);
@@ -80,7 +108,11 @@ public class Analyzer {
 	 */
 	private double imageContrast = 1.0;
 
+
 	private RegionMaker regionmaker;
+
+	private int sampleRate;
+
 
 	public Analyzer() {
 		movieLoaded = false;
@@ -142,6 +174,7 @@ public class Analyzer {
 		totalFrames = 0;
 		flies.clear();
 		images = new File[20];
+		loadingMovie = false;
 	}
 
 	/**
@@ -151,7 +184,7 @@ public class Analyzer {
 	 * to flies on other frames.
 	 * 
 	 * @param array
-	 *            The boolean array being searched for any false values.
+	 *            The boolean array being searched for any false values. 
 	 * @return True if there are any false values in the array.
 	 */
 	public boolean containsFalse(boolean[] array) {
@@ -574,17 +607,36 @@ public class Analyzer {
 	 * This runs flydentify on all stored images.
 	 */
 	public void updateImages() {
-		try {
-			for (int i = 0; i < totalFrames; i++) {
-				// TODO this should probably create a new flies List, since it
-				// is re running flydentify on all images.
-				BufferedImage image = ImageIO.read(images[i]);
-				flydentify(image, i);
+		if (movieLoaded) {
+			flydentify(firstMovieFrame, 0);
+		} else {
+			try {
+				for (int i = 0; i < totalFrames; i++) {
+					// TODO this should probably create a new flies List, since
+					// it
+					// is re running flydentify on all images.
+					BufferedImage image = ImageIO.read(images[i]);
+					flydentify(image, i);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.exit(1);
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1);
 		}
+	}
+
+
+	public int getFramesInMovie(String filename) {
+		IContainer container = IContainer.make();
+		if (container.open(filename, IContainer.Type.READ, null) < 0) {
+			throw new IllegalArgumentException("Could not open file:"
+					+ filename);
+		}
+		long duration = container.getDuration();
+		framesPerSecond = (int) container.getStream(0).getFrameRate()
+				.getDouble();
+		container.close();
+		return (int) (duration / 1000000.0 * framesPerSecond);
 	}
 
 	/**
@@ -592,43 +644,104 @@ public class Analyzer {
 	 * 
 	 * @param file
 	 */
+
 	public void playMovie(File file) {
+		IMediaReader mediaReader = ToolFactory.makeReader(file
+				.getAbsolutePath());
+	}
+
+	public void openMovie(File file) {
+		clearImages();
+		mLastPtsWrite = Global.NO_PTS;
+		movieLoaded = true;
+		movieFile = file;
+		firstMovieFrame=null;
 		IMediaReader mediaReader = ToolFactory.makeReader(file
 				.getAbsolutePath());
 		// stipulate that we want BufferedImages created in BGR 24bit color
 		// space
 		mediaReader
 				.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
-		mediaReader.addListener(new ImageSnapListener());
+		totalFrames = getFramesInMovie(file.getAbsolutePath());
+		mediaReader.addListener(new ImageSnapListener(true));
+		// read out the contents of the media file and
+		// dispatch events to the attached listener
+
+		loadingMovie = true;
+		while (mediaReader.readPacket() == null) {
+			if (firstMovieFrame != null) {
+				mediaReader.close();
+				break;
+			}
+		}
+		
+		gui.repaint();
+		// gui.showMovie(frames, 100
+		// MICRO_SECONDS_BETWEEN_FRAMES / 1000
+		// );
+	}
+
+	public void analyzeMovie(int sampleRate) {
+		this.sampleRate = sampleRate;
+		IMediaReader mediaReader = ToolFactory.makeReader(movieFile
+				.getAbsolutePath());
+
+		// stipulate that we want BufferedImages created in BGR 24bit color
+		// space
+		mediaReader
+				.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
+		totalFrames = getFramesInMovie(movieFile.getAbsolutePath()) / sampleRate;
+		mediaReader.addListener(new ImageSnapListener(false));
 		// read out the contents of the media file and
 		// dispatch events to the attached listener
 		while (mediaReader.readPacket() == null) {
 			// Wait
 		}
+
 		gui.showMovie(frames, 100
 		// MICRO_SECONDS_BETWEEN_FRAMES / 1000
 		);
+
+		gui.repaint();
+
 	}
 
 	private class ImageSnapListener extends MediaListenerAdapter {
 
+		private int increment;
+
+		public ImageSnapListener(boolean b) {
+			loadingMovie = b;
+		}
+
 		public void onVideoPicture(IVideoPictureEvent event) {
 			// if uninitialized, back date mLastPtsWrite to get the very first
 			// frame
-			if (mLastPtsWrite == Global.NO_PTS) {
-				mLastPtsWrite = event.getTimeStamp()
-						- MICRO_SECONDS_BETWEEN_FRAMES;
-			}
-			// if it's time to write the next frame
-			if (event.getTimeStamp() - mLastPtsWrite >= MICRO_SECONDS_BETWEEN_FRAMES) {
-				double seconds = ((double) event.getTimeStamp())
-						/ Global.DEFAULT_PTS_PER_SECOND;
-				frames.add(event.getImage());
-				System.out.printf(
-						"at elapsed time of %6.3f seconds wrote: %s\n",
-						seconds, "<imaginary file>");
-				// update last write time
-				mLastPtsWrite += MICRO_SECONDS_BETWEEN_FRAMES;
+			if (loadingMovie) {
+				firstMovieFrame = event.getImage();
+				flydentify(event.getImage(), 0);
+			} else {
+				if (mLastPtsWrite == Global.NO_PTS) {
+					mLastPtsWrite = event.getTimeStamp()
+							- MICRO_SECONDS_BETWEEN_FRAMES;
+				}
+				// if it's time to write the next frame
+				if (event.getTimeStamp() - mLastPtsWrite >= MICRO_SECONDS_BETWEEN_FRAMES) {
+					double seconds = ((double) event.getTimeStamp())
+							/ Global.DEFAULT_PTS_PER_SECOND;
+					// frames.add(event.getImage());
+
+					if(increment % sampleRate == 0)
+					{
+						flydentify(event.getImage(), increment / sampleRate);
+						System.out.printf(
+								"at elapsed time of %6.3f seconds wrote: %s\n",
+								seconds, "<imaginary file>");
+						// update last write time
+						mLastPtsWrite += MICRO_SECONDS_BETWEEN_FRAMES * sampleRate;
+					}
+					increment++;
+				}
 			}
 		}
 	}
@@ -646,6 +759,7 @@ public class Analyzer {
 		return images[imageIndex];
 	}
 
+
 	public void setFliestoArena(Point point1, Point point2, int Arena, int frame) {
 		regionmaker.setFliesToRegions(point1, point2, Arena, frame);
 	}
@@ -656,4 +770,14 @@ public class Analyzer {
 		}
 		regionmaker.clearData();
 	}
+
+	public BufferedImage getFirstFrameFromMovie() {
+		return firstMovieFrame;
+	}
+
+	public boolean getMovieLoaded() {
+		return movieLoaded;
+	}
+
+
 }

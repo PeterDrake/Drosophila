@@ -40,25 +40,17 @@ public class AnalyzerPanel extends JPanel {
 	AnalyzerPanel(AnalyzerGui gui) {
 		this.gui = gui;
 		this.setLayout(new GridBagLayout());
-		GridBagConstraints constraints = new GridBagConstraints();
-		ButtonPanel bpanel = new ButtonPanel(this);
-		constraints.gridx = 0;
-		constraints.gridy = 1;
-		constraints.weightx = 1;
-		constraints.insets = new Insets(150, 0, 0, 50);
-		constraints.weighty = 1;
-		constraints.insets = new Insets(150, 0, 0, 50);
-		constraints.anchor = constraints.NORTH;
-		add(bpanel, constraints);
-		constraints.insets = new Insets(0, 0, 0, 50);
+		GridBagConstraints constraints = new GridBagConstraints();		
+		
 		ipanel = new ImagePanel(this);
+		constraints.insets = new Insets(0, 0, 0, 0);
 		constraints.anchor = constraints.EAST;
 		constraints.gridx = 1;
 		constraints.gridy = 0;
 		constraints.weightx = 1;
 		constraints.weighty = 1;
 		constraints.gridheight = 3;
-		constraints.gridheight = 2;
+		constraints.gridwidth = 1;
 		add(ipanel, constraints);
 		dpanel = new DataTabbs(this);
 		constraints.anchor = constraints.NORTH;
@@ -68,13 +60,13 @@ public class AnalyzerPanel extends JPanel {
 		constraints.weighty=1;
 		constraints.insets = new Insets(0, 0, 0, 0);
 		constraints.weightx = 1;
-		add(dpanel, constraints);
-		constraints.gridheight = 2;
+		//add(dpanel, constraints);
+		constraints.gridheight = 1;
 		add(dpanel, constraints);
 		
 		graphPanel = new GraphPanel(this, false, .10, "TITLE", "vertical label now this is longer ", "Xkljhfdsalkjfhasdkljfh" );
 		constraints.gridx = 0;
-		constraints.gridy = 2;
+		constraints.gridy = 1;
 		constraints.gridheight = 1;
 		//constraints.insets = new Insets(0, 50, 50, 0);
 		add(graphPanel, constraints);
@@ -129,6 +121,12 @@ public class AnalyzerPanel extends JPanel {
 	 */
 	public void incrementIndex() {
 		ipanel.incrementIndex();
+	}
+	
+	public void displayMessagePopup(String s) {
+		JOptionPane.showMessageDialog(null, s, "Error", 
+				JOptionPane.INFORMATION_MESSAGE, 
+				new ImageIcon(getClass().getResource("images/DrawFlyTrajectoriesToggle.png")));
 	}
 
 	/**
@@ -258,6 +256,26 @@ public class AnalyzerPanel extends JPanel {
 
 	public void clearFlyGroups() {
 		gui.clearFlyGroups();
+		
+	}
+
+	public BufferedImage getFirstFrameFromMovie() {
+		// TODO Auto-generated method stub
+		return gui.getFirstFrameFromMovie();
+	}
+
+	public void setMovieLoading(boolean b) {
+		ipanel.setMovieLoading(b);
+		
+	}
+
+	public boolean getMovieLoaded() {
+		// TODO Auto-generated method stub
+		return gui.getMovieLoaded();
+	}
+
+	public void analyzeMovie(int sampleRate) {
+		gui.analyzeMovie(sampleRate);
 		
 	}
 }

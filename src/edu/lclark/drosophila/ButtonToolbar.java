@@ -21,7 +21,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.TextEvent;
 import java.awt.event.TextListener;
 
-public class ButtonPanel extends JPanel {
+public class ButtonToolbar extends JMenuBar {
 
 	/**
 	 * The action listener which decrements the ImagePanel's displayed image
@@ -63,15 +63,26 @@ public class ButtonPanel extends JPanel {
 		}
 	}
 	
-	
+
 	private class ClearFlyRegionsAction implements ActionListener {
 
 		/**
 		 * Tells the AnalyzerPanel clear fly regions
 		 */
 		public void actionPerformed(ActionEvent e) {
+			System.out.println("this gets fired");
 			analyzerPanel.clearFlyGroups();
 			analyzerPanel.repaint();
+		}
+	}
+
+	private class AnalyzeMovieAction implements ActionListener {
+
+		/**
+		 * Tells the AnalyzerPanel to toggle the flydentifiers.
+		 */
+		public void actionPerformed(ActionEvent e) {
+			analyzerPanel.analyzeMovie(Integer.parseInt(sampleRate.getText()));
 		}
 	}
 
@@ -86,10 +97,24 @@ public class ButtonPanel extends JPanel {
 			try {
 				int startFrame = Integer.parseInt(firstFrame.getText());
 				int endFrame = Integer.parseInt(lastFrame.getText());
-				analyzerPanel.setDrawTrajectories(startFrame, endFrame);
+				if(startFrame > endFrame) {
+					analyzerPanel.displayMessagePopup(
+							"Start frame must be smaller than end frame.");
+					drawTrajectories.setSelected(false);
+				} else if(startFrame <= 0 || endFrame <= 0){
+					analyzerPanel.displayMessagePopup(
+							"Frame numbers must be larger than 0.");
+					drawTrajectories.setSelected(false);
+				} else {
+					analyzerPanel.setDrawTrajectories(startFrame, endFrame);
+					drawTrajectories.setSelected(true);
+				}
 			} catch (NumberFormatException error) {
-				error.printStackTrace();
-				System.exit(1);
+				analyzerPanel.displayMessagePopup(
+						"Only enter whole numbers into the start and end frame boxes.");
+				drawTrajectories.setSelected(false);
+//				error.printStackTrace();
+//				System.exit(1);
 			}
 		}
 
@@ -113,9 +138,9 @@ public class ButtonPanel extends JPanel {
 	 */
 	private class GetImageAction implements ActionListener {
 
-		private ButtonPanel bpanel;
+		private ButtonToolbar bpanel;
 
-		public GetImageAction(ButtonPanel bpanel) {
+		public GetImageAction(ButtonToolbar bpanel) {
 			this.bpanel = bpanel;
 		}
 		
@@ -140,9 +165,9 @@ public class ButtonPanel extends JPanel {
 	 */
 	private class SetRegionsAction implements ActionListener {
 
-		private ButtonPanel bpanel;
+		private ButtonToolbar bpanel;
 		
-		public SetRegionsAction(ButtonPanel bpanel){
+		public SetRegionsAction(ButtonToolbar bpanel){
 			this.bpanel = bpanel;
 		}
 		
@@ -159,9 +184,9 @@ public class ButtonPanel extends JPanel {
 	 */
 	private class OpenMovieAction implements ActionListener {
 
-		private ButtonPanel bpanel; 
+		private ButtonToolbar bpanel; 
 		
-		public OpenMovieAction(ButtonPanel bpanel) { 
+		public OpenMovieAction(ButtonToolbar bpanel) { 
 			this.bpanel = bpanel; 
 		}
 		
@@ -204,6 +229,7 @@ public class ButtonPanel extends JPanel {
 				
 				analyzerPanel.sizeThresholdUpdate((int) Source.getValue());
 				thresholdText.setText("" + (int) Source.getValue());
+				analyzerPanel.repaint();
 					}
 				});
 				
@@ -298,7 +324,7 @@ public class ButtonPanel extends JPanel {
 					public void run(){
 						analyzerPanel.contrastThresholdUpdate((int) Source.getValue());
 						contrastThresholdText.setText("" + (int) Source.getValue());
-						
+						analyzerPanel.repaint();
 					}
 				});
 			}
@@ -352,6 +378,8 @@ public class ButtonPanel extends JPanel {
 		}
 	}
 
+	private JMenu menuFile;
+	
 		/**
 	 * The file browser which allows the user to choose a file which contains an
 	 * image.
@@ -361,7 +389,7 @@ public class ButtonPanel extends JPanel {
 	/**
 	 * The button which lets the user specify an image to display and analyze.
 	 */
-	private JButton getImage;
+	private JMenuItem getImage;
 
 	/**
 	 * The button which lets the user specify what the Analyzer's size threshold
@@ -390,12 +418,12 @@ public class ButtonPanel extends JPanel {
 	/**
 	 * The button which detaches all added files from the analyzer.
 	 */
-	private JButton clearImages;
+	private JMenuItem clearImages;
 	
 	/**
 	 * This button opens and plays a movie.
 	 */
-	private JButton openMovie; 
+	private JMenuItem openMovie; 
 	/**
 	 * A slider for editing the contrast of the actual image
 	 */
@@ -418,19 +446,18 @@ public class ButtonPanel extends JPanel {
 	/**
 	 * The button which lets the user toggle flydentifiers.
 	 */
-	private JButton drawFlydentifiers;
-
-	/** Button that lets user toggle drawing trajectories */
-	private JButton drawTrajectories;
+	private JCheckBoxMenuItem drawFlydentifiers;
 	
 	/** Button that lets user set areas of interest */
-	private JButton setRegions;
+	private JMenuItem setRegions;
 	
 	/** Button that lets user clear all existing fly arenas*/
-	private JButton clearFlyRegions;
+	private JMenuItem clearFlyRegions;
 	
 	/** Arena identification number */
 	private JTextField arenaID;
+
+	private JCheckBoxMenuItem drawTrajectories;
 
 	/** First frame to draw trajectories for */
 	private JTextField firstFrame;
@@ -442,16 +469,23 @@ public class ButtonPanel extends JPanel {
 	 * Current image index
 	 */
 	private int imageIndex;
+	
+	/**
+	 * Button for analyzing the movie already opened
+	 */
+	private JMenuItem analyzeMovie;
+	
+
 
 	/**
 	 * The default preferred width of this panel.
 	 */
-	private static final int DEFAULT_WIDTH = 400;
+	private static final int DEFAULT_WIDTH = 1000;
 
 	/**
 	 * The default preferred height of this panel.
 	 */
-	private static final int DEFAULT_HEIGHT = 400;
+	private static final int DEFAULT_HEIGHT = 20;
 	/**
 	 * the default pixel threshold for the slider;
 	 */
@@ -472,42 +506,63 @@ public class ButtonPanel extends JPanel {
 	private JLabel SliderLabel;
 	
 	private JLabel ContrastLabel;
+	
+	private JMenu fileMenu;
+	
+	private JMenu editMenu;
+	
+	private JMenu drawMenu;
+	
+	private JMenu GroupsMenu;
+	
 	/**
 	 * The AnalyzerPanel object that this ImagePanel communicates with.
 	 */
-
 	private AnalyzerPanel analyzerPanel;
+
+	private JLabel sampleRateLabel;
+
+	private JTextField sampleRate;
 	/**
 	 * The constructor which initializes all fields and adds the buttons to this
 	 * panel.
+	 * @param editMenu 
 	 * 
 	 * @param analyzerPanel
 	 *            the AnalyzerPanel object which this panel is attached to.
 	 */
-	public ButtonPanel(AnalyzerPanel a) {
+	public ButtonToolbar(AnalyzerPanel a) {
 		this.analyzerPanel = a;
-		this.setLayout(new GridBagLayout());
-		GridBagConstraints constraints = new GridBagConstraints();
+//		this.setLayout(new GridBagLayout());
+//		GridBagConstraints constraints = new GridBagConstraints();
 
+		fileMenu = new JMenu("File");
+		this.add(fileMenu);//, constraints);
+			
 		fileChooser = new JFileChooser();
-		getImage = new JButton("Open an Image");
-		constraints.fill = constraints.HORIZONTAL;
-		constraints.gridx = 0;
-		constraints.gridy = 0;
-		constraints.gridwidth = 2;
-		constraints.weightx = 1;
-		add(getImage, constraints);
+		getImage = new JMenuItem("Open an Image");
+		fileMenu.add(getImage);
 		GetImageAction getImageAction = new GetImageAction(this);
 		getImage.addActionListener(getImageAction);
-		
+	
 		fileChooser = new JFileChooser(); // unsure if we need a new variable to open a movie vs. opening an image
-		openMovie = new JButton("Open a movie"); 
-		constraints.gridx = 2; 
-		add(openMovie, constraints); 
+		openMovie = new JMenuItem("Open a movie");
+		fileMenu.add(openMovie);
 		OpenMovieAction openMovieAction = new OpenMovieAction(this); 
 		openMovie.addActionListener(openMovieAction); 
 		
+		analyzeMovie = new JMenuItem("Analyze the movie");
+		fileMenu.add(analyzeMovie);
+		AnalyzeMovieAction analyzeMovieAction = new AnalyzeMovieAction();
+		analyzeMovie.addActionListener(analyzeMovieAction);
+		
 
+		editMenu = new JMenu("Edit");
+		this.add(editMenu);
+		
+		SliderLabel = new JLabel("Pixel Threshold");
+		editMenu.add(SliderLabel);
+		
 		setThreshold = new JSlider(JSlider.HORIZONTAL, MIN_SLIDER_THRESHOLD,
 				MAX_SLIDER_THRESHHOLD, DEFAULT_SLIDER_THRESHOLD);
 		setThreshold.setMajorTickSpacing(50);
@@ -515,169 +570,135 @@ public class ButtonPanel extends JPanel {
 		setThreshold.setPaintLabels(true);
 		setThreshold.setPaintTicks(true);
 		setThreshold.setToolTipText("Sets the Pixel Threshold");
-		constraints.gridx = 1;
-		constraints.gridy = 1;
-		constraints.gridwidth = 2;
-		add(setThreshold, constraints);
+		editMenu.add(setThreshold);
 		SetThresholdAction setThresholdAction = new SetThresholdAction();
 		setThreshold.addChangeListener(setThresholdAction);
 		analyzerPanel.sizeThresholdUpdate(DEFAULT_SLIDER_THRESHOLD);
 		
-		SliderLabel = new JLabel("Pixel Threshold");
-		constraints.gridx = 0;
-		constraints.gridy = 1;
-		constraints.ipadx = 0;
-		constraints.ipady = 0;
-		constraints.weightx = 0;
-		constraints.gridwidth = 1;
-		add(SliderLabel,constraints);
-		
-		ContrastLabel = new JLabel("Contrast Threshold");
-		constraints.gridx = 0;
-		constraints.gridy = 2;
-		constraints.ipadx = 0;
-		constraints.ipady = 0;
-		constraints.weightx = 0;
-		constraints.gridwidth = 1;
-		add(ContrastLabel,constraints);
-		
 		thresholdText = new JTextField("0");
-		thresholdText.setPreferredSize(new Dimension(100, 500));
+		thresholdText.setPreferredSize(new Dimension(100, 25));
 		thresholdText.setText("" + DEFAULT_SLIDER_THRESHOLD);
-		constraints.gridx = 3;
-		constraints.gridy = 1;
-		constraints.ipadx = 75;
-		constraints.ipady = 10;
-		constraints.gridwidth = 1;
 		SetThresholdEntered setThresholdEntered = new SetThresholdEntered();
 		thresholdText.getDocument().addDocumentListener(setThresholdEntered);
-		add(thresholdText, constraints);
 		
-		setImageContrast = new JSlider(JSlider.HORIZONTAL, 10, 30, 10);
-		setImageContrast.setToolTipText("Sets Image Contrast");
-		setImageContrast.setMajorTickSpacing(5);
-//		setImageContrast.setPaintLabels(true);
-//		setImageContrast.setPaintTicks(false);
-		constraints.gridx = 1;
-		constraints.gridy = 3;
-		constraints.gridwidth = 3;
-		add(setImageContrast, constraints);
-		constraints.gridx = 0;
-		constraints.gridwidth = 1;
-		add(new JLabel("Image Contrast"), constraints);
-		SetImageContrastAction setImageContrastAction = new SetImageContrastAction();
-		setImageContrast.addChangeListener(setImageContrastAction);
-		//analyzerPanel.sizeImageContrastUpdate(1.0);
-
+		editMenu.add(thresholdText);
+		
+		editMenu.addSeparator();
+		
+		ContrastLabel = new JLabel("Contrast Threshold");
+		
+		editMenu.add(ContrastLabel);
+		
 		setContrastThreshold = new JSlider(JSlider.HORIZONTAL, MIN_SLIDER_THRESHOLD,MAX_SLIDER_THRESHHOLD,DEFAULT_CONTRAST_THRESHOLD);
 		setContrastThreshold.setMajorTickSpacing(50);
 		setContrastThreshold.setMinorTickSpacing(10);
 		setContrastThreshold.setPaintLabels(true);
 		setContrastThreshold.setPaintTicks(true);
-		constraints.gridx = 1;
-		constraints.gridy = 2;
-		constraints.ipadx = 0;
-		constraints.ipady = 0;
-		constraints.gridwidth = 2;
-		add(setContrastThreshold, constraints);
+		setContrastThreshold.setToolTipText("Sets the contrast threshold");
 		SetContrastThresholdAction setContrastThresholdAction = new SetContrastThresholdAction();
 		setContrastThreshold.addChangeListener(setContrastThresholdAction);
 		
+		editMenu.add(setContrastThreshold);
+		
 		contrastThresholdText = new JTextField("200");
-		contrastThresholdText.setPreferredSize(new Dimension(100, 500));
-		constraints.gridx = 3;
-		constraints.gridy = 2;
-		constraints.ipadx = 75;
-		constraints.ipady = 10;
-		constraints.gridwidth = 1;
-		add(contrastThresholdText, constraints);
+		contrastThresholdText.setPreferredSize(new Dimension(100, 25));
 		SetContrastEntered setContrastEntered = new SetContrastEntered();
 		contrastThresholdText.getDocument().addDocumentListener(setContrastEntered);
 		
-		drawFlydentifiers = new JButton("Draw fly locations");
-		constraints.fill = constraints.HORIZONTAL;
-		constraints.ipadx = 0;
-		constraints.ipady = 0;
-		constraints.gridx = 0;
-		constraints.gridy = 4;
-		constraints.gridwidth = 4;
-		add(drawFlydentifiers, constraints);
+		editMenu.add(contrastThresholdText);
+		
+		editMenu.addSeparator();
+		
+		editMenu.add(new JLabel("Image Contrast"));
+		//analyzerPanel.sizeImageContrastUpdate(1.0);
+		
+		setImageContrast = new JSlider(JSlider.HORIZONTAL, 10, 30, 10);
+		setImageContrast.setToolTipText("Sets Image Contrast");
+		setImageContrast.setMajorTickSpacing(5);
+		SetImageContrastAction setImageContrastAction = new SetImageContrastAction();
+		setImageContrast.addChangeListener(setImageContrastAction);
+		
+		editMenu.add(setImageContrast);
+
+		editMenu.addSeparator();
+		
+		sampleRateLabel = new JLabel("Sample Rate");
+		
+		editMenu.add(sampleRateLabel);
+		
+		sampleRate = new JTextField("1");
+		sampleRate.setPreferredSize(new Dimension(100, 25));
+		sampleRate.setToolTipText("Sample every nth frame of the movie");
+		sampleRate.setEnabled(false);
+		
+		editMenu.add(sampleRate);
+		
+		
+		drawMenu = new JMenu("Draw");
+		this.add(drawMenu);
+		
+		drawFlydentifiers = new JCheckBoxMenuItem(new ImageIcon(getClass().getResource("images/flydentify.png")));
+		drawFlydentifiers.setToolTipText("Draw fly locations");
 		DrawFlydentifiersAction drawFlydentifiersAction = new DrawFlydentifiersAction();
 		drawFlydentifiers.addActionListener(drawFlydentifiersAction);
-
-		drawTrajectories = new JButton("Draw fly trajectories");
-		constraints.ipadx = 100;
-		constraints.gridx = 0;
-		constraints.gridy = 5;
-		constraints.gridwidth = 2;
-		//add(drawTrajectories, constraints);
+		drawMenu.add(drawFlydentifiers);
+		
+		GroupsMenu = new JMenu("Areas");
+		this.add(GroupsMenu);
+		
+		setRegions = new JMenuItem("Set Area of Interest");
+		setRegions.setToolTipText("sets the currently selecteded area as an Arena, setting those flies to the group in the box");
+		setRegions.addActionListener(new SetRegionsAction(this));
+		GroupsMenu.add(setRegions);
+		
+	
+		
+		clearFlyRegions = new JMenuItem("Clear All Areas of Interest");
+		clearFlyRegions.setToolTipText("Clears all regions of interest, and sets all flies to group 0");
+		clearFlyRegions.addActionListener(new ClearFlyRegionsAction());
+		GroupsMenu.add(clearFlyRegions);
+		
+		arenaID = new JTextField("1");
+		arenaID.setToolTipText("insert a number to label all the flies in the region with");
+		GroupsMenu.add(arenaID);
+		
+		
+		drawTrajectories = new JCheckBoxMenuItem(new ImageIcon(getClass().getResource("images/DrawFlyTrajectoriesToggle.png")));
+		drawTrajectories.setToolTipText("Draw fly trajectories");
 		DrawTrajectoriesAction drawTrajectoriesAction = new DrawTrajectoriesAction();
 		drawTrajectories.addActionListener(drawTrajectoriesAction);
-		
-		setRegions = new JButton("Set area of interest");
-		constraints.insets = new Insets(50, 0, 0, 30);
-		constraints.gridy = 8;
-		add(setRegions, constraints);
-		SetRegionsAction setRegionsAction = new SetRegionsAction(this);
-		setRegions.addActionListener(setRegionsAction);
-		
-		clearFlyRegions = new JButton("Clear current regions");
-		constraints.gridx = 0;
-		constraints.gridy = 5;
-		ClearFlyRegionsAction clearFlyRegionsAction = new ClearFlyRegionsAction();
-		clearFlyRegions.addActionListener(clearFlyRegionsAction);
-		add(clearFlyRegions, constraints);
-		
-		constraints.insets = new Insets(50, 20, 0, 0);
-		arenaID = new JTextField("1");
-		constraints.gridx = 2;
-		constraints.gridwidth = 1;
-		add(arenaID, constraints);
-		
-		constraints.insets = new Insets(0, 0, 0, 0);
-		
+		drawMenu.add(drawTrajectories);
 
 		firstFrame = new JTextField("First frame");
-		firstFrame.setPreferredSize(new Dimension(100, 50));
-		constraints.fill = constraints.NONE;
-		constraints.gridx = 2;
-		constraints.gridwidth = 1;
-		constraints.ipadx = 100;
-		constraints.ipady = 10;
-		add(firstFrame, constraints);
+		firstFrame.setPreferredSize(new Dimension(75, 25));
+		firstFrame.setMaximumSize(new Dimension(75, 25));
+		firstFrame.setToolTipText("First frame to draw trajectories");
+		this.add(firstFrame);
 
 		lastFrame = new JTextField("Last frame");
-		lastFrame.setPreferredSize(new Dimension(100, 50));
-		constraints.gridx = 3;
-		constraints.weightx = 1;
-		add(lastFrame, constraints);
+		lastFrame.setPreferredSize(new Dimension(75, 25));
+		lastFrame.setMaximumSize(new Dimension(75, 25));
+		lastFrame.setToolTipText("Last frame to draw trajectories");
+		this.add(lastFrame);
 
 		backFrame = new JButton("\u25C0");
-		constraints.fill = constraints.HORIZONTAL;
-		constraints.ipadx = 0;
-		constraints.ipady = 0;
-		constraints.gridx = 2;
-		constraints.gridy = 6;
-		constraints.gridwidth = 1;
-		add(backFrame, constraints);
+		backFrame.setToolTipText("Move back one frame");
 		BackFrameAction backFrameAction = new BackFrameAction();
 		backFrame.addActionListener(backFrameAction);
+		this.add(backFrame);
 
 		forwardFrame = new JButton("\u25B6");
-		constraints.fill = constraints.HORIZONTAL;
-		constraints.gridx = 3;
-		add(forwardFrame, constraints);
+		forwardFrame.setToolTipText("Move forward one frame");
 		ForwardFrameAction forwardFrameAction = new ForwardFrameAction();
 		forwardFrame.addActionListener(forwardFrameAction);
+		this.add(forwardFrame);
 
-		clearImages = new JButton("Clear all images");
-		constraints.gridx = 0;
-		constraints.gridwidth = 2;
-		constraints.gridy = 6;
-		constraints.fill = constraints.HORIZONTAL;
-		add(clearImages, constraints);
+		clearImages = new JMenuItem("Clear all images");
 		ClearImageAction clearImageAction = new ClearImageAction();
 		clearImages.addActionListener(clearImageAction);
+		
+		fileMenu.addSeparator();
+		fileMenu.add(clearImages);
 
 	}
 
@@ -694,19 +715,21 @@ public class ButtonPanel extends JPanel {
 	/**
 	 * Returns the preferred size of this panel as a Dimension object.
 	 */
-	public Dimension getPreferredSize() {
-		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-	}
+//	public Dimension getPreferredSize() {
+//		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+//	}
 
 	/** Returns the minimum size of this panel as a Dimension object. */
-	public Dimension getMinimumSize() {
-		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-	}
+//	public Dimension getMinimumSize() {
+//		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+//	}
 
 	/**
 	 * Draws any components on this panel.
 	 */
 	public void paintComponent(Graphics g) {
+		analyzeMovie.setEnabled(analyzerPanel.getMovieLoaded());
+		sampleRate.setEnabled(analyzerPanel.getMovieLoaded());
 	}
 
 	/**
@@ -720,3 +743,4 @@ public class ButtonPanel extends JPanel {
 		analyzerPanel.passImage(file);
 	}
 }
+

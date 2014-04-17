@@ -40,16 +40,11 @@ public class RegionMaker {
 		flies = analyzer.getFlies();
 		Point topleft = gettopleft(point1, point2);
 		Point bottomright = getbottomright(point1, point2);
-		System.out.println("between "+topleft+" and "+bottomright);
 		for (Fly f : flies) {
-			System.out.println("checking fly " + f+ " at " + f.getX(frame)
-					+ " and " + f.getY(frame));
 			if (f.getX(frame) >= topleft.x && f.getX(frame) <= bottomright.x
 					&& f.getY(frame) >= topleft.y
 					&& f.getY(frame) <= bottomright.y) {
 				f.setArena(arena);
-				System.out.println("set fly " + f + " at " + f.getX(frame)
-						+ " and " + f.getY(frame) + " to Arena " + arena);
 
 			}
 		}
@@ -84,6 +79,7 @@ public class RegionMaker {
 		pastfirstpoints.clear();
 		pastsecondpoints.clear();
 		ArenaAssignment.clear();
+		System.out.println("is first points clear?"+pastfirstpoints.isEmpty()+ " is Arena Assignments clear?"+ArenaAssignment.isEmpty());
 	}
 
 	private Point getbottomright(Point point1, Point point2) {

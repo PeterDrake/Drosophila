@@ -15,13 +15,13 @@ public class DataTabbs extends JTabbedPane{
 	 * sets this panels default size
 	 */
 	public Dimension getPreferredSize(){
-		return new Dimension(402,402);
+		return new Dimension(400,400);
 	}
 	
 	/**
 	 * sets this panels minimum size
 	 */
 	public Dimension getMinimumSize(){
-		return new Dimension(401,401);
+		return new Dimension(400,400);
 	}
 }

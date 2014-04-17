@@ -1,12 +1,16 @@
 package edu.lclark.drosophila;
 
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Point;
+import java.awt.MenuBar;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
 
 import javax.swing.JFrame;
+import javax.swing.JMenuBar;
 
 public class AnalyzerGui extends JFrame {
 
@@ -17,7 +21,8 @@ public class AnalyzerGui extends JFrame {
 	 */
 	private Analyzer analyzer;
 
-
+	private JMenuBar ButtonMenuBar;
+	
 	/**
 	 * The AnalyzerPanel object which this AnalyzerGui communicates with.
 	 */
@@ -32,6 +37,7 @@ public class AnalyzerGui extends JFrame {
 	public AnalyzerGui(Analyzer a) {
 		this.analyzer = a;
 		this.analyzerPanel = new AnalyzerPanel(this);
+		this.ButtonMenuBar = new ButtonToolbar(analyzerPanel);
 	}
 
 	public double[] getAverageVelocity() {
@@ -98,7 +104,9 @@ public class AnalyzerGui extends JFrame {
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				frame.setVisible(true);
 				frame.add(analyzerPanel);
-				frame.pack();
+				frame.setJMenuBar(ButtonMenuBar);
+			    frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+				//frame.pack();
 			}
 		});
 		analyzerPanel.repaint();
@@ -144,7 +152,7 @@ public class AnalyzerGui extends JFrame {
 	 * @param file
 	 */
 	public void passMovie(File file) {
-		analyzer.playMovie(file);
+		analyzer.openMovie(file);
 		
 	}
 
@@ -158,6 +166,30 @@ public class AnalyzerGui extends JFrame {
 	public void clearFlyGroups() {
 		analyzer.clearFlyGroups();
 		
+	}
+
+	public BufferedImage getFirstFrameFromMovie() {
+		// TODO Auto-generated method stub
+		return analyzer.getFirstFrameFromMovie();
+	}
+
+	public void setMovieLoading(boolean b) {
+		analyzerPanel.setMovieLoading(b);
+		
+	}
+
+	public boolean getMovieLoaded() {
+		// TODO Auto-generated method stub
+		return analyzer.getMovieLoaded();
+	}
+	
+	@Override
+	public void repaint(){
+		analyzerPanel.repaint();
+	}
+
+	public void analyzeMovie(int sampleRate) {
+		analyzer.analyzeMovie(sampleRate);
 	}
 
 }

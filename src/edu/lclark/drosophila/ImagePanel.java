@@ -46,6 +46,11 @@ public class ImagePanel extends JPanel {
 	private double scale;
 
 	/**
+	 * Boolean for if we are trying to load the first frame from a movie.
+	 */
+	private boolean movieLoading;
+
+	/**
 	 * The AnalyzerPanel object that this ImagePanel communicates with.
 	 */
 	private AnalyzerPanel analyzerPanel;
@@ -80,6 +85,12 @@ public class ImagePanel extends JPanel {
 	private double oldImageContrast;
 
 	private BufferedImage oldImage;
+
+	/**
+	 * Image saved without changing contrast so we can compare it to a new image
+	 * we load
+	 */
+	private BufferedImage savedImage;
 
 	/**
 	 * The constructor which sets the AnalyzerPanel this ImagePanel is connected
@@ -138,43 +149,82 @@ public class ImagePanel extends JPanel {
 		if (moviePlaying) {
 			int imgWidth = image.getWidth(null);
 			int imgHeight = image.getHeight(null);
-
 			double xScale = this.getWidth() / (double) imgWidth;
 			double yScale = this.getHeight() / (double) imgHeight;
 			scale = Math.min(xScale, yScale);
-
 			g.drawImage(image, 0, 0, (int) (imgWidth * scale),
 					(int) (imgHeight * scale), null);
 		} else {
 
-			int totalImages = analyzerPanel.getTotalFrames();
-			if (imageIndex < 0) {
-				imageIndex = 0;
-			} else if (imageIndex >= totalImages) {
-				imageIndex = totalImages - 1;
-			}
-			// String filePath = analyzerPanel.passdownImage(imageIndex);
-			File file = null;
-			if (imageIndex >= 0) {
-				file = analyzerPanel.passdownFile(imageIndex);
-			} else {
-				return;
-			}
-			if (file != null) {
-				// Image image = new ImageIcon(filePath).getImage();
-				BufferedImage image = null;
-				try {
-					image = ImageIO.read(file);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					System.exit(0);
+//			int totalImages = analyzerPanel.getTotalFrames();
+//			if (imageIndex < 0) {
+//				imageIndex = 0;
+//			} else if (imageIndex >= totalImages) {
+//				imageIndex = totalImages - 1;
+//			}
+//			// String filePath = analyzerPanel.passdownImage(imageIndex);
+//			File file = null;
+//			if (imageIndex >= 0) {
+//				file = analyzerPanel.passdownFile(imageIndex);
+//			} else {
+//				return;
+//			}
+//			if (file != null) {
+//				// Image image = new ImageIcon(filePath).getImage();
+//				BufferedImage image = null;
+//				try {
+//					image = ImageIO.read(file);
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//					System.exit(0);
+//				}
+
+			if (!analyzerPanel.getMovieLoaded()) {
+
+				int totalImages = analyzerPanel.getTotalFrames();
+				if (imageIndex < 0) {
+					imageIndex = 0;
+				} else if (imageIndex >= totalImages) {
+					imageIndex = totalImages - 1;
 				}
+				// String filePath = analyzerPanel.passdownImage(imageIndex);
+				File file = null;
+				if (imageIndex >= 0) {
+					file = analyzerPanel.passdownFile(imageIndex);
+
+				} else {
+					return;
+				}
+				if (file != null) {
+
+					// Image image = new ImageIcon(filePath).getImage();
+					image = null;
+					try {
+
+						image = ImageIO.read(file);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						System.exit(0);
+					}
+				}
+			} else {
+				BufferedImage tempImage = analyzerPanel
+						.getFirstFrameFromMovie();
+				image = new BufferedImage(tempImage.getColorModel(),
+						tempImage.copyData(null), tempImage.getColorModel()
+								.isAlphaPremultiplied(), null);
+				imageIndex = 0;
+			}
+			if (image != null) {
+
 				int imgWidth = image.getWidth(null);
 				int imgHeight = image.getHeight(null);
 
 				double xScale = this.getWidth() / (double) imgWidth;
 				double yScale = this.getHeight() / (double) imgHeight;
+
 				scale = Math.min(xScale, yScale);
 				System.out.println("scale is " + scale);
 
@@ -203,15 +253,23 @@ public class ImagePanel extends JPanel {
 							rgb += green << 8;
 							rgb += blue;
 							image.setRGB(i, j, rgb);
+
 						}
 					}
 					oldImage = image;
 					oldImageContrast = imageContrast;
 				}
 
+				oldImage = image;
+				oldImageContrast = imageContrast;
+				// }
+
+
 				g.drawImage(oldImage, 0, 0, (int) (imgWidth * scale),
 						(int) (imgHeight * scale), null);
 				// g.drawImage(image, 0, 0, null);
+
+
 				if (flydentifiers) {
 					List<Fly> flies = analyzerPanel.getFlyList();
 					int sizeFlies = flies.size();
@@ -281,8 +339,11 @@ public class ImagePanel extends JPanel {
 			int yPoints[] = { currentpoint1.y, currentpoint1.y,
 					currentpoint2.y, currentpoint2.y };
 			g.drawPolygon(xPoints, yPoints, 4);
+		
+			}
 		}
-	}
+
+	
 
 	/**
 	 * Toggles whether or not fly trajectories are drawn over identified flies,
@@ -324,6 +385,7 @@ public class ImagePanel extends JPanel {
 	public void setImage(BufferedImage b) {
 		image = b;
 	}
+
 
 	public Point getCurrentPoint1() {
 		double x = (double) currentpoint1.x;
@@ -371,5 +433,10 @@ public class ImagePanel extends JPanel {
 			}
 
 		}
+
 	}
+	public void setMovieLoading(boolean b) {
+		movieLoading = b;
+	}
+	
 }
