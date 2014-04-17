@@ -49,6 +49,8 @@ public class Analyzer {
 	 */
 	private int totalFrames;
 
+	private int temptotalFrames;
+	
 	/**
 	 * True if the currently loaded file is a movie. Otherwise, it is false.
 	 * <p>
@@ -679,6 +681,7 @@ public class Analyzer {
 		while (mediaReader.readPacket() == null) {
 			// Wait
 		}
+		totalFrames = temptotalFrames;
 		gui.repaint();
 	}
 
@@ -719,7 +722,7 @@ public class Analyzer {
 					increment++;
 				}
 			}
-			totalFrames=increment;
+			temptotalFrames=increment;
 		}
 	}
 
