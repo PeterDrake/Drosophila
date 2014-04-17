@@ -65,7 +65,7 @@ public class ButtonToolbar extends JMenuBar {
 		 * Tells the AnalyzerPanel to toggle the flydentifiers.
 		 */
 		public void actionPerformed(ActionEvent e) {
-			analyzerPanel.analyzeMovie();
+			analyzerPanel.analyzeMovie(Integer.parseInt(sampleRate.getText()));
 		}
 	}
 
@@ -466,6 +466,10 @@ public class ButtonToolbar extends JMenuBar {
 	 * The AnalyzerPanel object that this ImagePanel communicates with.
 	 */
 	private AnalyzerPanel analyzerPanel;
+
+	private JLabel sampleRateLabel;
+
+	private JTextField sampleRate;
 	/**
 	 * The constructor which initializes all fields and adds the buttons to this
 	 * panel.
@@ -563,6 +567,20 @@ public class ButtonToolbar extends JMenuBar {
 		
 		editMenu.add(setImageContrast);
 
+		editMenu.addSeparator();
+		
+		sampleRateLabel = new JLabel("Sample Rate");
+		
+		editMenu.add(sampleRateLabel);
+		
+		sampleRate = new JTextField("1");
+		sampleRate.setPreferredSize(new Dimension(100, 25));
+		sampleRate.setToolTipText("Sample every nth frame of the movie");
+		sampleRate.setEnabled(false);
+		
+		editMenu.add(sampleRate);
+		
+		
 		drawMenu = new JMenu("Draw");
 		this.add(drawMenu);
 		
@@ -644,6 +662,7 @@ public class ButtonToolbar extends JMenuBar {
 	 */
 	public void paintComponent(Graphics g) {
 		analyzeMovie.setEnabled(analyzerPanel.getMovieLoaded());
+		sampleRate.setEnabled(analyzerPanel.getMovieLoaded());
 	}
 
 	/**

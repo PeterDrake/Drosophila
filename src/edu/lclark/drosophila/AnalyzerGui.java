@@ -173,8 +173,8 @@ public class AnalyzerGui extends JFrame {
 		analyzerPanel.repaint();
 	}
 
-	public void analyzeMovie() {
-		analyzer.analyzeMovie();
+	public void analyzeMovie(int sampleRate) {
+		analyzer.analyzeMovie(sampleRate);
 	}
 
 }

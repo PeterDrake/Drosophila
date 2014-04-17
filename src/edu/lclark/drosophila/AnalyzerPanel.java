@@ -261,8 +261,8 @@ public class AnalyzerPanel extends JPanel {
 		return gui.getMovieLoaded();
 	}
 
-	public void analyzeMovie() {
-		gui.analyzeMovie();
+	public void analyzeMovie(int sampleRate) {
+		gui.analyzeMovie(sampleRate);
 		
 	}
 }
