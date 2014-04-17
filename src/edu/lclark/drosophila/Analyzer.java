@@ -676,11 +676,8 @@ public class Analyzer {
 		mediaReader.addListener(new ImageSnapListener(false));
 		// read out the contents of the media file and
 		// dispatch events to the attached listener
-		int i=0;
 		while (mediaReader.readPacket() == null) {
 			// Wait
-			System.err.println("This is the " + i +"th time through the loop.");
-			i++;
 		}
 		gui.repaint();
 	}
@@ -722,6 +719,7 @@ public class Analyzer {
 					increment++;
 				}
 			}
+			totalFrames=increment;
 		}
 	}
 
