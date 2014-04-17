@@ -83,15 +83,19 @@ public class ButtonToolbar extends JMenuBar {
 				if(startFrame > endFrame) {
 					analyzerPanel.displayMessagePopup(
 							"Start frame must be smaller than end frame.");
+					drawTrajectories.setSelected(false);
 				} else if(startFrame <= 0 || endFrame <= 0){
 					analyzerPanel.displayMessagePopup(
 							"Frame numbers must be larger than 0.");
+					drawTrajectories.setSelected(false);
 				} else {
 					analyzerPanel.setDrawTrajectories(startFrame, endFrame);
+					drawTrajectories.setSelected(true);
 				}
 			} catch (NumberFormatException error) {
 				analyzerPanel.displayMessagePopup(
 						"Only enter whole numbers into the start and end frame boxes.");
+				drawTrajectories.setSelected(false);
 //				error.printStackTrace();
 //				System.exit(1);
 			}
@@ -584,13 +588,13 @@ public class ButtonToolbar extends JMenuBar {
 		drawMenu = new JMenu("Draw");
 		this.add(drawMenu);
 		
-		drawFlydentifiers = new JCheckBoxMenuItem(new ImageIcon("flydentify.png"));
+		drawFlydentifiers = new JCheckBoxMenuItem(new ImageIcon(getClass().getResource("images/flydentify.png")));
 		drawFlydentifiers.setToolTipText("Draw fly locations");
 		DrawFlydentifiersAction drawFlydentifiersAction = new DrawFlydentifiersAction();
 		drawFlydentifiers.addActionListener(drawFlydentifiersAction);
 		drawMenu.add(drawFlydentifiers);
 
-		drawTrajectories = new JCheckBoxMenuItem(new ImageIcon("DrawFlyTrajectoriesToggle.png"));
+		drawTrajectories = new JCheckBoxMenuItem(new ImageIcon(getClass().getResource("images/DrawFlyTrajectoriesToggle.png")));
 		drawTrajectories.setToolTipText("Draw fly trajectories");
 		DrawTrajectoriesAction drawTrajectoriesAction = new DrawTrajectoriesAction();
 		drawTrajectories.addActionListener(drawTrajectoriesAction);
