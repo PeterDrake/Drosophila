@@ -155,4 +155,9 @@ public class AnalyzerGui extends JFrame {
 		analyzer.setFliestoArena(point1, point2, arena, frame);
 	}
 
+	public void clearFlyGroups() {
+		analyzer.clearFlyGroups();
+		
+	}
+
 }

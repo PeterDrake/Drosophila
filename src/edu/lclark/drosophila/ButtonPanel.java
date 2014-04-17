@@ -42,8 +42,10 @@ public class ButtonPanel extends JPanel {
 	private class ClearImageAction implements ActionListener {
 
 		public void actionPerformed(ActionEvent e) {
+			analyzerPanel.clearFlyGroups();
 			analyzerPanel.clearImages();
 			analyzerPanel.repaint();
+
 		}
 	}
 
@@ -58,6 +60,18 @@ public class ButtonPanel extends JPanel {
 		 */
 		public void actionPerformed(ActionEvent e) {
 			analyzerPanel.setFlydentifiers();
+		}
+	}
+	
+	
+	private class ClearFlyRegionsAction implements ActionListener {
+
+		/**
+		 * Tells the AnalyzerPanel clear fly regions
+		 */
+		public void actionPerformed(ActionEvent e) {
+			analyzerPanel.clearFlyGroups();
+			analyzerPanel.repaint();
 		}
 	}
 
@@ -412,6 +426,9 @@ public class ButtonPanel extends JPanel {
 	/** Button that lets user set areas of interest */
 	private JButton setRegions;
 	
+	/** Button that lets user clear all existing fly arenas*/
+	private JButton clearFlyRegions;
+	
 	/** Arena identification number */
 	private JTextField arenaID;
 
@@ -593,7 +610,7 @@ public class ButtonPanel extends JPanel {
 		constraints.gridx = 0;
 		constraints.gridy = 5;
 		constraints.gridwidth = 2;
-		add(drawTrajectories, constraints);
+		//add(drawTrajectories, constraints);
 		DrawTrajectoriesAction drawTrajectoriesAction = new DrawTrajectoriesAction();
 		drawTrajectories.addActionListener(drawTrajectoriesAction);
 		
@@ -603,6 +620,13 @@ public class ButtonPanel extends JPanel {
 		add(setRegions, constraints);
 		SetRegionsAction setRegionsAction = new SetRegionsAction(this);
 		setRegions.addActionListener(setRegionsAction);
+		
+		clearFlyRegions = new JButton("Clear current regions");
+		constraints.gridx = 0;
+		constraints.gridy = 5;
+		ClearFlyRegionsAction clearFlyRegionsAction = new ClearFlyRegionsAction();
+		clearFlyRegions.addActionListener(clearFlyRegionsAction);
+		add(clearFlyRegions, constraints);
 		
 		constraints.insets = new Insets(50, 20, 0, 0);
 		arenaID = new JTextField("1");

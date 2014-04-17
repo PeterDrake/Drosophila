@@ -255,4 +255,9 @@ public class AnalyzerPanel extends JPanel {
 		Point point2 = ipanel.getCurrentPoint2();
 		gui.passupArenaParameters(arena, frame, point1, point2);
 	}
+
+	public void clearFlyGroups() {
+		gui.clearFlyGroups();
+		
+	}
 }

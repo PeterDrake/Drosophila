@@ -5,6 +5,7 @@ import java.util.Hashtable;
 import java.util.List;
 public class Fly {
 
+
 	/** Id number to be able to tell flies apart */
 	private int id;
 	

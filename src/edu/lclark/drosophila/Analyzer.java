@@ -140,7 +140,7 @@ public class Analyzer {
 	public void clearImages() {
 		movieLoaded = false;
 		totalFrames = 0;
-		flies = new LinkedList<Fly>();
+		flies.clear();
 		images = new File[20];
 	}
 
@@ -161,6 +161,10 @@ public class Analyzer {
 			}
 		}
 		return false;
+	}
+	
+	public List<RegionMaker.PointArena> passDownArenaAssignments(){
+		return regionmaker.getArenaAssignment();
 	}
 
 	/**
@@ -292,6 +296,7 @@ public class Analyzer {
 				}
 				f.addFrameInfo(frameNumber, d[0], d[1]);
 				f.setId(flies.size());
+				f.setArena(regionmaker.getArenaAssignment(), frameNumber);
 				flies.add(f);
 
 			}
@@ -416,6 +421,7 @@ public class Analyzer {
 				Fly aNewFly = flies.get((int) d[2]).copyThisFly();
 				aNewFly.addFrameInfo(frameNumber, d[0], d[1]);
 				aNewFly.setId(flies.size());
+				aNewFly.setArena(regionmaker.getArenaAssignment(), frameNumber);
 				flies.add(aNewFly);
 			}
 		}
@@ -642,5 +648,12 @@ public class Analyzer {
 
 	public void setFliestoArena(Point point1, Point point2, int Arena, int frame) {
 		regionmaker.setFliesToRegions(point1, point2, Arena, frame);
+	}
+
+	public void clearFlyGroups() {
+		for (Fly fly : flies){
+			fly.setArena(0);
+		}
+		regionmaker.clearData();
 	}
 }

@@ -10,19 +10,12 @@ public class RegionMaker {
 	Analyzer analyzer;
 	List<Point> pastfirstpoints;
 	List<PointArena> ArenaAssignment;
-	
-	public List<Point> getPastfirstpoints() {
-		return pastfirstpoints;
-	}
-
-	
-	public List<Point> getPastsecondpoints() {
-		return pastsecondpoints;
-	}
-
-
 	List<Point> pastsecondpoints;
 	List<Fly> flies;
+	
+
+
+	
 
 	public RegionMaker(Analyzer a) {
 		analyzer = a;
@@ -31,6 +24,16 @@ public class RegionMaker {
 		pastsecondpoints = new LinkedList<Point>();
 	}
 
+	
+	public List<Point> getPastfirstpoints() {
+		return pastfirstpoints;
+	}
+	
+	
+	public List<Point> getPastsecondpoints() {
+		return pastsecondpoints;
+	}
+	
 	public void setFliesToRegions(Point point1, Point point2, int arena,
 			int frame) {
 		System.out.println("this method is being called for arena" + arena);
@@ -76,6 +79,12 @@ public class RegionMaker {
 		}
 		return new Point(fx, fy);
 	}
+	
+	public void clearData(){
+		pastfirstpoints.clear();
+		pastsecondpoints.clear();
+		ArenaAssignment.clear();
+	}
 
 	private Point getbottomright(Point point1, Point point2) {
 		int x1 = point1.x;
@@ -96,7 +105,7 @@ public class RegionMaker {
 		}
 		return new Point(fx, fy);
 	}
-	private List<PointArena> getArenaAssignment(){
+	public List<PointArena> getArenaAssignment(){
 		return ArenaAssignment;
 	}
 	public class PointArena{
@@ -118,4 +127,5 @@ public class RegionMaker {
 			Arena=arena;
 		}
 		}
+	
 }
