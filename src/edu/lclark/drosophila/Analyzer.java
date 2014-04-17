@@ -101,7 +101,11 @@ public class Analyzer {
 	 */
 	private double imageContrast = 1.0;
 
+
 	private double duration;
+
+	private int sampleRate;
+
 
 	public Analyzer() {
 		movieLoaded = false;
@@ -651,20 +655,24 @@ public class Analyzer {
 		// );
 	}
 
-	public void analyzeMovie() {
+	public void analyzeMovie(int sampleRate) {
+		this.sampleRate = sampleRate;
 		IMediaReader mediaReader = ToolFactory.makeReader(movieFile
 				.getAbsolutePath());
 		// stipulate that we want BufferedImages created in BGR 24bit color
 		// space
 		mediaReader
 				.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
-		totalFrames = getFramesInMovie(movieFile.getAbsolutePath());
+		totalFrames = getFramesInMovie(movieFile.getAbsolutePath()) / sampleRate;
 		System.err.println("Total Frames is: " + totalFrames);
 		System.err.println("Duration is " + duration);
 		SECONDS_BETWEEN_FRAMES = duration/totalFrames;
 		System.err.println("Seconds between frames is: " + SECONDS_BETWEEN_FRAMES);
 		MICRO_SECONDS_BETWEEN_FRAMES = (long) (Global.DEFAULT_PTS_PER_SECOND * SECONDS_BETWEEN_FRAMES);
 		System.err.println("micro seconds between frames is: " + MICRO_SECONDS_BETWEEN_FRAMES);
+
+
+
 		mediaReader.addListener(new ImageSnapListener(false));
 		// read out the contents of the media file and
 		// dispatch events to the attached listener
@@ -701,15 +709,17 @@ public class Analyzer {
 					double seconds = ((double) event.getTimeStamp())
 							/ Global.DEFAULT_PTS_PER_SECOND;
 					// frames.add(event.getImage());
-					System.err.println("Calling flydentify with increment of: " + increment);
-					flydentify(event.getImage(), increment);
-					
+
+					if(increment % sampleRate == 0)
+					{
+						flydentify(event.getImage(), increment / sampleRate);
+						System.out.printf(
+								"at elapsed time of %6.3f seconds wrote: %s\n",
+								seconds, "<imaginary file>");
+						// update last write time
+						mLastPtsWrite += MICRO_SECONDS_BETWEEN_FRAMES * sampleRate;
+					}
 					increment++;
-					System.out.printf(
-							"at elapsed time of %6.3f seconds wrote: %s\n",
-							seconds, "<imaginary file>");
-					// update last write time
-					mLastPtsWrite += MICRO_SECONDS_BETWEEN_FRAMES;
 				}
 			}
 		}

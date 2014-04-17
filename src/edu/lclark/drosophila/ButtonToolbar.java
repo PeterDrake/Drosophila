@@ -66,7 +66,7 @@ public class ButtonToolbar extends JMenuBar {
 		 * Tells the AnalyzerPanel to toggle the flydentifiers.
 		 */
 		public void actionPerformed(ActionEvent e) {
-			analyzerPanel.analyzeMovie();
+			analyzerPanel.analyzeMovie(Integer.parseInt(sampleRate.getText()));
 		}
 	}
 
@@ -84,15 +84,19 @@ public class ButtonToolbar extends JMenuBar {
 				if(startFrame > endFrame) {
 					analyzerPanel.displayMessagePopup(
 							"Start frame must be smaller than end frame.");
+					drawTrajectories.setSelected(false);
 				} else if(startFrame <= 0 || endFrame <= 0){
 					analyzerPanel.displayMessagePopup(
 							"Frame numbers must be larger than 0.");
+					drawTrajectories.setSelected(false);
 				} else {
 					analyzerPanel.setDrawTrajectories(startFrame, endFrame);
+					drawTrajectories.setSelected(true);
 				}
 			} catch (NumberFormatException error) {
 				analyzerPanel.displayMessagePopup(
 						"Only enter whole numbers into the start and end frame boxes.");
+				drawTrajectories.setSelected(false);
 //				error.printStackTrace();
 //				System.exit(1);
 			}
@@ -468,7 +472,13 @@ public class ButtonToolbar extends JMenuBar {
 	 */
 	private AnalyzerPanel analyzerPanel;
 
+
 	private JLabel totalFrames;
+
+	private JLabel sampleRateLabel;
+
+	private JTextField sampleRate;
+
 	/**
 	 * The constructor which initializes all fields and adds the buttons to this
 	 * panel.
@@ -566,16 +576,30 @@ public class ButtonToolbar extends JMenuBar {
 		
 		editMenu.add(setImageContrast);
 
+		editMenu.addSeparator();
+		
+		sampleRateLabel = new JLabel("Sample Rate");
+		
+		editMenu.add(sampleRateLabel);
+		
+		sampleRate = new JTextField("1");
+		sampleRate.setPreferredSize(new Dimension(100, 25));
+		sampleRate.setToolTipText("Sample every nth frame of the movie");
+		sampleRate.setEnabled(false);
+		
+		editMenu.add(sampleRate);
+		
+		
 		drawMenu = new JMenu("Draw");
 		this.add(drawMenu);
 		
-		drawFlydentifiers = new JCheckBoxMenuItem(new ImageIcon("flydentify.png"));
+		drawFlydentifiers = new JCheckBoxMenuItem(new ImageIcon(getClass().getResource("images/flydentify.png")));
 		drawFlydentifiers.setToolTipText("Draw fly locations");
 		DrawFlydentifiersAction drawFlydentifiersAction = new DrawFlydentifiersAction();
 		drawFlydentifiers.addActionListener(drawFlydentifiersAction);
 		drawMenu.add(drawFlydentifiers);
 
-		drawTrajectories = new JCheckBoxMenuItem(new ImageIcon("DrawFlyTrajectoriesToggle.png"));
+		drawTrajectories = new JCheckBoxMenuItem(new ImageIcon(getClass().getResource("images/DrawFlyTrajectoriesToggle.png")));
 		drawTrajectories.setToolTipText("Draw fly trajectories");
 		DrawTrajectoriesAction drawTrajectoriesAction = new DrawTrajectoriesAction();
 		drawTrajectories.addActionListener(drawTrajectoriesAction);
@@ -654,6 +678,7 @@ public class ButtonToolbar extends JMenuBar {
 	public void paintComponent(Graphics g) {
 		analyzeMovie.setEnabled(analyzerPanel.getMovieLoaded());
 		totalFrames.setText(""+analyzerPanel.getTotalFrames());
+		sampleRate.setEnabled(analyzerPanel.getMovieLoaded());
 	}
 
 	/**

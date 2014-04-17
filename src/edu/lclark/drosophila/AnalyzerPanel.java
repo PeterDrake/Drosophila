@@ -128,7 +128,7 @@ public class AnalyzerPanel extends JPanel {
 	public void displayMessagePopup(String s) {
 		JOptionPane.showMessageDialog(null, s, "Error", 
 				JOptionPane.INFORMATION_MESSAGE, 
-				new ImageIcon("DrawFlyTrajectoriesToggle.png"));
+				new ImageIcon(getClass().getResource("images/DrawFlyTrajectoriesToggle.png")));
 	}
 
 	/**
@@ -261,8 +261,8 @@ public class AnalyzerPanel extends JPanel {
 		return gui.getMovieLoaded();
 	}
 
-	public void analyzeMovie() {
-		gui.analyzeMovie();
+	public void analyzeMovie(int sampleRate) {
+		gui.analyzeMovie(sampleRate);
 		
 	}
 }
