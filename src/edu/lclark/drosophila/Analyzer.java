@@ -80,7 +80,7 @@ public class Analyzer {
 	/**
 	 * The number of frames per second in a movie file.
 	 */
-	private int framesPerSecond;
+	private double framesPerSecond;
 
 	/**
 	 * The number of microseconds between frames in a movie file
@@ -606,11 +606,11 @@ public class Analyzer {
 			throw new IllegalArgumentException("Could not open file:"
 					+ filename);
 		}
-		duration = container.getDuration();
-		framesPerSecond = (int) container.getStream(0).getFrameRate()
+		duration = container.getDuration()/1000000.0;
+		framesPerSecond = container.getStream(0).getFrameRate()
 				.getDouble();
 		container.close();
-		return (int) (duration / 1000000.0 * framesPerSecond);
+		return (int) (duration * framesPerSecond);
 	}
 
 	/**
@@ -659,13 +659,20 @@ public class Analyzer {
 		mediaReader
 				.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
 		totalFrames = getFramesInMovie(movieFile.getAbsolutePath());
+		System.err.println("Total Frames is: " + totalFrames);
+		System.err.println("Duration is " + duration);
 		SECONDS_BETWEEN_FRAMES = duration/totalFrames;
+		System.err.println("Seconds between frames is: " + SECONDS_BETWEEN_FRAMES);
 		MICRO_SECONDS_BETWEEN_FRAMES = (long) (Global.DEFAULT_PTS_PER_SECOND * SECONDS_BETWEEN_FRAMES);
+		System.err.println("micro seconds between frames is: " + MICRO_SECONDS_BETWEEN_FRAMES);
 		mediaReader.addListener(new ImageSnapListener(false));
 		// read out the contents of the media file and
 		// dispatch events to the attached listener
+		int i=0;
 		while (mediaReader.readPacket() == null) {
 			// Wait
+			System.err.println("This is the " + i +"th time through the loop.");
+			i++;
 		}
 		gui.repaint();
 	}
@@ -694,8 +701,9 @@ public class Analyzer {
 					double seconds = ((double) event.getTimeStamp())
 							/ Global.DEFAULT_PTS_PER_SECOND;
 					// frames.add(event.getImage());
-
+					System.err.println("Calling flydentify with increment of: " + increment);
 					flydentify(event.getImage(), increment);
+					
 					increment++;
 					System.out.printf(
 							"at elapsed time of %6.3f seconds wrote: %s\n",
