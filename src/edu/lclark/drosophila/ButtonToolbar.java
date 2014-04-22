@@ -82,7 +82,16 @@ public class ButtonToolbar extends JMenuBar {
 		 * Tells the AnalyzerPanel to toggle the flydentifiers.
 		 */
 		public void actionPerformed(ActionEvent e) {
-			analyzerPanel.analyzeMovie(Integer.parseInt(sampleRate.getText()));
+			analyzerPanel.displayLoadingPopup("Movie is loading");
+			new Thread(
+				new Runnable() {
+					public void run() {
+						analyzerPanel.analyzeMovie(Integer.parseInt(sampleRate.getText()));		
+						analyzerPanel.disposeLoadingDialog();
+					}
+				}
+			).start();
+			
 		}
 	}
 
@@ -520,9 +529,13 @@ public class ButtonToolbar extends JMenuBar {
 	 */
 	private AnalyzerPanel analyzerPanel;
 
+
+	private JLabel totalFrames;
+
 	private JLabel sampleRateLabel;
 
 	private JTextField sampleRate;
+
 	/**
 	 * The constructor which initializes all fields and adds the buttons to this
 	 * panel.
@@ -697,6 +710,12 @@ public class ButtonToolbar extends JMenuBar {
 		ClearImageAction clearImageAction = new ClearImageAction();
 		clearImages.addActionListener(clearImageAction);
 		
+		totalFrames = new JLabel("0");
+		totalFrames.setPreferredSize(new Dimension(75, 25));
+		totalFrames.setMaximumSize(new Dimension(75, 25));
+		totalFrames.setToolTipText("Total frames in the movie");
+		this.add(totalFrames);
+		
 		fileMenu.addSeparator();
 		fileMenu.add(clearImages);
 
@@ -729,6 +748,7 @@ public class ButtonToolbar extends JMenuBar {
 	 */
 	public void paintComponent(Graphics g) {
 		analyzeMovie.setEnabled(analyzerPanel.getMovieLoaded());
+		totalFrames.setText(""+analyzerPanel.getTotalFrames());
 		sampleRate.setEnabled(analyzerPanel.getMovieLoaded());
 	}
 

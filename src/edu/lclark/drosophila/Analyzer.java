@@ -52,6 +52,8 @@ public class Analyzer {
 	 */
 	private int totalFrames;
 
+	private int temptotalFrames;
+	
 	/**
 	 * True if the currently loaded file is a movie. Otherwise, it is false.
 	 * <p>
@@ -79,20 +81,20 @@ public class Analyzer {
 	/**
 	 * The number of seconds between frames in a movie file
 	 */
-	public static final double SECONDS_BETWEEN_FRAMES = 1.0 / 10.0;
+	private double SECONDS_BETWEEN_FRAMES;
 
 	/**
 <<<<<<< HEAD
 =======
 	 * The number of frames per second in a movie file.
 	 */
-	private int framesPerSecond = 10;
+	private double framesPerSecond;
 
 	/**
 >>>>>>> master
 	 * The number of microseconds between frames in a movie file
 	 */
-	public static final long MICRO_SECONDS_BETWEEN_FRAMES = (long) (Global.DEFAULT_PTS_PER_SECOND * SECONDS_BETWEEN_FRAMES);
+	private long MICRO_SECONDS_BETWEEN_FRAMES;
 
 	// Time of last frame write
 	// PTS means ... picture time stamp?
@@ -109,7 +111,11 @@ public class Analyzer {
 	private double imageContrast = 1.0;
 
 
+<<<<<<< HEAD
 	private RegionMaker regionmaker;
+=======
+	private double duration;
+>>>>>>> master
 
 	private int sampleRate;
 
@@ -632,11 +638,11 @@ public class Analyzer {
 			throw new IllegalArgumentException("Could not open file:"
 					+ filename);
 		}
-		long duration = container.getDuration();
-		framesPerSecond = (int) container.getStream(0).getFrameRate()
+		duration = container.getDuration()/1000000.0;
+		framesPerSecond = container.getStream(0).getFrameRate()
 				.getDouble();
 		container.close();
-		return (int) (duration / 1000000.0 * framesPerSecond);
+		return (int) (duration * framesPerSecond);
 	}
 
 	/**
@@ -663,10 +669,12 @@ public class Analyzer {
 		mediaReader
 				.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
 		totalFrames = getFramesInMovie(file.getAbsolutePath());
+		SECONDS_BETWEEN_FRAMES = duration/totalFrames;
+		MICRO_SECONDS_BETWEEN_FRAMES = (long) (Global.DEFAULT_PTS_PER_SECOND * SECONDS_BETWEEN_FRAMES);
 		mediaReader.addListener(new ImageSnapListener(true));
 		// read out the contents of the media file and
 		// dispatch events to the attached listener
-
+		
 		loadingMovie = true;
 		while (mediaReader.readPacket() == null) {
 			if (firstMovieFrame != null) {
@@ -691,17 +699,30 @@ public class Analyzer {
 		mediaReader
 				.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
 		totalFrames = getFramesInMovie(movieFile.getAbsolutePath()) / sampleRate;
+		System.err.println("Total Frames is: " + totalFrames);
+		System.err.println("Duration is " + duration);
+		SECONDS_BETWEEN_FRAMES = duration/totalFrames;
+		System.err.println("Seconds between frames is: " + SECONDS_BETWEEN_FRAMES);
+		MICRO_SECONDS_BETWEEN_FRAMES = (long) (Global.DEFAULT_PTS_PER_SECOND * SECONDS_BETWEEN_FRAMES);
+		System.err.println("micro seconds between frames is: " + MICRO_SECONDS_BETWEEN_FRAMES);
+
+
+
 		mediaReader.addListener(new ImageSnapListener(false));
 		// read out the contents of the media file and
 		// dispatch events to the attached listener
 		while (mediaReader.readPacket() == null) {
 			// Wait
 		}
+<<<<<<< HEAD
 
 		gui.showMovie(frames, 100
 		// MICRO_SECONDS_BETWEEN_FRAMES / 1000
 		);
 
+=======
+		totalFrames = temptotalFrames;
+>>>>>>> master
 		gui.repaint();
 
 	}
@@ -743,6 +764,7 @@ public class Analyzer {
 					increment++;
 				}
 			}
+			temptotalFrames=increment;
 		}
 	}
 

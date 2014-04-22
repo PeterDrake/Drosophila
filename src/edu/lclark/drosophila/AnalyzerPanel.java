@@ -29,6 +29,8 @@ public class AnalyzerPanel extends JPanel {
 	 */
 	private DataTabbs dpanel;
 
+	private JDialog loadingDialog;
+
 	/**
 	 * The constructor for AnalyzerPanel, which adds the button panel and image
 	 * panel to this panel.
@@ -70,6 +72,12 @@ public class AnalyzerPanel extends JPanel {
 		constraints.gridheight = 1;
 		//constraints.insets = new Insets(0, 50, 50, 0);
 		add(graphPanel, constraints);
+		
+		loadingDialog = new JDialog(new Dialog(gui), "Loading", false);
+		JPanel panel = new JPanel();
+		loadingDialog.setSize(400, 200);
+		panel.add(new JLabel("Movie is loading"), BorderLayout.CENTER);
+		loadingDialog.add(panel);
 	}
 
 	public double[] getAverageVelocity() {
@@ -127,6 +135,12 @@ public class AnalyzerPanel extends JPanel {
 		JOptionPane.showMessageDialog(null, s, "Error", 
 				JOptionPane.INFORMATION_MESSAGE, 
 				new ImageIcon(getClass().getResource("images/DrawFlyTrajectoriesToggle.png")));
+	}
+	
+	public void displayLoadingPopup(String s) {
+		loadingDialog.validate();
+		loadingDialog.setVisible(true);
+		//JOptionPane.showMessageDialog(null, s, "Loading", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	/**
@@ -277,5 +291,9 @@ public class AnalyzerPanel extends JPanel {
 	public void analyzeMovie(int sampleRate) {
 		gui.analyzeMovie(sampleRate);
 		
+	}
+
+	public void disposeLoadingDialog() {
+		loadingDialog.setVisible(false);
 	}
 }
