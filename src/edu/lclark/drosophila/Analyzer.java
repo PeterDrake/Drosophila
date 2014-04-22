@@ -106,7 +106,7 @@ public class Analyzer {
 
 	private double duration;
 
-	private int sampleRate;
+	private int sampleRate=1;
 
 
 	public Analyzer() {
@@ -745,6 +745,10 @@ public class Analyzer {
 
 	public boolean getMovieLoaded() {
 		return movieLoaded;
+	}
+
+	public double getFrameRate() {
+		return (MICRO_SECONDS_BETWEEN_FRAMES * sampleRate)/1000.0;
 	}
 
 }

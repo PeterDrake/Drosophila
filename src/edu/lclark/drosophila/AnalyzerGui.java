@@ -177,4 +177,9 @@ public class AnalyzerGui extends JFrame {
 		analyzer.analyzeMovie(sampleRate);
 	}
 
+	public double getFrameRate() {
+		// TODO Auto-generated method stub
+		return analyzer.getFrameRate();
+	}
+
 }

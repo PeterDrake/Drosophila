@@ -185,6 +185,30 @@ public class ButtonToolbar extends JMenuBar {
 		
 	}
 	
+	private class GraphOptionsAction implements ActionListener {
+
+		
+		public GraphOptionsAction() { 
+			
+		}
+		
+		/**
+		 * Opens the file browsing window and passes the selected movie to the
+		 * Button Panel when chosen.
+		 */
+		public void actionPerformed(ActionEvent e) {
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					JFrame frame = new JFrame();
+					frame.setTitle("Edit Graph");
+					frame.setVisible(true);
+					frame.add(new GraphOptionsPanel(analyzerPanel));
+					frame.pack();
+				}
+			});
+		} 
+	}
+	
 	
 
 	/**
@@ -488,6 +512,8 @@ public class ButtonToolbar extends JMenuBar {
 
 	private JTextField sampleRate;
 
+	private JMenuItem graphOptions;
+
 	/**
 	 * The constructor which initializes all fields and adds the buttons to this
 	 * panel.
@@ -597,6 +623,12 @@ public class ButtonToolbar extends JMenuBar {
 		sampleRate.setEnabled(false);
 		
 		editMenu.add(sampleRate);
+		
+		editMenu.addSeparator();
+		graphOptions = new JMenuItem("Edit the graph axes");
+		GraphOptionsAction graphOptionsAction = new GraphOptionsAction();
+		graphOptions.addActionListener(graphOptionsAction);
+		editMenu.add(graphOptions);
 		
 		
 		drawMenu = new JMenu("Draw");

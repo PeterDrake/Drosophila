@@ -79,7 +79,7 @@ public class GraphPanel extends JPanel {
 		int GPanelHeight=this.getHeight();
 		g.fillRect(0, 0, GPanelWidth, GPanelHeight);
 		averageVelocity = analyzerPanel.getAverageVelocity();
-		
+		videoLength = averageVelocity.length * analyzerPanel.getFrameRate();
 		g.setColor(Color.BLACK);
 
 		double maxVelocity = 0;
@@ -126,7 +126,7 @@ public class GraphPanel extends JPanel {
 			g.drawLine((int)(gridxOffset * i) + leftMarg, GPanelHeight-bottomMarg,
 					(int)(gridxOffset * i) + leftMarg, topMarg);
 			
-			g.drawString(""+df.format(d*i), (int)(gridxOffset * i) + leftMarg, GPanelHeight-(bottomMarg/2));
+			g.drawString(""+df.format(d*i/1000), (int)(gridxOffset * i) + leftMarg, GPanelHeight-(bottomMarg/2));
 		}
 		
 		d = maxVelocity/((GPanelHeight-(topMarg+bottomMarg))/gridyOffset);
@@ -175,5 +175,11 @@ public class GraphPanel extends JPanel {
 			x+=bounds.getWidth();
 		}
 
+	}
+
+	public void setLabels(String titleText, String xAxisText, String yAxisText) {
+		title=titleText;
+		xLabel=xAxisText;
+		yLabel=yAxisText;
 	}
 }
