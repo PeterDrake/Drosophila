@@ -98,12 +98,14 @@ public class ImagePanel extends JPanel {
 	 * Returns the preferred size of this panel as a Dimension object.
 	 */
 	public Dimension getPreferredSize() {
-		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+		return new Dimension((int) (analyzerPanel.getWidth() * (2.0 / 3.0)), analyzerPanel.getHeight());
+//		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 	}
 
 	/** Returns the minimum size of this panel as a Dimension object */
 	public Dimension getMinimumSize() {
-		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+		return new Dimension((int) (analyzerPanel.getWidth() * (2.0 / 3.0)), analyzerPanel.getHeight());
+//		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 	}
 
 	/**
