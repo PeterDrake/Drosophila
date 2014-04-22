@@ -116,6 +116,7 @@ public class GraphPanel extends JPanel {
 		int stringWidth=0;
 		
 		DecimalFormat df= new DecimalFormat ("##.##");
+//		String.forma
 		g.setColor(Color.LIGHT_GRAY);
 		
 		stringWidth=(int) f.getStringBounds(xLabel, g2d.getFontRenderContext()).getWidth();
@@ -130,7 +131,9 @@ public class GraphPanel extends JPanel {
 			g.drawLine((int)(gridxOffset * i) + leftMarg, GPanelHeight-bottomMarg,
 					(int)(gridxOffset * i) + leftMarg, topMarg);
 			
-			g.drawString(""+df.format(d*i/1000), (int)(gridxOffset * i) + leftMarg, GPanelHeight-(bottomMarg/2));
+			String tempXValue = String.format("%.2f", d*i / 1000);		
+			stringWidth=(int) f.getStringBounds(tempXValue, g2d.getFontRenderContext()).getWidth();		
+			g.drawString(tempXValue, (int)(gridxOffset * i) + leftMarg - stringWidth / 2, GPanelHeight-(bottomMarg/2));
 		}
 		
 		d = maxVelocity/((GPanelHeight-(topMarg+bottomMarg))/gridyOffset);
@@ -138,7 +141,9 @@ public class GraphPanel extends JPanel {
 			g.drawLine(leftMarg,(int) -(gridyOffset * i) + GPanelHeight - bottomMarg, GPanelWidth-rightMarg,
 					(int)	-(gridyOffset * i) + GPanelHeight - bottomMarg);
 			
-			g.drawString(""+df.format(d*i), leftMarg/2, (int)(-gridyOffset * i) + GPanelHeight - bottomMarg);
+			String tempYValue =String.format("%.2f", d*i);
+			int stringHeight=(int) f.getStringBounds(tempYValue, g2d.getFontRenderContext()).getHeight();	
+			g.drawString(String.format("%.2f", (d*i)), leftMarg/2, (int)(-gridyOffset * i) + GPanelHeight - bottomMarg + stringHeight/2);
 		}
 
 		g.setColor(Color.BLACK);
