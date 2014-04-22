@@ -202,7 +202,8 @@ public class ButtonToolbar extends JMenuBar {
 					JFrame frame = new JFrame();
 					frame.setTitle("Edit Graph");
 					frame.setVisible(true);
-					frame.add(new GraphOptionsPanel(analyzerPanel));
+					frame.add(new GraphOptionsPanel(analyzerPanel, frame));
+					frame.setResizable(false);
 					frame.pack();
 				}
 			});
