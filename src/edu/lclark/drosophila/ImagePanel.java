@@ -423,8 +423,6 @@ public class ImagePanel extends JPanel {
 
 			@Override
 			public void mouseDragged(MouseEvent event) {
-				currentpoint2 = event.getPoint();
-				repaint();
 			}
 
 			@Override
