@@ -149,6 +149,7 @@ public class ImagePanel extends JPanel {
 		if (moviePlaying) {
 			int imgWidth = image.getWidth(null);
 			int imgHeight = image.getHeight(null);
+			
 			double xScale = this.getWidth() / (double) imgWidth;
 			double yScale = this.getHeight() / (double) imgHeight;
 			scale = Math.min(xScale, yScale);
@@ -229,7 +230,7 @@ public class ImagePanel extends JPanel {
 				System.out.println("scale is " + scale);
 
 				double imageContrast = analyzerPanel.getImageContrast();
-				if (imageContrast != oldImageContrast) {
+			//	if (imageContrast != oldImageContrast) {
 					for (int i = 0; i < image.getWidth(null); i++) {
 						for (int j = 0; j < image.getHeight(null); j++) {
 							int rgb = image.getRGB(i, j);
@@ -258,7 +259,7 @@ public class ImagePanel extends JPanel {
 					}
 					oldImage = image;
 					oldImageContrast = imageContrast;
-				}
+				//}
 
 				oldImage = image;
 				oldImageContrast = imageContrast;
@@ -339,7 +340,6 @@ public class ImagePanel extends JPanel {
 			int yPoints[] = { currentpoint1.y, currentpoint1.y,
 					currentpoint2.y, currentpoint2.y };
 			g.drawPolygon(xPoints, yPoints, 4);
-		
 			}
 		}
 
