@@ -283,4 +283,8 @@ public class AnalyzerPanel extends JPanel {
 	public void disposeLoadingDialog() {
 		loadingDialog.setVisible(false);
 	}
+
+	public String getDataForFile() {
+		return dpanel.getDataForFile();
+	}
 }
