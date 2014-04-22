@@ -284,6 +284,7 @@ public class AnalyzerPanel extends JPanel {
 		loadingDialog.setVisible(false);
 	}
 
+
 	public double getFrameRate() {
 		// TODO Auto-generated method stub
 		return gui.getFrameRate();
@@ -295,5 +296,10 @@ public class AnalyzerPanel extends JPanel {
 
 	public void saveGraph(File file) {
 		graphPanel.saveGraph(file);
+	}
+		
+		
+	public String getDataForFile() {
+		return dpanel.getDataForFile();
 	}
 }

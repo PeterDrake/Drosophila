@@ -1,6 +1,7 @@
 package edu.lclark.drosophila;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.text.ParseException;
 
 import javax.swing.*;
@@ -178,11 +179,31 @@ public class ButtonToolbar extends JMenuBar {
 			
 		} 
 		
+	}
+	
+	private class SaveDataAction implements ActionListener {
 		
+		private ButtonToolbar bpanel;
 		
+		public SaveDataAction(ButtonToolbar bpanel){
+			this.bpanel = bpanel;
+		}
 		
-		
-		
+		public void actionPerformed(ActionEvent e) {
+			String sample = bpanel.getDataForFile();
+			JFileChooser fileChooser = new JFileChooser();
+			int returnVal = fileChooser.showSaveDialog(saveData);
+			if(returnVal == JFileChooser.APPROVE_OPTION){
+				try {
+					FileWriter fileWriter = new FileWriter(fileChooser.getSelectedFile() + ".csv");
+					fileWriter.write(sample.toString());
+					fileWriter.close();
+				}catch(Exception ex){
+					ex.printStackTrace();
+					System.exit(1);
+				}
+			}
+		}
 	}
 	
 	private class GraphOptionsAction implements ActionListener {
@@ -545,6 +566,8 @@ public class ButtonToolbar extends JMenuBar {
 	 * @param analyzerPanel
 	 *            the AnalyzerPanel object which this panel is attached to.
 	 */
+
+	private JMenuItem saveData;
 	public ButtonToolbar(AnalyzerPanel a) {
 		this.analyzerPanel = a;
 //		this.setLayout(new GridBagLayout());
@@ -574,7 +597,20 @@ public class ButtonToolbar extends JMenuBar {
 		fileMenu.add(saveGraph);
 		SaveGraphAction saveGraphAction = new SaveGraphAction();
 		saveGraph.addActionListener(saveGraphAction);
+
+		saveData = new JMenuItem("Save chart data to file");
+		SaveDataAction saveDataAction = new SaveDataAction(this);
+		saveData.addActionListener(saveDataAction);
 		
+		fileMenu.addSeparator();
+		fileMenu.add(saveData);
+		
+		clearImages = new JMenuItem("Clear all images");
+		ClearImageAction clearImageAction = new ClearImageAction();
+		clearImages.addActionListener(clearImageAction);
+		
+		fileMenu.addSeparator();
+		fileMenu.add(clearImages);
 
 		editMenu = new JMenu("Edit");
 		this.add(editMenu);
@@ -704,22 +740,20 @@ public class ButtonToolbar extends JMenuBar {
 		forwardFrame.addActionListener(forwardFrameAction);
 		this.add(forwardFrame);
 
-		clearImages = new JMenuItem("Clear all images");
-		ClearImageAction clearImageAction = new ClearImageAction();
-		clearImages.addActionListener(clearImageAction);
-		
 		totalFrames = new JLabel("0");
 		totalFrames.setPreferredSize(new Dimension(75, 25));
 		totalFrames.setMaximumSize(new Dimension(75, 25));
 		totalFrames.setToolTipText("Total frames in the movie");
 		this.add(totalFrames);
-		
-		fileMenu.addSeparator();
-		fileMenu.add(clearImages);
 
 	}
 
 	
+	public String getDataForFile() {
+		return analyzerPanel.getDataForFile();
+	}
+
+
 	/**
 	 * Daisy chain method to pass an opened movie file
 	 * @param file
