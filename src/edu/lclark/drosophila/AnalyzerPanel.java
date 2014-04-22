@@ -292,4 +292,8 @@ public class AnalyzerPanel extends JPanel {
 	public void setLabels(String titleText, String xAxisText, String yAxisText) {
 		graphPanel.setLabels(titleText, xAxisText, yAxisText);
 	}
+
+	public void saveGraph(File file) {
+		graphPanel.saveGraph(file);
+	}
 }

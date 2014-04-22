@@ -209,6 +209,26 @@ public class ButtonToolbar extends JMenuBar {
 		} 
 	}
 	
+	private class SaveGraphAction implements ActionListener {
+
+		
+		public SaveGraphAction() { 
+			
+		}
+		
+		/**
+		 * Opens the file browsing window and passes the selected movie to the
+		 * Button Panel when chosen.
+		 */
+		public void actionPerformed(ActionEvent e) {
+			int returnVal = fileChooser.showSaveDialog(saveGraph); 
+			if(returnVal == JFileChooser.APPROVE_OPTION) {
+				File file = fileChooser.getSelectedFile();
+				analyzerPanel.saveGraph(file);
+				//analyzerPanel.repaint(); Maybe we need this? We shall see...  
+			}
+		} 
+	}
 	
 
 	/**
@@ -514,6 +534,8 @@ public class ButtonToolbar extends JMenuBar {
 
 	private JMenuItem graphOptions;
 
+	private JMenuItem saveGraph;
+
 	/**
 	 * The constructor which initializes all fields and adds the buttons to this
 	 * panel.
@@ -546,6 +568,11 @@ public class ButtonToolbar extends JMenuBar {
 		fileMenu.add(analyzeMovie);
 		AnalyzeMovieAction analyzeMovieAction = new AnalyzeMovieAction();
 		analyzeMovie.addActionListener(analyzeMovieAction);
+		
+		saveGraph = new JMenuItem("Save Graph");
+		fileMenu.add(saveGraph);
+		SaveGraphAction saveGraphAction = new SaveGraphAction();
+		saveGraph.addActionListener(saveGraphAction);
 		
 
 		editMenu = new JMenu("Edit");

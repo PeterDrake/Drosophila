@@ -1,10 +1,14 @@
 package edu.lclark.drosophila;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
 
 public class GraphPanel extends JPanel {
@@ -181,5 +185,17 @@ public class GraphPanel extends JPanel {
 		title=titleText;
 		xLabel=xAxisText;
 		yLabel=yAxisText;
+	}
+
+	public void saveGraph(File file) {
+		Container c = this;
+		BufferedImage im = new BufferedImage(c.getWidth(), c.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		c.paint(im.getGraphics());
+		try {
+			ImageIO.write(im, "PNG", file);
+		} catch (IOException e) {
+			System.err.println("Invalid IO Exception");
+			e.printStackTrace();
+		}
 	}
 }
