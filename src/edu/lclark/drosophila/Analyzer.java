@@ -715,9 +715,9 @@ public class Analyzer {
 		}
 
 
-		gui.showMovie(frames, 100
+		//gui.showMovie(frames, 100
 		// MICRO_SECONDS_BETWEEN_FRAMES / 1000
-		);
+		//);
 
 		totalFrames = temptotalFrames;
 		gui.repaint();
