@@ -10,6 +10,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Caret;
 import javax.swing.text.Document;
@@ -576,13 +578,18 @@ public class ButtonToolbar extends JMenuBar {
 		fileMenu = new JMenu("File");
 		this.add(fileMenu);//, constraints);
 			
+		FileFilter filter = new FileNameExtensionFilter("All common image file formats.", 
+				"png", "jpg", "jpeg", "gif", "raw", "tif", "bmp");
 		fileChooser = new JFileChooser();
+		fileChooser.addChoosableFileFilter(filter);
 		getImage = new JMenuItem("Open an Image");
 		fileMenu.add(getImage);
 		GetImageAction getImageAction = new GetImageAction(this);
 		getImage.addActionListener(getImageAction);
 	
+		filter = new FileNameExtensionFilter("Only .mov files.", "mov");
 		fileChooser = new JFileChooser(); // unsure if we need a new variable to open a movie vs. opening an image
+		fileChooser.addChoosableFileFilter(filter);
 		openMovie = new JMenuItem("Open a movie");
 		fileMenu.add(openMovie);
 		OpenMovieAction openMovieAction = new OpenMovieAction(this); 
