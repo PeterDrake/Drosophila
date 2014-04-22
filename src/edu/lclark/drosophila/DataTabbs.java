@@ -8,7 +8,7 @@ public class DataTabbs extends JTabbedPane{
 	AnalyzerPanel analyzer;
 	public DataTabbs(AnalyzerPanel a){
 		addTab("Single", null, new DataPanel(a), "shows data associated with individual flies");
-		addTab("Group", null, new GroupDataPanel(a), "Shows data associated with groups of flies");
+		//addTab("Group", null, new GroupDataPanel(a), "Shows data associated with groups of flies");
 	}
 
 	/**

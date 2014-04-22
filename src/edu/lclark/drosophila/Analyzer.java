@@ -111,11 +111,10 @@ public class Analyzer {
 	private double imageContrast = 1.0;
 
 
-<<<<<<< HEAD
+
 	private RegionMaker regionmaker;
-=======
+
 	private double duration;
->>>>>>> master
 
 	private int sampleRate;
 
@@ -714,15 +713,13 @@ public class Analyzer {
 		while (mediaReader.readPacket() == null) {
 			// Wait
 		}
-<<<<<<< HEAD
+
 
 		gui.showMovie(frames, 100
 		// MICRO_SECONDS_BETWEEN_FRAMES / 1000
 		);
 
-=======
 		totalFrames = temptotalFrames;
->>>>>>> master
 		gui.repaint();
 
 	}
