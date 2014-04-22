@@ -23,6 +23,8 @@ public class Analyzer {
 
 	private int sizeThreshold;
 
+	private int maxSizeThreshold;
+
 	private static AnalyzerGui gui;
 
 	private int contrastThreshold = 200;
@@ -284,8 +286,10 @@ public class Analyzer {
 							}
 						}
 
-						if (numPixels >= sizeThreshold) {
+						if (numPixels >= sizeThreshold 
+								&& numPixels <= maxSizeThreshold) {
 							// if the blob is large enough to be a fly
+							// and small enough to be a fly
 
 							// create a new temporary fly object
 							double tempLocation[] = new double[2];
@@ -512,6 +516,14 @@ public class Analyzer {
 	public int getTotalFrames() {
 		return totalFrames;
 	}
+	
+	public int getSizeThreshold() {
+		return sizeThreshold;
+	}
+	
+	public int getMaxSizeThreshold() {
+		return maxSizeThreshold;
+	}
 
 	/**
 	 * Checks if the rgb value given is dark enough to be identified as a fly.
@@ -556,6 +568,21 @@ public class Analyzer {
 	 */
 	public void sizeThresholdUpdate(int input) {
 		sizeThreshold = input;
+		if (totalFrames > 0) {
+			updateImages();
+		}
+	}
+	
+	/**
+	 * Updates the size threshold field. This is used to determine if an object
+	 * identified within an image is large enough to be considered a fly. This
+	 * will also analyze all stored images again.
+	 * 
+	 * @param input
+	 *            the value which size threshold will be set to.
+	 */
+	public void maxSizeThresholdUpdate(int input) {
+		maxSizeThreshold = input;
 		if (totalFrames > 0) {
 			updateImages();
 		}

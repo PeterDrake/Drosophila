@@ -196,6 +196,18 @@ public class AnalyzerPanel extends JPanel {
 	}
 	
 	/**
+	 * Updates the max size threshold in Analyzer. This is used to determine if an
+	 * object identified within an image is too large to be considered a fly.
+	 * This will also analyze all stored images again.
+	 * 
+	 * @param input
+	 *            the value which size threshold will be set to.
+	 */
+	public void maxSizeThresholdUpdate(int input) {
+		gui.maxSizeThresholdUpdate(input);
+	}
+	
+	/**
 	 * Daisy chain method to pass an opened movie file
 	 * @param file
 	 */
@@ -273,6 +285,14 @@ public class AnalyzerPanel extends JPanel {
 	public boolean getMovieLoaded() {
 		// TODO Auto-generated method stub
 		return gui.getMovieLoaded();
+	}
+	
+	public int getSizeThreshold() {
+		return gui.getSizeThreshold();
+	}
+	
+	public int getMaxSizeThreshold() {
+		return gui.getMaxSizeThreshold();
 	}
 
 	public void analyzeMovie(int sampleRate) {

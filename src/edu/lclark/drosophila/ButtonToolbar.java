@@ -60,7 +60,7 @@ public class ButtonToolbar extends JMenuBar {
 			analyzerPanel.setFlydentifiers();
 		}
 	}
-	
+
 	private class AnalyzeMovieAction implements ActionListener {
 
 		/**
@@ -68,15 +68,14 @@ public class ButtonToolbar extends JMenuBar {
 		 */
 		public void actionPerformed(ActionEvent e) {
 			analyzerPanel.displayLoadingPopup("Movie is loading");
-			new Thread(
-				new Runnable() {
-					public void run() {
-						analyzerPanel.analyzeMovie(Integer.parseInt(sampleRate.getText()));		
-						analyzerPanel.disposeLoadingDialog();
-					}
+			new Thread(new Runnable() {
+				public void run() {
+					analyzerPanel.analyzeMovie(Integer.parseInt(sampleRate
+							.getText()));
+					analyzerPanel.disposeLoadingDialog();
 				}
-			).start();
-			
+			}).start();
+
 		}
 	}
 
@@ -91,24 +90,24 @@ public class ButtonToolbar extends JMenuBar {
 			try {
 				int startFrame = Integer.parseInt(firstFrame.getText());
 				int endFrame = Integer.parseInt(lastFrame.getText());
-				if(startFrame > endFrame) {
-					analyzerPanel.displayMessagePopup(
-							"Start frame must be smaller than end frame.");
+				if (startFrame > endFrame) {
+					analyzerPanel
+							.displayMessagePopup("Start frame must be smaller than end frame.");
 					drawTrajectories.setSelected(false);
-				} else if(startFrame <= 0 || endFrame <= 0){
-					analyzerPanel.displayMessagePopup(
-							"Frame numbers must be larger than 0.");
+				} else if (startFrame <= 0 || endFrame <= 0) {
+					analyzerPanel
+							.displayMessagePopup("Frame numbers must be larger than 0.");
 					drawTrajectories.setSelected(false);
 				} else {
 					analyzerPanel.setDrawTrajectories(startFrame, endFrame);
 					drawTrajectories.setSelected(true);
 				}
 			} catch (NumberFormatException error) {
-				analyzerPanel.displayMessagePopup(
-						"Only enter whole numbers into the start and end frame boxes.");
+				analyzerPanel
+						.displayMessagePopup("Only enter whole numbers into the start and end frame boxes.");
 				drawTrajectories.setSelected(false);
-//				error.printStackTrace();
-//				System.exit(1);
+				// error.printStackTrace();
+				// System.exit(1);
 			}
 		}
 
@@ -136,7 +135,7 @@ public class ButtonToolbar extends JMenuBar {
 		public GetImageAction(ButtonToolbar bpanel) {
 			this.bpanel = bpanel;
 		}
-		
+
 		/**
 		 * Opens the file browsing window and passes the selected image to the
 		 * Button Panel when chosen.
@@ -151,54 +150,54 @@ public class ButtonToolbar extends JMenuBar {
 			}
 		}
 	}
-	
-	
+
 	/**
-	 * The action listener which opens a file browsing window when the open movie
-	 * button is clicked.
+	 * The action listener which opens a file browsing window when the open
+	 * movie button is clicked.
 	 */
 	private class OpenMovieAction implements ActionListener {
 
-		private ButtonToolbar bpanel; 
-		
-		public OpenMovieAction(ButtonToolbar bpanel) { 
-			this.bpanel = bpanel; 
+		private ButtonToolbar bpanel;
+
+		public OpenMovieAction(ButtonToolbar bpanel) {
+			this.bpanel = bpanel;
 		}
-		
+
 		/**
 		 * Opens the file browsing window and passes the selected movie to the
 		 * Button Panel when chosen.
 		 */
 		public void actionPerformed(ActionEvent e) {
-			int returnVal = fileChooser.showOpenDialog(openMovie); 
-			if(returnVal == JFileChooser.APPROVE_OPTION) {
+			int returnVal = fileChooser.showOpenDialog(openMovie);
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				File file = fileChooser.getSelectedFile();
-				bpanel.passMovie(file); 
-				//analyzerPanel.repaint(); Maybe we need this? We shall see...  
+				bpanel.passMovie(file);
+				// analyzerPanel.repaint(); Maybe we need this? We shall see...
 			}
-			
-		} 
-		
+
+		}
+
 	}
-	
+
 	private class SaveDataAction implements ActionListener {
-		
+
 		private ButtonToolbar bpanel;
-		
-		public SaveDataAction(ButtonToolbar bpanel){
+
+		public SaveDataAction(ButtonToolbar bpanel) {
 			this.bpanel = bpanel;
 		}
-		
+
 		public void actionPerformed(ActionEvent e) {
 			String sample = bpanel.getDataForFile();
 			JFileChooser fileChooser = new JFileChooser();
 			int returnVal = fileChooser.showSaveDialog(saveData);
-			if(returnVal == JFileChooser.APPROVE_OPTION){
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				try {
-					FileWriter fileWriter = new FileWriter(fileChooser.getSelectedFile() + ".csv");
+					FileWriter fileWriter = new FileWriter(
+							fileChooser.getSelectedFile() + ".csv");
 					fileWriter.write(sample.toString());
 					fileWriter.close();
-				}catch(Exception ex){
+				} catch (Exception ex) {
 					ex.printStackTrace();
 					System.exit(1);
 				}
@@ -219,16 +218,17 @@ public class ButtonToolbar extends JMenuBar {
 		public void stateChanged(ChangeEvent e) {
 			final JSlider Source = (JSlider) e.getSource();
 			if (!Source.getValueIsAdjusting()) {
-				SwingUtilities.invokeLater(new Runnable(){
+				SwingUtilities.invokeLater(new Runnable() {
 					@Override
-					public void run(){
-				
-				analyzerPanel.sizeThresholdUpdate((int) Source.getValue());
-				thresholdText.setText("" + (int) Source.getValue());
-				analyzerPanel.repaint();
+					public void run() {
+
+						analyzerPanel.sizeThresholdUpdate((int) Source
+								.getValue());
+						thresholdText.setText("" + (int) Source.getValue());
+						analyzerPanel.repaint();
 					}
 				});
-				
+
 			}
 			if (Source.getValueIsAdjusting()) {
 				thresholdText.setText("" + (int) Source.getValue());
@@ -263,50 +263,31 @@ public class ButtonToolbar extends JMenuBar {
 			} catch (BadLocationException e1) {
 				e1.getStackTrace();
 				System.exit(1);
-				}
+			}
 
-		
 			try {
 				int value = Integer.parseInt(text);
-				if(value>=MIN_SLIDER_THRESHOLD&&value<=MAX_SLIDER_THRESHHOLD){
-				analyzerPanel.sizeThresholdUpdate(value);
-				setThreshold.setValue(value);
-				}
-				else{
+				if (value >= MIN_SLIDER_THRESHOLD
+						&& value <= MAX_SLIDER_THRESHOLD) {
+					analyzerPanel.sizeThresholdUpdate(value);
+					setThreshold.setValue(value);
+				} else {
 					analyzerPanel.sizeThresholdUpdate(DEFAULT_SLIDER_THRESHOLD);
 					setThreshold.setValue(DEFAULT_SLIDER_THRESHOLD);
 				}
 			} catch (NumberFormatException E) {
 				E.getStackTrace();
-				//does nothing waits for a valid argument
+				// does nothing waits for a valid argument
 
 			}
 		}
 	}
 
-	
 	/**
-	 * The action listener which changes the Analyzer's size threshold when the
-	 * size threshold button is clicked.
+	 * The action listener which changes the Analyzer's max size threshold when
+	 * the max size threshold button is clicked.
 	 */
-	private class SetImageContrastAction implements ChangeListener {
-
-		/**
-		 *Event which sets the size threshold when the slider is moved 
-		 *
-		 */
-		public void stateChanged(ChangeEvent e) {
-			JSlider Source = (JSlider)e.getSource();
-			if(!Source.getValueIsAdjusting()){
-				analyzerPanel.setImageContrast((double)Source.getValue()/10.0);
-				//System.err.println(Source.getValue() + " : " + (double)Source.getValue()/10.0);
-				analyzerPanel.repaint();
-			}
-		}
-	}
-
-	private class SetContrastThresholdAction implements ChangeListener{
-
+	private class SetMaxThresholdAction implements ChangeListener {
 
 		/**
 		 * Event which sets the size threshold when the slider is moved
@@ -315,11 +296,111 @@ public class ButtonToolbar extends JMenuBar {
 		public void stateChanged(ChangeEvent e) {
 			final JSlider Source = (JSlider) e.getSource();
 			if (!Source.getValueIsAdjusting()) {
-				SwingUtilities.invokeLater(new Runnable(){
+				SwingUtilities.invokeLater(new Runnable() {
 					@Override
-					public void run(){
-						analyzerPanel.contrastThresholdUpdate((int) Source.getValue());
-						contrastThresholdText.setText("" + (int) Source.getValue());
+					public void run() {
+
+						analyzerPanel.maxSizeThresholdUpdate((int) Source
+								.getValue());
+						thresholdText.setText("" + (int) Source.getValue());
+						analyzerPanel.repaint();
+					}
+				});
+
+			}
+			if (Source.getValueIsAdjusting()) {
+				thresholdText.setText("" + (int) Source.getValue());
+			}
+		}
+	}
+
+	/**
+	 * The action listener that will adjust the Threshold as the textbox is
+	 * changed
+	 */
+	private class SetMaxThresholdEntered implements DocumentListener {
+		public void changedUpdate(DocumentEvent e) {
+			reportchange(e);
+		}
+
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			reportchange(e);
+		}
+
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			reportchange(e);
+		}
+
+		public void reportchange(DocumentEvent e) {
+			Document Source = e.getDocument();
+			String text = "25";
+			try {
+				text = Source.getText(0, Source.getLength());
+			} catch (BadLocationException e1) {
+				e1.getStackTrace();
+				System.exit(1);
+			}
+
+			try {
+				int value = Integer.parseInt(text);
+				if (value >= MIN_MAXPIXEL_SLIDER_THRESHOLD
+						&& value <= MAX_MAXPIXEL_SLIDER_THRESHOLD
+						&& value > analyzerPanel.getSizeThreshold()) {
+					analyzerPanel.sizeThresholdUpdate(value);
+					setThreshold.setValue(value);
+				} else {
+					analyzerPanel
+							.sizeThresholdUpdate(DEFAULT_MAXPIXEL_SLIDER_THRESHOLD);
+					setThreshold.setValue(DEFAULT_MAXPIXEL_SLIDER_THRESHOLD);
+				}
+			} catch (NumberFormatException E) {
+				E.getStackTrace();
+				// does nothing waits for a valid argument
+
+			}
+		}
+	}
+
+	/**
+	 * The action listener which changes the Analyzer's size threshold when the
+	 * size threshold button is clicked.
+	 */
+	private class SetImageContrastAction implements ChangeListener {
+
+		/**
+		 * Event which sets the size threshold when the slider is moved
+		 * 
+		 */
+		public void stateChanged(ChangeEvent e) {
+			JSlider Source = (JSlider) e.getSource();
+			if (!Source.getValueIsAdjusting()) {
+				analyzerPanel
+						.setImageContrast((double) Source.getValue() / 10.0);
+				// System.err.println(Source.getValue() + " : " +
+				// (double)Source.getValue()/10.0);
+				analyzerPanel.repaint();
+			}
+		}
+	}
+
+	private class SetContrastThresholdAction implements ChangeListener {
+
+		/**
+		 * Event which sets the size threshold when the slider is moved
+		 * 
+		 */
+		public void stateChanged(ChangeEvent e) {
+			final JSlider Source = (JSlider) e.getSource();
+			if (!Source.getValueIsAdjusting()) {
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						analyzerPanel.contrastThresholdUpdate((int) Source
+								.getValue());
+						contrastThresholdText.setText(""
+								+ (int) Source.getValue());
 						analyzerPanel.repaint();
 					}
 				});
@@ -330,6 +411,7 @@ public class ButtonToolbar extends JMenuBar {
 		}
 
 	}
+
 	private class SetContrastEntered implements DocumentListener {
 		public void changedUpdate(DocumentEvent e) {
 			reportchange(e);
@@ -353,30 +435,30 @@ public class ButtonToolbar extends JMenuBar {
 			} catch (BadLocationException e1) {
 				e1.getStackTrace();
 				System.exit(1);
-				}
-
+			}
 
 			try {
 				int value = Integer.parseInt(text);
-				if(value>=MIN_SLIDER_THRESHOLD&&value<=MAX_SLIDER_THRESHHOLD){
-				analyzerPanel.contrastThresholdUpdate(value);
-				setContrastThreshold.setValue(value);
-				}
-				else{
-					analyzerPanel.contrastThresholdUpdate(DEFAULT_CONTRAST_THRESHOLD);
+				if (value >= MIN_SLIDER_THRESHOLD
+						&& value <= MAX_SLIDER_THRESHOLD) {
+					analyzerPanel.contrastThresholdUpdate(value);
+					setContrastThreshold.setValue(value);
+				} else {
+					analyzerPanel
+							.contrastThresholdUpdate(DEFAULT_CONTRAST_THRESHOLD);
 					setContrastThreshold.setValue(DEFAULT_CONTRAST_THRESHOLD);
 				}
 			} catch (NumberFormatException E) {
 				E.getStackTrace();
-	//does nothing waits for valid argument 
+				// does nothing waits for valid argument
 
 			}
 		}
 	}
 
 	private JMenu menuFile;
-	
-		/**
+
+	/**
 	 * The file browser which allows the user to choose a file which contains an
 	 * image.
 	 */
@@ -391,15 +473,19 @@ public class ButtonToolbar extends JMenuBar {
 	 * The button which lets the user specify what the Analyzer's size threshold
 	 * is.
 	 */
-
 	private JSlider setThreshold;
-	
+
 	/**
-	 * The button which lets the user specify what the Analyzer's contrast threshold
-	 * is.
+	 * The button which lets the user specify what the Analyzer's maximum size
+	 * threshold is.
+	 */
+	private JSlider setMaxThreshold;
+
+	/**
+	 * The button which lets the user specify what the Analyzer's contrast
+	 * threshold is.
 	 */
 	private JSlider setContrastThreshold;
-
 
 	/**
 	 * The button which advances the displayed image one frame forward.
@@ -415,24 +501,29 @@ public class ButtonToolbar extends JMenuBar {
 	 * The button which detaches all added files from the analyzer.
 	 */
 	private JMenuItem clearImages;
-	
+
 	/**
 	 * This button opens and plays a movie.
 	 */
-	private JMenuItem openMovie; 
+	private JMenuItem openMovie;
+
 	/**
 	 * A slider for editing the contrast of the actual image
 	 */
-	 
 	private JSlider setImageContrast;
-
 
 	/**
 	 * The text field which lets the user specify what the Analyzer's size
 	 * threshold is.
 	 */
 	private JTextField thresholdText;
-	
+
+	/**
+	 * The text field which lets the user specify what the Analyzer's maximum
+	 * size threshold is.
+	 */
+	private JTextField maxThresholdText;
+
 	/**
 	 * The text field which lets the user specify what the Analyzer's contrast
 	 * threshold is.
@@ -452,12 +543,11 @@ public class ButtonToolbar extends JMenuBar {
 
 	/** Last frame to draw trajectories for */
 	private JTextField lastFrame;
-	
+
 	/**
 	 * Button for analyzing the movie already opened
 	 */
 	private JMenuItem analyzeMovie;
-	
 
 	/**
 	 * The default preferred width of this panel.
@@ -468,38 +558,58 @@ public class ButtonToolbar extends JMenuBar {
 	 * The default preferred height of this panel.
 	 */
 	private static final int DEFAULT_HEIGHT = 20;
+
 	/**
 	 * the default pixel threshold for the slider;
 	 */
 	private static final int DEFAULT_SLIDER_THRESHOLD = 25;
+
+	/**
+	 * the default pixel threshold for the max pixel slider;
+	 */
+	private static final int DEFAULT_MAXPIXEL_SLIDER_THRESHOLD = 500;
+
 	/**
 	 * The Highest possible value for the pixel threshold;
 	 */
-	private static final int MAX_SLIDER_THRESHHOLD = 255;
+	private static final int MAX_SLIDER_THRESHOLD = 255;
+
 	/**
-	 * The lowest possible value for the pixel theshold;
+	 * The Highest possible value for the max pixel slider threshold;
+	 */
+	private static final int MAX_MAXPIXEL_SLIDER_THRESHOLD = 500;
+
+	/**
+	 * The lowest possible value for the pixel threshold;
 	 */
 	private static final int MIN_SLIDER_THRESHOLD = 0;
+
+	/**
+	 * The lowest possible value for the max pixel threshold.
+	 */
+	private static final int MIN_MAXPIXEL_SLIDER_THRESHOLD = 50;
+
+	private static final int DEFAULT_CONTRAST_THRESHOLD = 200;
+
 	/**
 	 * The label for the Slider
 	 */
-	private static final int DEFAULT_CONTRAST_THRESHOLD=200;
-	
 	private JLabel SliderLabel;
-	
+
+	private JLabel MaxSliderLabel;
+
 	private JLabel ContrastLabel;
-	
+
 	private JMenu fileMenu;
-	
+
 	private JMenu editMenu;
-	
+
 	private JMenu drawMenu;
-	
+
 	/**
 	 * The AnalyzerPanel object that this ImagePanel communicates with.
 	 */
 	private AnalyzerPanel analyzerPanel;
-
 
 	private JLabel totalFrames;
 
@@ -510,85 +620,117 @@ public class ButtonToolbar extends JMenuBar {
 	/**
 	 * The constructor which initializes all fields and adds the buttons to this
 	 * panel.
-	 * @param editMenu 
+	 * 
+	 * @param editMenu
 	 * 
 	 * @param analyzerPanel
 	 *            the AnalyzerPanel object which this panel is attached to.
 	 */
 
 	private JMenuItem saveData;
+
 	public ButtonToolbar(AnalyzerPanel a) {
 		this.analyzerPanel = a;
-//		this.setLayout(new GridBagLayout());
-//		GridBagConstraints constraints = new GridBagConstraints();
+		// this.setLayout(new GridBagLayout());
+		// GridBagConstraints constraints = new GridBagConstraints();
 
 		fileMenu = new JMenu("File");
-		this.add(fileMenu);//, constraints);
-			
+		this.add(fileMenu);// , constraints);
+
 		fileChooser = new JFileChooser();
 		getImage = new JMenuItem("Open an Image");
 		fileMenu.add(getImage);
 		GetImageAction getImageAction = new GetImageAction(this);
 		getImage.addActionListener(getImageAction);
-	
-		fileChooser = new JFileChooser(); // unsure if we need a new variable to open a movie vs. opening an image
+
+		fileChooser = new JFileChooser(); // unsure if we need a new variable to
+											// open a movie vs. opening an image
 		openMovie = new JMenuItem("Open a movie");
 		fileMenu.add(openMovie);
-		OpenMovieAction openMovieAction = new OpenMovieAction(this); 
-		openMovie.addActionListener(openMovieAction); 
-		
+		OpenMovieAction openMovieAction = new OpenMovieAction(this);
+		openMovie.addActionListener(openMovieAction);
+
 		analyzeMovie = new JMenuItem("Analyze the movie");
 		fileMenu.add(analyzeMovie);
 		AnalyzeMovieAction analyzeMovieAction = new AnalyzeMovieAction();
 		analyzeMovie.addActionListener(analyzeMovieAction);
-		
+
 		saveData = new JMenuItem("Save chart data to file");
 		SaveDataAction saveDataAction = new SaveDataAction(this);
 		saveData.addActionListener(saveDataAction);
-		
+
 		fileMenu.addSeparator();
 		fileMenu.add(saveData);
-		
+
 		clearImages = new JMenuItem("Clear all images");
 		ClearImageAction clearImageAction = new ClearImageAction();
 		clearImages.addActionListener(clearImageAction);
-		
+
 		fileMenu.addSeparator();
 		fileMenu.add(clearImages);
 
 		editMenu = new JMenu("Edit");
 		this.add(editMenu);
-		
-		SliderLabel = new JLabel("Pixel Threshold");
+
+		SliderLabel = new JLabel("Minimum Pixel Threshold");
 		editMenu.add(SliderLabel);
-		
+
 		setThreshold = new JSlider(JSlider.HORIZONTAL, MIN_SLIDER_THRESHOLD,
-				MAX_SLIDER_THRESHHOLD, DEFAULT_SLIDER_THRESHOLD);
+				MAX_SLIDER_THRESHOLD, DEFAULT_SLIDER_THRESHOLD);
 		setThreshold.setMajorTickSpacing(50);
 		setThreshold.setMinorTickSpacing(10);
 		setThreshold.setPaintLabels(true);
 		setThreshold.setPaintTicks(true);
-		setThreshold.setToolTipText("Sets the Pixel Threshold");
+		setThreshold.setToolTipText("Sets the Minumum Pixel Threshold");
 		editMenu.add(setThreshold);
 		SetThresholdAction setThresholdAction = new SetThresholdAction();
 		setThreshold.addChangeListener(setThresholdAction);
 		analyzerPanel.sizeThresholdUpdate(DEFAULT_SLIDER_THRESHOLD);
-		
+
 		thresholdText = new JTextField("0");
 		thresholdText.setPreferredSize(new Dimension(100, 25));
 		thresholdText.setText("" + DEFAULT_SLIDER_THRESHOLD);
 		SetThresholdEntered setThresholdEntered = new SetThresholdEntered();
 		thresholdText.getDocument().addDocumentListener(setThresholdEntered);
-		
+
 		editMenu.add(thresholdText);
-		
+
 		editMenu.addSeparator();
-		
+
+		MaxSliderLabel = new JLabel("Maximum Pixel Threshold");
+		editMenu.add(MaxSliderLabel);
+
+		setMaxThreshold = new JSlider(JSlider.HORIZONTAL,
+				MIN_MAXPIXEL_SLIDER_THRESHOLD, MAX_MAXPIXEL_SLIDER_THRESHOLD,
+				DEFAULT_MAXPIXEL_SLIDER_THRESHOLD);
+		setMaxThreshold.setMajorTickSpacing(150);
+		setMaxThreshold.setMinorTickSpacing(25);
+		setMaxThreshold.setPaintLabels(true);
+		setMaxThreshold.setPaintTicks(true);
+		setMaxThreshold.setToolTipText("Sets the Maximum Pixel Threshold");
+		editMenu.add(setMaxThreshold);
+		SetMaxThresholdAction setMaxThresholdAction = new SetMaxThresholdAction();
+		setMaxThreshold.addChangeListener(setMaxThresholdAction);
+		analyzerPanel.sizeThresholdUpdate(DEFAULT_SLIDER_THRESHOLD);
+
+		maxThresholdText = new JTextField("0");
+		maxThresholdText.setPreferredSize(new Dimension(100, 25));
+		maxThresholdText.setText("" + DEFAULT_SLIDER_THRESHOLD);
+		SetMaxThresholdEntered setMaxThresholdEntered = new SetMaxThresholdEntered();
+		maxThresholdText.getDocument().addDocumentListener(
+				setMaxThresholdEntered);
+
+		editMenu.add(maxThresholdText);
+
+		editMenu.addSeparator();
+
 		ContrastLabel = new JLabel("Contrast Threshold");
-		
+
 		editMenu.add(ContrastLabel);
-		
-		setContrastThreshold = new JSlider(JSlider.HORIZONTAL, MIN_SLIDER_THRESHOLD,MAX_SLIDER_THRESHHOLD,DEFAULT_CONTRAST_THRESHOLD);
+
+		setContrastThreshold = new JSlider(JSlider.HORIZONTAL,
+				MIN_SLIDER_THRESHOLD, MAX_SLIDER_THRESHOLD,
+				DEFAULT_CONTRAST_THRESHOLD);
 		setContrastThreshold.setMajorTickSpacing(50);
 		setContrastThreshold.setMinorTickSpacing(10);
 		setContrastThreshold.setPaintLabels(true);
@@ -596,53 +738,55 @@ public class ButtonToolbar extends JMenuBar {
 		setContrastThreshold.setToolTipText("Sets the contrast threshold");
 		SetContrastThresholdAction setContrastThresholdAction = new SetContrastThresholdAction();
 		setContrastThreshold.addChangeListener(setContrastThresholdAction);
-		
+
 		editMenu.add(setContrastThreshold);
-		
+
 		contrastThresholdText = new JTextField("200");
 		contrastThresholdText.setPreferredSize(new Dimension(100, 25));
 		SetContrastEntered setContrastEntered = new SetContrastEntered();
-		contrastThresholdText.getDocument().addDocumentListener(setContrastEntered);
-		
+		contrastThresholdText.getDocument().addDocumentListener(
+				setContrastEntered);
+
 		editMenu.add(contrastThresholdText);
-		
+
 		editMenu.addSeparator();
-		
+
 		editMenu.add(new JLabel("Image Contrast"));
-		//analyzerPanel.sizeImageContrastUpdate(1.0);
-		
+		// analyzerPanel.sizeImageContrastUpdate(1.0);
+
 		setImageContrast = new JSlider(JSlider.HORIZONTAL, 10, 30, 10);
 		setImageContrast.setToolTipText("Sets Image Contrast");
 		setImageContrast.setMajorTickSpacing(5);
 		SetImageContrastAction setImageContrastAction = new SetImageContrastAction();
 		setImageContrast.addChangeListener(setImageContrastAction);
-		
+
 		editMenu.add(setImageContrast);
 
 		editMenu.addSeparator();
-		
+
 		sampleRateLabel = new JLabel("Sample Rate");
-		
+
 		editMenu.add(sampleRateLabel);
-		
+
 		sampleRate = new JTextField("1");
 		sampleRate.setPreferredSize(new Dimension(100, 25));
 		sampleRate.setToolTipText("Sample every nth frame of the movie");
 		sampleRate.setEnabled(false);
-		
+
 		editMenu.add(sampleRate);
-		
-		
+
 		drawMenu = new JMenu("Draw");
 		this.add(drawMenu);
-		
-		drawFlydentifiers = new JCheckBoxMenuItem(new ImageIcon(getClass().getResource("images/flydentify.png")));
+
+		drawFlydentifiers = new JCheckBoxMenuItem(new ImageIcon(getClass()
+				.getResource("images/flydentify.png")));
 		drawFlydentifiers.setToolTipText("Draw fly locations");
 		DrawFlydentifiersAction drawFlydentifiersAction = new DrawFlydentifiersAction();
 		drawFlydentifiers.addActionListener(drawFlydentifiersAction);
 		drawMenu.add(drawFlydentifiers);
 
-		drawTrajectories = new JCheckBoxMenuItem(new ImageIcon(getClass().getResource("images/DrawFlyTrajectoriesToggle.png")));
+		drawTrajectories = new JCheckBoxMenuItem(new ImageIcon(getClass()
+				.getResource("images/DrawFlyTrajectoriesToggle.png")));
 		drawTrajectories.setToolTipText("Draw fly trajectories");
 		DrawTrajectoriesAction drawTrajectoriesAction = new DrawTrajectoriesAction();
 		drawTrajectories.addActionListener(drawTrajectoriesAction);
@@ -652,12 +796,12 @@ public class ButtonToolbar extends JMenuBar {
 		firstFrame.setPreferredSize(new Dimension(75, 25));
 		firstFrame.setMaximumSize(new Dimension(75, 25));
 		firstFrame.setToolTipText("First frame to draw trajectories");
-//		constraints.fill = constraints.NONE;
-//		constraints.gridx = 9;
-//		constraints.gridwidth = 1;
-//		constraints.ipadx = 100;
-//		constraints.ipady = 10;
-//		add(firstFrame);//, constraints);
+		// constraints.fill = constraints.NONE;
+		// constraints.gridx = 9;
+		// constraints.gridwidth = 1;
+		// constraints.ipadx = 100;
+		// constraints.ipady = 10;
+		// add(firstFrame);//, constraints);
 		this.add(firstFrame);
 
 		lastFrame = new JTextField("Last frame");
@@ -686,39 +830,38 @@ public class ButtonToolbar extends JMenuBar {
 
 	}
 
-	
 	public String getDataForFile() {
 		return analyzerPanel.getDataForFile();
 	}
 
-
 	/**
 	 * Daisy chain method to pass an opened movie file
+	 * 
 	 * @param file
 	 */
 	public void passMovie(File file) {
 		analyzerPanel.passMovie(file);
-		
+
 	}
 
 	/**
 	 * Returns the preferred size of this panel as a Dimension object.
 	 */
-//	public Dimension getPreferredSize() {
-//		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-//	}
+	// public Dimension getPreferredSize() {
+	// return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+	// }
 
 	/** Returns the minimum size of this panel as a Dimension object. */
-//	public Dimension getMinimumSize() {
-//		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-//	}
+	// public Dimension getMinimumSize() {
+	// return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+	// }
 
 	/**
 	 * Draws any components on this panel.
 	 */
 	public void paintComponent(Graphics g) {
 		analyzeMovie.setEnabled(analyzerPanel.getMovieLoaded());
-		totalFrames.setText(""+analyzerPanel.getTotalFrames());
+		totalFrames.setText("" + analyzerPanel.getTotalFrames());
 		sampleRate.setEnabled(analyzerPanel.getMovieLoaded());
 	}
 

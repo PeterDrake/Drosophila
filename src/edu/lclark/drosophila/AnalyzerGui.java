@@ -123,6 +123,19 @@ public class AnalyzerGui extends JFrame {
 		analyzer.sizeThresholdUpdate(input);
 	}
 	
+	/**
+	 * Updates the size threshold in Analyzer. This is used to determine if an
+	 * object identified within an image is too large to be considered a fly.
+	 * This will also analyze all stored images again.
+	 * 
+	 * @param input
+	 *            the value which size threshold will be set to.
+	 */
+	public void maxSizeThresholdUpdate(int input) {
+		analyzer.maxSizeThresholdUpdate(input);
+		
+	}
+	
 	public void contrastThresholdUpdate(int input) {
 		analyzer.contrastThresholdUpdate(input);
 	}
@@ -166,6 +179,14 @@ public class AnalyzerGui extends JFrame {
 	public boolean getMovieLoaded() {
 		// TODO Auto-generated method stub
 		return analyzer.getMovieLoaded();
+	}
+	
+	public int getSizeThreshold() {
+		return analyzer.getSizeThreshold();
+	}
+	
+	public int getMaxSizeThreshold() {	
+		return analyzer.getMaxSizeThreshold();
 	}
 	
 	@Override
