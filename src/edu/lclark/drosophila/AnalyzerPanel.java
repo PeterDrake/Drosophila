@@ -302,4 +302,8 @@ public class AnalyzerPanel extends JPanel {
 	public String getDataForFile() {
 		return dpanel.getDataForFile();
 	}
+
+	public void sizeRangeUpdate(int value) {
+		gui.sizeRangeUpdate(value);
+	}
 }

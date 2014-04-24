@@ -182,4 +182,8 @@ public class AnalyzerGui extends JFrame {
 		return analyzer.getFrameRate();
 	}
 
+	public void sizeRangeUpdate(int value) {
+		analyzer.sizeRangeUpdate(value);
+	}
+
 }

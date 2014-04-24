@@ -108,6 +108,8 @@ public class Analyzer {
 
 	private int sampleRate=1;
 
+	private int pixelRange;
+
 
 	public Analyzer() {
 		movieLoaded = false;
@@ -283,9 +285,8 @@ public class Analyzer {
 								}
 							}
 						}
-
-						if (numPixels >= sizeThreshold) {
-							// if the blob is large enough to be a fly
+						if (numPixels >= sizeThreshold && numPixels <= (sizeThreshold + pixelRange)) {
+							// if the blob is large enough to be a fly, but not too big
 
 							// create a new temporary fly object
 							double tempLocation[] = new double[2];
@@ -749,6 +750,13 @@ public class Analyzer {
 
 	public double getFrameRate() {
 		return (MICRO_SECONDS_BETWEEN_FRAMES * sampleRate)/1000.0;
+	}
+
+	public void sizeRangeUpdate(int value) {
+		pixelRange = value;
+		if (totalFrames > 0) {
+			updateImages();
+		}
 	}
 
 }
