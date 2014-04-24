@@ -148,8 +148,15 @@ public class ButtonToolbar extends JMenuBar {
 			int returnVal = fileChooser.showOpenDialog(getImage);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				File file = fileChooser.getSelectedFile();
-				bpanel.passImage(file);
-				analyzerPanel.repaint();
+				if(file.getName().endsWith(".png")||file.getName().endsWith(".jpg")
+						||file.getName().endsWith(".jpeg")||file.getName().endsWith(".gif")
+						||file.getName().endsWith(".bmp")) {					
+					bpanel.passImage(file);
+					analyzerPanel.repaint();
+				} else {
+					analyzerPanel.displayMessagePopup("Image must show file extension, and "
+							+ "be a .png, .jpg, .jpeg, .gif, or .bmp.");
+				}
 			}
 		}
 	}
@@ -175,7 +182,12 @@ public class ButtonToolbar extends JMenuBar {
 			int returnVal = fileChooser.showOpenDialog(openMovie); 
 			if(returnVal == JFileChooser.APPROVE_OPTION) {
 				File file = fileChooser.getSelectedFile();
-				bpanel.passMovie(file); 
+				if(file.getName().endsWith(".mov")) {					
+					bpanel.passMovie(file); 
+				} else {
+					analyzerPanel.displayMessagePopup("Movie must show file extension, "
+							+ "and be a .mov file.");
+				}
 				//analyzerPanel.repaint(); Maybe we need this? We shall see...  
 			}
 			
@@ -578,18 +590,15 @@ public class ButtonToolbar extends JMenuBar {
 		fileMenu = new JMenu("File");
 		this.add(fileMenu);//, constraints);
 			
-		FileFilter filter = new FileNameExtensionFilter("All common image file formats.", 
-				"png", "jpg", "jpeg", "gif", "raw", "tif", "bmp");
+		
 		fileChooser = new JFileChooser();
-		fileChooser.addChoosableFileFilter(filter);
 		getImage = new JMenuItem("Open an Image");
 		fileMenu.add(getImage);
 		GetImageAction getImageAction = new GetImageAction(this);
 		getImage.addActionListener(getImageAction);
 	
-		filter = new FileNameExtensionFilter("Only .mov files.", "mov");
+		
 		fileChooser = new JFileChooser(); // unsure if we need a new variable to open a movie vs. opening an image
-		fileChooser.addChoosableFileFilter(filter);
 		openMovie = new JMenuItem("Open a movie");
 		fileMenu.add(openMovie);
 		OpenMovieAction openMovieAction = new OpenMovieAction(this); 
