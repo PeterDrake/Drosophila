@@ -281,6 +281,29 @@ public class ButtonToolbar extends JMenuBar {
 		} 
 	}
 	
+	private class SelectRegionsAction implements ActionListener {
+		public SelectRegionsAction() { 
+			
+		}
+		
+		/**
+		 * Opens the file browsing window and passes the selected movie to the
+		 * Button Panel when chosen.
+		 */
+		public void actionPerformed(ActionEvent e) {
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					JFrame frame = new JFrame();
+					frame.setTitle("Select the regions to get data for");
+					frame.setVisible(true);
+					frame.add(new RegionSelectPanel(analyzerPanel, frame));
+					frame.setResizable(false);
+					frame.pack();
+				}
+			});
+		} 
+	}
+	
 	private class SaveGraphAction implements ActionListener {
 
 		
@@ -704,6 +727,8 @@ public class ButtonToolbar extends JMenuBar {
 	private JSlider setRange;
 
 	private JTextField rangeText;
+
+	private JMenuItem selectRegions;
 	public ButtonToolbar(AnalyzerPanel a) {
 		this.analyzerPanel = a;
 //		this.setLayout(new GridBagLayout());
@@ -881,6 +906,11 @@ public class ButtonToolbar extends JMenuBar {
 		arenaID = new JTextField("1");
 		arenaID.setToolTipText("insert a number to label all the flies in the region with");
 		GroupsMenu.add(arenaID);
+		
+		selectRegions = new JMenuItem("Select regions to analyze");
+		selectRegions.setToolTipText("Select the regions that you want data for");
+		selectRegions.addActionListener(new SelectRegionsAction());
+		GroupsMenu.add(selectRegions);
 		
 		
 		drawTrajectories = new JCheckBoxMenuItem(new ImageIcon(getClass().getResource("images/DrawFlyTrajectoriesToggle.png")));
