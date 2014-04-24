@@ -621,6 +621,7 @@ public class Analyzer {
 					// TODO this should probably create a new flies List, since
 					// it
 					// is re running flydentify on all images.
+					flies.clear();
 					BufferedImage image = ImageIO.read(images[i]);
 					flydentify(image, i);
 				}
@@ -690,6 +691,12 @@ public class Analyzer {
 	}
 
 	public void analyzeMovie(int sampleRate) {
+		if(movieLoaded){
+			File f = movieFile;
+			clearImages();
+			openMovie(f);
+			
+		}
 		this.sampleRate = sampleRate;
 		IMediaReader mediaReader = ToolFactory.makeReader(movieFile
 				.getAbsolutePath());
