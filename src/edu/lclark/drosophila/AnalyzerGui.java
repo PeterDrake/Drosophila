@@ -200,5 +200,9 @@ public class AnalyzerGui extends JFrame {
 	public void sizeRangeUpdate(int value) {
 		analyzer.sizeRangeUpdate(value);
 	}
+	
+	public boolean getMovieAnalyzed(){
+		return analyzer.getMovieAnalyzed();
+	}
 
 }

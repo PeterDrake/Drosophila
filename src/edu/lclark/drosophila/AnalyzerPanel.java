@@ -323,4 +323,8 @@ public class AnalyzerPanel extends JPanel {
 	public void sizeRangeUpdate(int value) {
 		gui.sizeRangeUpdate(value);
 	}
+	
+	public boolean getMovieAnalyzed(){
+		return gui.getMovieAnalyzed();
+	}
 }
