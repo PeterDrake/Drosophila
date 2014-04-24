@@ -304,4 +304,10 @@ public class ImagePanel extends JPanel {
 		movieLoading = b;
 
 	}
+
+	public void clearYourImages() {
+		image = null;
+		oldImage = null;
+		savedImage = null;
+	}
 }

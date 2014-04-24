@@ -46,6 +46,7 @@ public class ButtonToolbar extends JMenuBar {
 		public void actionPerformed(ActionEvent e) {
 			analyzerPanel.clearImages();
 			analyzerPanel.repaint();
+			saveGraph.setEnabled(false);
 		}
 	}
 
@@ -592,7 +593,7 @@ public class ButtonToolbar extends JMenuBar {
 			
 		
 		fileChooser = new JFileChooser();
-		getImage = new JMenuItem("Open an Image");
+		getImage = new JMenuItem("Open an image");
 		fileMenu.add(getImage);
 		GetImageAction getImageAction = new GetImageAction(this);
 		getImage.addActionListener(getImageAction);
@@ -608,8 +609,10 @@ public class ButtonToolbar extends JMenuBar {
 		fileMenu.add(analyzeMovie);
 		AnalyzeMovieAction analyzeMovieAction = new AnalyzeMovieAction();
 		analyzeMovie.addActionListener(analyzeMovieAction);
+
+		fileMenu.addSeparator();
 		
-		saveGraph = new JMenuItem("Save Graph");
+		saveGraph = new JMenuItem("Save graph to file");
 		fileMenu.add(saveGraph);
 		SaveGraphAction saveGraphAction = new SaveGraphAction();
 		saveGraph.addActionListener(saveGraphAction);
@@ -618,7 +621,6 @@ public class ButtonToolbar extends JMenuBar {
 		SaveDataAction saveDataAction = new SaveDataAction(this);
 		saveData.addActionListener(saveDataAction);
 		
-		fileMenu.addSeparator();
 		fileMenu.add(saveData);
 		
 		clearImages = new JMenuItem("Clear all images");
@@ -798,6 +800,7 @@ public class ButtonToolbar extends JMenuBar {
 		analyzeMovie.setEnabled(analyzerPanel.getMovieLoaded());
 		totalFrames.setText(""+analyzerPanel.getTotalFrames());
 		sampleRate.setEnabled(analyzerPanel.getMovieLoaded());
+		saveGraph.setEnabled(analyzerPanel.getFlyList().size() > 0);
 	}
 
 	/**

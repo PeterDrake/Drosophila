@@ -93,7 +93,7 @@ public class AnalyzerPanel extends JPanel {
 	 */
 	public void clearImages() {
 		gui.clearImages();
-
+		ipanel.clearYourImages();
 	}
 
 	/**
@@ -280,6 +280,10 @@ public class AnalyzerPanel extends JPanel {
 		
 	}
 
+	public AnalyzerGui getGui() {
+		return gui;
+	}
+	
 	public void disposeLoadingDialog() {
 		loadingDialog.setVisible(false);
 	}
