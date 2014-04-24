@@ -10,6 +10,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Caret;
 import javax.swing.text.Document;
@@ -146,8 +148,15 @@ public class ButtonToolbar extends JMenuBar {
 			int returnVal = fileChooser.showOpenDialog(getImage);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				File file = fileChooser.getSelectedFile();
-				bpanel.passImage(file);
-				analyzerPanel.repaint();
+				if(file.getName().endsWith(".png")||file.getName().endsWith(".jpg")
+						||file.getName().endsWith(".jpeg")||file.getName().endsWith(".gif")
+						||file.getName().endsWith(".bmp")) {					
+					bpanel.passImage(file);
+					analyzerPanel.repaint();
+				} else {
+					analyzerPanel.displayMessagePopup("Image must show file extension, and "
+							+ "be a .png, .jpg, .jpeg, .gif, or .bmp.");
+				}
 			}
 		}
 	}
@@ -173,7 +182,12 @@ public class ButtonToolbar extends JMenuBar {
 			int returnVal = fileChooser.showOpenDialog(openMovie); 
 			if(returnVal == JFileChooser.APPROVE_OPTION) {
 				File file = fileChooser.getSelectedFile();
-				bpanel.passMovie(file); 
+				if(file.getName().endsWith(".mov")) {					
+					bpanel.passMovie(file); 
+				} else {
+					analyzerPanel.displayMessagePopup("Movie must show file extension, "
+							+ "and be a .mov file.");
+				}
 				//analyzerPanel.repaint(); Maybe we need this? We shall see...  
 			}
 			
@@ -646,12 +660,14 @@ public class ButtonToolbar extends JMenuBar {
 		fileMenu = new JMenu("File");
 		this.add(fileMenu);//, constraints);
 			
+		
 		fileChooser = new JFileChooser();
 		getImage = new JMenuItem("Open an Image");
 		fileMenu.add(getImage);
 		GetImageAction getImageAction = new GetImageAction(this);
 		getImage.addActionListener(getImageAction);
 	
+		
 		fileChooser = new JFileChooser(); // unsure if we need a new variable to open a movie vs. opening an image
 		openMovie = new JMenuItem("Open a movie");
 		fileMenu.add(openMovie);
