@@ -196,5 +196,8 @@ public class AnalyzerGui extends JFrame {
 		// TODO Auto-generated method stub
 		return analyzer.getFrameRate();
 	}
+	public double calcArenaAverageVelocityinFrame(int Arena, int frame){
+		return analyzer.calcArenaAverageVelocityinFrame(Arena, frame);
+	}
 
 }

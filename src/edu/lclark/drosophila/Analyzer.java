@@ -113,6 +113,8 @@ public class Analyzer {
 
 
 	private RegionMaker regionmaker;
+	
+	private ArenaAnalyzer arenaAnalyzer;
 
 	private double duration;
 
@@ -126,6 +128,7 @@ public class Analyzer {
 		frames = new ArrayList<BufferedImage>();
 		images = new File[20];
 		regionmaker = new RegionMaker(this);
+		arenaAnalyzer = new ArenaAnalyzer(this);
 		//passDownPoints();
 	}
 
@@ -157,7 +160,7 @@ public class Analyzer {
 	 * @return average velocity of flies from start to end
 	 */
 
-	public double[] averageVelMultFlies(List<Fly> flies, int start, int end) {
+	public static double[] averageVelMultFlies(List<Fly> flies, int start, int end) {
 		double[] avgVel = new double[end - start];
 		double tempAvg;
 		for (int i = start; i < end; i++) {
@@ -800,6 +803,9 @@ public class Analyzer {
 
 	public double getFrameRate() {
 		return (MICRO_SECONDS_BETWEEN_FRAMES * sampleRate)/1000.0;
+	}
+	public double calcArenaAverageVelocityinFrame(int Arena, int frame){
+		return arenaAnalyzer.AvgVelocityofArena(Arena, frame);
 	}
 
 
