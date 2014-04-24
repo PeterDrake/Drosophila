@@ -66,7 +66,7 @@ public class AnalyzerPanel extends JPanel {
 		constraints.gridheight = 1;
 		add(dpanel, constraints);
 		
-		graphPanel = new GraphPanel(this, false, .10, "TITLE", "vertical label now this is longer ", "Xkljhfdsalkjfhasdkljfh" );
+		graphPanel = new GraphPanel(this, false, .10, "TITLE", "Instantaneous velocity (pixels)", "Seconds" );
 		constraints.gridx = 0;
 		constraints.gridy = 1;
 		constraints.gridheight = 1;
@@ -295,5 +295,24 @@ public class AnalyzerPanel extends JPanel {
 
 	public void disposeLoadingDialog() {
 		loadingDialog.setVisible(false);
+	}
+
+
+	public double getFrameRate() {
+		// TODO Auto-generated method stub
+		return gui.getFrameRate();
+	}
+
+	public void setLabels(String titleText, String xAxisText, String yAxisText) {
+		graphPanel.setLabels(titleText, xAxisText, yAxisText);
+	}
+
+	public void saveGraph(File file) {
+		graphPanel.saveGraph(file);
+	}
+		
+		
+	public String getDataForFile() {
+		return dpanel.getDataForFile();
 	}
 }

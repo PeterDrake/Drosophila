@@ -1,10 +1,14 @@
 package edu.lclark.drosophila;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
 
 public class GraphPanel extends JPanel {
@@ -54,7 +58,8 @@ public class GraphPanel extends JPanel {
 	}
 
 	public Dimension getPreferredSize() {
-		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+//		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+		return new Dimension((int)(analyzerPanel.getWidth() * (3.0 / 8.0)), (int)(analyzerPanel.getHeight() * 2.0 / 3.0));
 	}
 	
 	public void setDrawPoints(boolean drawPoints) {
@@ -63,7 +68,8 @@ public class GraphPanel extends JPanel {
 	
 	/** Returns the minimum size of this panel as a Dimension object */
 	public Dimension getMinimumSize() {
-		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+//		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+		return new Dimension((int)(analyzerPanel.getWidth() * (3.0 / 8.0)), (int)(analyzerPanel.getHeight() * 2.0 / 3.0));
 	}
 	
 	public Dimension getMaximumSize() {
@@ -79,7 +85,7 @@ public class GraphPanel extends JPanel {
 		int GPanelHeight=this.getHeight();
 		g.fillRect(0, 0, GPanelWidth, GPanelHeight);
 		averageVelocity = analyzerPanel.getAverageVelocity();
-		
+		videoLength = averageVelocity.length * analyzerPanel.getFrameRate();
 		g.setColor(Color.BLACK);
 
 		double maxVelocity = 0;
@@ -112,6 +118,7 @@ public class GraphPanel extends JPanel {
 		int stringWidth=0;
 		
 		DecimalFormat df= new DecimalFormat ("##.##");
+//		String.forma
 		g.setColor(Color.LIGHT_GRAY);
 		
 		stringWidth=(int) f.getStringBounds(xLabel, g2d.getFontRenderContext()).getWidth();
@@ -126,7 +133,9 @@ public class GraphPanel extends JPanel {
 			g.drawLine((int)(gridxOffset * i) + leftMarg, GPanelHeight-bottomMarg,
 					(int)(gridxOffset * i) + leftMarg, topMarg);
 			
-			g.drawString(""+df.format(d*i), (int)(gridxOffset * i) + leftMarg, GPanelHeight-(bottomMarg/2));
+			String tempXValue = String.format("%.2f", d*i / 1000);		
+			stringWidth=(int) f.getStringBounds(tempXValue, g2d.getFontRenderContext()).getWidth();		
+			g.drawString(tempXValue, (int)(gridxOffset * i) + leftMarg - stringWidth / 2, GPanelHeight-(bottomMarg/2));
 		}
 		
 		d = maxVelocity/((GPanelHeight-(topMarg+bottomMarg))/gridyOffset);
@@ -134,7 +143,9 @@ public class GraphPanel extends JPanel {
 			g.drawLine(leftMarg,(int) -(gridyOffset * i) + GPanelHeight - bottomMarg, GPanelWidth-rightMarg,
 					(int)	-(gridyOffset * i) + GPanelHeight - bottomMarg);
 			
-			g.drawString(""+df.format(d*i), leftMarg/2, (int)(-gridyOffset * i) + GPanelHeight - bottomMarg);
+			String tempYValue =String.format("%.2f", d*i);
+			int stringHeight=(int) f.getStringBounds(tempYValue, g2d.getFontRenderContext()).getHeight();	
+			g.drawString(String.format("%.2f", (d*i)), leftMarg/2, (int)(-gridyOffset * i) + GPanelHeight - bottomMarg + stringHeight/2);
 		}
 
 		g.setColor(Color.BLACK);
@@ -175,5 +186,23 @@ public class GraphPanel extends JPanel {
 			x+=bounds.getWidth();
 		}
 
+	}
+
+	public void setLabels(String titleText, String xAxisText, String yAxisText) {
+		title=titleText;
+		xLabel=xAxisText;
+		yLabel=yAxisText;
+	}
+
+	public void saveGraph(File file) {
+		Container c = this;
+		BufferedImage im = new BufferedImage(c.getWidth(), c.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		c.paint(im.getGraphics());
+		try {
+			ImageIO.write(im, "PNG", file);
+		} catch (IOException e) {
+			System.err.println("Invalid IO Exception");
+			e.printStackTrace();
+		}
 	}
 }

@@ -24,4 +24,8 @@ public class DataTabbs extends JTabbedPane{
 	public Dimension getMinimumSize(){
 		return new Dimension(400,400);
 	}
+	
+	public String getDataForFile(){
+		return ((DataPanel)this.getComponent(0)).getDataForFile();
+	}
 }

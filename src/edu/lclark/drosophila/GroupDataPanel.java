@@ -16,8 +16,8 @@ public class GroupDataPanel extends DataPanel{
 	 */
 	public String createData(int start, int end){
 		String Data= "";
-		if(analyzerpanel.getFlyList()!=null){
-		for(Fly fly : analyzerpanel.getFlyList()){
+		if(analyzerPanel.getFlyList()!=null){
+		for(Fly fly : analyzerPanel.getFlyList()){
 			Data+=createFlyLine(fly,start,end);
 			Data+="\n";
 		}
