@@ -6,17 +6,24 @@ public class ArenaAnalyzer {
 	private List<Fly> fullflylist;
 	public ArenaAnalyzer(Analyzer a){
 		this.analyzer=a;
-		fullflylist=analyzer.getFlies();
 	}
-	public double AvgVelocityofArena(int Arena,int frame){
+	
+	public double AvgVelocityofArena(int Arena,int start, int end){
+		fullflylist=analyzer.getFlies();
 		List<Fly> arenaflies = new LinkedList<Fly>();
 		for (Fly f:fullflylist){
 			if (f.getArena()==Arena){
 				arenaflies.add(f);
 			}
 		}
-		return Analyzer.averageVelMultFlies(arenaflies, 0, analyzer.getTotalFrames())[frame];
-	}
+		double avg = 0;
+		for(Fly f:arenaflies){
+			avg+=f.averageVelFly(start, end);			
+		}
+		avg= avg/ arenaflies.size();
+		System.out.println("Arena "+ Arena+ "  avg "+ avg);
+		return avg;
+		}
 }
 
 

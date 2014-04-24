@@ -804,8 +804,9 @@ public class Analyzer {
 	public double getFrameRate() {
 		return (MICRO_SECONDS_BETWEEN_FRAMES * sampleRate)/1000.0;
 	}
-	public double calcArenaAverageVelocityinFrame(int Arena, int frame){
-		return arenaAnalyzer.AvgVelocityofArena(Arena, frame);
+
+	public double calcArenaAverageVelocityinFrame(int Arena, int start, int end){
+		return arenaAnalyzer.AvgVelocityofArena(Arena, start, end);
 	}
 
 

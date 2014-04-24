@@ -315,4 +315,7 @@ public class AnalyzerPanel extends JPanel {
 	public String getDataForFile() {
 		return dpanel.getDataForFile();
 	}
+	public double calcAverageVelocityforArena(int Arena, int start, int end){
+		return gui.calcArenaAverageVelocityinFrame(Arena, start, end);
+	}
 }
