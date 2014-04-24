@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Frame;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -17,7 +18,7 @@ public class GraphOptionsPanel extends JPanel {
 
 	private static final int DEFAULT_WIDTH = 175;
 
-	private static final int DEFAULT_HEIGHT = 200;
+	private static final int DEFAULT_HEIGHT = 150;
 
 	private AnalyzerPanel analyzerPanel;
 	
@@ -40,6 +41,11 @@ public class GraphOptionsPanel extends JPanel {
 	public GraphOptionsPanel(AnalyzerPanel a, JFrame frame){
 		this.analyzerPanel = a;
 		myFrame= frame;
+		
+		GridLayout gl = new GridLayout(4, 2);
+		
+		this.setLayout(gl);
+		
 		titleText = new JTextField("Title", 8);
 		xAxisText = new JTextField("x-Axis", 8);
 		yAxisText = new JTextField("y-Axis", 8);

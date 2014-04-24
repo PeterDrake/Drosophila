@@ -58,7 +58,8 @@ public class GraphPanel extends JPanel {
 	}
 
 	public Dimension getPreferredSize() {
-		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+//		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+		return new Dimension((int)(analyzerPanel.getWidth() * (3.0 / 8.0)), (int)(analyzerPanel.getHeight() * 2.0 / 3.0));
 	}
 	
 	public void setDrawPoints(boolean drawPoints) {
@@ -67,7 +68,8 @@ public class GraphPanel extends JPanel {
 	
 	/** Returns the minimum size of this panel as a Dimension object */
 	public Dimension getMinimumSize() {
-		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+//		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+		return new Dimension((int)(analyzerPanel.getWidth() * (3.0 / 8.0)), (int)(analyzerPanel.getHeight() * 2.0 / 3.0));
 	}
 	
 	public Dimension getMaximumSize() {
