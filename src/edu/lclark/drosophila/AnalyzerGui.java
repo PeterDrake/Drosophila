@@ -2,6 +2,7 @@ package edu.lclark.drosophila;
 
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Point;
 import java.awt.MenuBar;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
@@ -138,6 +139,12 @@ public class AnalyzerGui extends JFrame {
 	public File passdownFile(int imageIndex) {
 		return analyzer.passdownFile(imageIndex);
 	}
+	
+	public void passDownPoints(List<Point> tempFirst, List<Point> tempSecond ){
+	
+		analyzerPanel.passDownPoints(tempFirst, tempSecond);
+	}
+
 
 	
 	/**
@@ -151,6 +158,14 @@ public class AnalyzerGui extends JFrame {
 
 	public void showMovie(List<BufferedImage> frames, long l) {
 		analyzerPanel.showMovie(frames, l);
+	}
+	public void passupArenaParameters(int arena, int frame, Point point1, Point point2){
+		analyzer.setFliestoArena(point1, point2, arena, frame);
+	}
+
+	public void clearFlyGroups() {
+		analyzer.clearFlyGroups();
+		
 	}
 
 	public BufferedImage getFirstFrameFromMovie() {
@@ -180,6 +195,10 @@ public class AnalyzerGui extends JFrame {
 	public double getFrameRate() {
 		// TODO Auto-generated method stub
 		return analyzer.getFrameRate();
+	}
+
+	public void sizeRangeUpdate(int value) {
+		analyzer.sizeRangeUpdate(value);
 	}
 
 }

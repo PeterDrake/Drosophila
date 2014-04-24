@@ -27,7 +27,7 @@ public class AnalyzerPanel extends JPanel {
 	/**
 	 * The Data Panel object which this AnalyzerPanel communicates with.
 	 */
-	private DataPanel dpanel;
+	private DataTabbs dpanel;
 
 	private JDialog loadingDialog;
 
@@ -54,9 +54,7 @@ public class AnalyzerPanel extends JPanel {
 		constraints.gridheight = 3;
 		constraints.gridwidth = 1;
 		add(ipanel, constraints);
-		
-		
-		dpanel = new DataPanel(this);
+		dpanel = new DataTabbs(this);
 		constraints.anchor = constraints.NORTH;
 		constraints.gridx = 0;
 		constraints.gridy = 0;
@@ -242,6 +240,11 @@ public class AnalyzerPanel extends JPanel {
 	public void setMoviePlaying(boolean b){
 		ipanel.setMoviePlaying(b);
 	}
+	
+	public void passDownPoints(List<Point> tempFirst, List<Point> tempSecond ){
+		
+		ipanel.passDownPoints(tempFirst, tempSecond);
+	}
 
 	public void setImageContrast(double d) {
 		gui.setImageContrast(d);		
@@ -257,7 +260,17 @@ public class AnalyzerPanel extends JPanel {
 	
 	public void contrastThresholdUpdate(int input) {
 		gui.contrastThresholdUpdate(input);
+		
+	}
+	public void passUpArenaParameters(int arena, int frame){
+		Point point1 = ipanel.getCurrentPoint1();
+		Point point2 = ipanel.getCurrentPoint2();
+		gui.passupArenaParameters(arena, frame, point1, point2);
+	}
 
+	public void clearFlyGroups() {
+		gui.clearFlyGroups();
+		
 	}
 
 	public BufferedImage getFirstFrameFromMovie() {
@@ -305,5 +318,9 @@ public class AnalyzerPanel extends JPanel {
 		
 	public String getDataForFile() {
 		return dpanel.getDataForFile();
+	}
+
+	public void sizeRangeUpdate(int value) {
+		gui.sizeRangeUpdate(value);
 	}
 }

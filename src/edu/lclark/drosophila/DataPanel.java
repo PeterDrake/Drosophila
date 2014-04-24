@@ -6,9 +6,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class DataPanel extends JPanel {
-	private AnalyzerPanel analyzerPanel;
-	private List<Fly> flyList;
-	private JTextArea text;
+
+	protected AnalyzerPanel analyzerPanel;
+	protected List<Fly> flyList;
+	protected JTextArea text;
+
 	/**
 	 * creates this panel which at the moment displays all the data for the analytical stories we want to show
 	 * @param analyzerpanel
@@ -28,13 +30,16 @@ public class DataPanel extends JPanel {
 	public void paintComponent(Graphics G){
 		if(analyzerPanel.getFlyList().size()>0){
 		text.setText(createLabels());
-		text.append(createData(1,analyzerPanel.getTotalFrames()));
+
+		text.append(createData(1,analyzerPanel.getTotalFrames()-1));
+
 		}
 	}
 	/**
 	 * sets this panels default size
 	 */
 	public Dimension getPreferredSize(){
+
 //		return new Dimension(400,400);
 		return new Dimension((int)(analyzerPanel.getWidth() * (3.0 / 8.0)), (int)(analyzerPanel.getHeight() / 3.0));
 	}
@@ -43,6 +48,7 @@ public class DataPanel extends JPanel {
 	 * sets this panels minimum size
 	 */
 	public Dimension getMinimumSize(){
+
 //		return new Dimension(400,400);
 		return new Dimension((int)(analyzerPanel.getWidth() * (3.0 / 8.0)), (int)(analyzerPanel.getHeight() / 3.0));
 	}

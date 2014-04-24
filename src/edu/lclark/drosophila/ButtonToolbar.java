@@ -34,6 +34,7 @@ public class ButtonToolbar extends JMenuBar {
 		public void actionPerformed(ActionEvent e) {
 			analyzerPanel.decrementIndex();
 			analyzerPanel.repaint();
+			imageIndex--;
 		}
 	}
 
@@ -44,6 +45,7 @@ public class ButtonToolbar extends JMenuBar {
 	private class ClearImageAction implements ActionListener {
 
 		public void actionPerformed(ActionEvent e) {
+			analyzerPanel.clearFlyGroups();
 			analyzerPanel.clearImages();
 			analyzerPanel.repaint();
 			saveGraph.setEnabled(false);
@@ -64,6 +66,19 @@ public class ButtonToolbar extends JMenuBar {
 		}
 	}
 	
+
+	private class ClearFlyRegionsAction implements ActionListener {
+
+		/**
+		 * Tells the AnalyzerPanel clear fly regions
+		 */
+		public void actionPerformed(ActionEvent e) {
+			System.out.println("this gets fired");
+			analyzerPanel.clearFlyGroups();
+			analyzerPanel.repaint();
+		}
+	}
+
 	private class AnalyzeMovieAction implements ActionListener {
 
 		/**
@@ -125,6 +140,7 @@ public class ButtonToolbar extends JMenuBar {
 		public void actionPerformed(ActionEvent e) {
 			analyzerPanel.incrementIndex();
 			analyzerPanel.repaint();
+			imageIndex++;
 		}
 	}
 
@@ -162,6 +178,24 @@ public class ButtonToolbar extends JMenuBar {
 		}
 	}
 	
+	/**
+	 * The action listener which will set the arena ID of flies in the current
+	 * rectangular selection.
+	 */
+	private class SetRegionsAction implements ActionListener {
+
+		private ButtonToolbar bpanel;
+		
+		public SetRegionsAction(ButtonToolbar bpanel){
+			this.bpanel = bpanel;
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			bpanel.analyzerPanel.passUpArenaParameters(Integer.parseInt(arenaID.getText()), imageIndex);
+			bpanel.analyzerPanel.repaint();
+		}
+	}
+	
 	
 	/**
 	 * The action listener which opens a file browsing window when the open movie
@@ -193,6 +227,7 @@ public class ButtonToolbar extends JMenuBar {
 			}
 			
 		} 
+
 		
 	}
 	
@@ -297,6 +332,32 @@ public class ButtonToolbar extends JMenuBar {
 			}
 		}
 	}
+	
+	private class SetRangeAction implements ChangeListener {
+
+		/**
+		 * Event which sets the size threshold when the slider is moved
+		 * 
+		 */
+		public void stateChanged(ChangeEvent e) {
+			final JSlider Source = (JSlider) e.getSource();
+			if (!Source.getValueIsAdjusting()) {
+				SwingUtilities.invokeLater(new Runnable(){
+					@Override
+					public void run(){
+				
+				analyzerPanel.sizeRangeUpdate((int) Source.getValue());
+				rangeText.setText("" + (int) Source.getValue());
+				analyzerPanel.repaint();
+					}
+				});
+				
+			}
+			if (Source.getValueIsAdjusting()) {
+				rangeText.setText("" + (int) Source.getValue());
+			}
+		}
+	}
 
 	/**
 	 * The action listener that will adjust the Threshold as the textbox is
@@ -330,12 +391,10 @@ public class ButtonToolbar extends JMenuBar {
 		
 			try {
 				int value = Integer.parseInt(text);
-				if(value>=MIN_SLIDER_THRESHOLD&&value<=MAX_SLIDER_THRESHHOLD){
-				analyzerPanel.sizeThresholdUpdate(value);
+				if(value>=MIN_SLIDER_THRESHOLD&&value<=MAX_PIXEL_THRESHOLD){
 				setThreshold.setValue(value);
 				}
 				else{
-					analyzerPanel.sizeThresholdUpdate(DEFAULT_SLIDER_THRESHOLD);
 					setThreshold.setValue(DEFAULT_SLIDER_THRESHOLD);
 				}
 			} catch (NumberFormatException E) {
@@ -346,6 +405,48 @@ public class ButtonToolbar extends JMenuBar {
 		}
 	}
 
+	
+	private class SetRangeEntered implements DocumentListener {
+		public void changedUpdate(DocumentEvent e) {
+			reportchange(e);
+		}
+
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			reportchange(e);
+		}
+
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			reportchange(e);
+		}
+
+		public void reportchange(DocumentEvent e) {
+			Document Source = e.getDocument();
+			String text = "25";
+			try {
+				text = Source.getText(0, Source.getLength());
+			} catch (BadLocationException e1) {
+				e1.getStackTrace();
+				System.exit(1);
+				}
+
+		
+			try {
+				int value = Integer.parseInt(text);
+				if(value>=MIN_SLIDER_THRESHOLD&&value<=MAX_PIXEL_THRESHOLD){
+				setRange.setValue(value);
+				}
+				else{
+					setRange.setValue(DEFAULT_SLIDER_THRESHOLD);
+				}
+			} catch (NumberFormatException E) {
+				E.getStackTrace();
+				//does nothing waits for a valid argument
+
+			}
+		}
+	}
 	
 	/**
 	 * The action listener which changes the Analyzer's size threshold when the
@@ -420,12 +521,10 @@ public class ButtonToolbar extends JMenuBar {
 
 			try {
 				int value = Integer.parseInt(text);
-				if(value>=MIN_SLIDER_THRESHOLD&&value<=MAX_SLIDER_THRESHHOLD){
-				analyzerPanel.contrastThresholdUpdate(value);
+				if(value>=MIN_SLIDER_THRESHOLD&&value<=MAX_SLIDER_THRESHOLD){
 				setContrastThreshold.setValue(value);
 				}
 				else{
-					analyzerPanel.contrastThresholdUpdate(DEFAULT_CONTRAST_THRESHOLD);
 					setContrastThreshold.setValue(DEFAULT_CONTRAST_THRESHOLD);
 				}
 			} catch (NumberFormatException E) {
@@ -505,8 +604,16 @@ public class ButtonToolbar extends JMenuBar {
 	 * The button which lets the user toggle flydentifiers.
 	 */
 	private JCheckBoxMenuItem drawFlydentifiers;
+	
+	/** Button that lets user set areas of interest */
+	private JMenuItem setRegions;
+	
+	/** Button that lets user clear all existing fly arenas*/
+	private JMenuItem clearFlyRegions;
+	
+	/** Arena identification number */
+	private JTextField arenaID;
 
-	/** Button that lets user toggle drawing trajectories */
 	private JCheckBoxMenuItem drawTrajectories;
 
 	/** First frame to draw trajectories for */
@@ -516,10 +623,16 @@ public class ButtonToolbar extends JMenuBar {
 	private JTextField lastFrame;
 	
 	/**
+	 * Current image index
+	 */
+	private int imageIndex;
+	
+	/**
 	 * Button for analyzing the movie already opened
 	 */
 	private JMenuItem analyzeMovie;
 	
+
 
 	/**
 	 * The default preferred width of this panel.
@@ -537,7 +650,9 @@ public class ButtonToolbar extends JMenuBar {
 	/**
 	 * The Highest possible value for the pixel threshold;
 	 */
-	private static final int MAX_SLIDER_THRESHHOLD = 255;
+	private static final int MAX_SLIDER_THRESHOLD = 255;
+	
+	private static final int MAX_PIXEL_THRESHOLD = 1000;
 	/**
 	 * The lowest possible value for the pixel theshold;
 	 */
@@ -556,6 +671,8 @@ public class ButtonToolbar extends JMenuBar {
 	private JMenu editMenu;
 	
 	private JMenu drawMenu;
+	
+	private JMenu GroupsMenu;
 	
 	/**
 	 * The AnalyzerPanel object that this ImagePanel communicates with.
@@ -583,6 +700,10 @@ public class ButtonToolbar extends JMenuBar {
 	 */
 
 	private JMenuItem saveData;
+
+	private JSlider setRange;
+
+	private JTextField rangeText;
 	public ButtonToolbar(AnalyzerPanel a) {
 		this.analyzerPanel = a;
 //		this.setLayout(new GridBagLayout());
@@ -637,9 +758,9 @@ public class ButtonToolbar extends JMenuBar {
 		editMenu.add(SliderLabel);
 		
 		setThreshold = new JSlider(JSlider.HORIZONTAL, MIN_SLIDER_THRESHOLD,
-				MAX_SLIDER_THRESHHOLD, DEFAULT_SLIDER_THRESHOLD);
-		setThreshold.setMajorTickSpacing(50);
-		setThreshold.setMinorTickSpacing(10);
+				MAX_PIXEL_THRESHOLD, DEFAULT_SLIDER_THRESHOLD);
+		setThreshold.setMajorTickSpacing(250);
+		setThreshold.setMinorTickSpacing(50);
 		setThreshold.setPaintLabels(true);
 		setThreshold.setPaintTicks(true);
 		setThreshold.setToolTipText("Sets the Pixel Threshold");
@@ -656,13 +777,33 @@ public class ButtonToolbar extends JMenuBar {
 		
 		editMenu.add(thresholdText);
 		
+		editMenu.add(new JLabel("Pixel Range"));
+		setRange = new JSlider(JSlider.HORIZONTAL, MIN_SLIDER_THRESHOLD,
+				MAX_PIXEL_THRESHOLD, DEFAULT_SLIDER_THRESHOLD);
+		setRange.setMajorTickSpacing(250);
+		setRange.setMinorTickSpacing(50);
+		setRange.setPaintLabels(true);
+		setRange.setPaintTicks(true);
+		setRange.setToolTipText("Sets the Pixel Range");
+		editMenu.add(setRange);
+		SetRangeAction setRangeAction = new SetRangeAction();
+		setRange.addChangeListener(setRangeAction);
+		
+		rangeText = new JTextField("0");
+		rangeText.setPreferredSize(new Dimension(100, 25));
+		rangeText.setText("" + DEFAULT_SLIDER_THRESHOLD);
+		SetRangeEntered setRangeEntered = new SetRangeEntered();
+		rangeText.getDocument().addDocumentListener(setRangeEntered);
+		
+		editMenu.add(rangeText);
+		
 		editMenu.addSeparator();
 		
 		ContrastLabel = new JLabel("Contrast Threshold");
 		
 		editMenu.add(ContrastLabel);
 		
-		setContrastThreshold = new JSlider(JSlider.HORIZONTAL, MIN_SLIDER_THRESHOLD,MAX_SLIDER_THRESHHOLD,DEFAULT_CONTRAST_THRESHOLD);
+		setContrastThreshold = new JSlider(JSlider.HORIZONTAL, MIN_SLIDER_THRESHOLD,MAX_SLIDER_THRESHOLD,DEFAULT_CONTRAST_THRESHOLD);
 		setContrastThreshold.setMajorTickSpacing(50);
 		setContrastThreshold.setMinorTickSpacing(10);
 		setContrastThreshold.setPaintLabels(true);
@@ -721,7 +862,27 @@ public class ButtonToolbar extends JMenuBar {
 		DrawFlydentifiersAction drawFlydentifiersAction = new DrawFlydentifiersAction();
 		drawFlydentifiers.addActionListener(drawFlydentifiersAction);
 		drawMenu.add(drawFlydentifiers);
-
+		
+		GroupsMenu = new JMenu("Areas");
+		this.add(GroupsMenu);
+		
+		setRegions = new JMenuItem("Set Area of Interest");
+		setRegions.setToolTipText("sets the currently selecteded area as an Arena, setting those flies to the group in the box");
+		setRegions.addActionListener(new SetRegionsAction(this));
+		GroupsMenu.add(setRegions);
+		
+	
+		
+		clearFlyRegions = new JMenuItem("Clear All Areas of Interest");
+		clearFlyRegions.setToolTipText("Clears all regions of interest, and sets all flies to group 0");
+		clearFlyRegions.addActionListener(new ClearFlyRegionsAction());
+		GroupsMenu.add(clearFlyRegions);
+		
+		arenaID = new JTextField("1");
+		arenaID.setToolTipText("insert a number to label all the flies in the region with");
+		GroupsMenu.add(arenaID);
+		
+		
 		drawTrajectories = new JCheckBoxMenuItem(new ImageIcon(getClass().getResource("images/DrawFlyTrajectoriesToggle.png")));
 		drawTrajectories.setToolTipText("Draw fly trajectories");
 		DrawTrajectoriesAction drawTrajectoriesAction = new DrawTrajectoriesAction();
@@ -732,12 +893,6 @@ public class ButtonToolbar extends JMenuBar {
 		firstFrame.setPreferredSize(new Dimension(75, 25));
 		firstFrame.setMaximumSize(new Dimension(75, 25));
 		firstFrame.setToolTipText("First frame to draw trajectories");
-//		constraints.fill = constraints.NONE;
-//		constraints.gridx = 9;
-//		constraints.gridwidth = 1;
-//		constraints.ipadx = 100;
-//		constraints.ipady = 10;
-//		add(firstFrame);//, constraints);
 		this.add(firstFrame);
 
 		lastFrame = new JTextField("Last frame");
@@ -814,3 +969,4 @@ public class ButtonToolbar extends JMenuBar {
 		analyzerPanel.passImage(file);
 	}
 }
+

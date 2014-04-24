@@ -1,5 +1,6 @@
 package edu.lclark.drosophila;
 
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +18,9 @@ import com.xuggle.mediatool.MediaListenerAdapter;
 import com.xuggle.mediatool.ToolFactory;
 import com.xuggle.mediatool.event.IVideoPictureEvent;
 import com.xuggle.xuggler.Global;
+
 import com.xuggle.xuggler.IContainer;
+
 
 public class Analyzer {
 
@@ -64,6 +67,7 @@ public class Analyzer {
 	 */
 	private File[] images;
 
+
 	/**
 	 * The name of the movie file that we have loaded
 	 */
@@ -80,11 +84,14 @@ public class Analyzer {
 	private double SECONDS_BETWEEN_FRAMES;
 
 	/**
+<<<<<<< HEAD
+=======
 	 * The number of frames per second in a movie file.
 	 */
 	private double framesPerSecond;
 
 	/**
+>>>>>>> master
 	 * The number of microseconds between frames in a movie file
 	 */
 	private long MICRO_SECONDS_BETWEEN_FRAMES;
@@ -104,9 +111,14 @@ public class Analyzer {
 	private double imageContrast = 1.0;
 
 
+
+	private RegionMaker regionmaker;
+
 	private double duration;
 
 	private int sampleRate=1;
+
+	private int pixelRange;
 
 
 	public Analyzer() {
@@ -115,6 +127,8 @@ public class Analyzer {
 		flies = new LinkedList<Fly>();
 		frames = new ArrayList<BufferedImage>();
 		images = new File[20];
+		regionmaker = new RegionMaker(this);
+		//passDownPoints();
 	}
 
 	public void flydentify(BufferedImage image) {
@@ -127,6 +141,12 @@ public class Analyzer {
 		images = new File[20];
 
 		mLastPtsWrite = Global.NO_PTS;
+	}
+	
+	public void passDownPoints(){
+		List<Point> tempFirst = regionmaker.getPastfirstpoints();
+		List<Point> tempSecond = regionmaker.getPastsecondpoints();
+		gui.passDownPoints(tempFirst, tempSecond);
 	}
 
 	/**
@@ -159,7 +179,7 @@ public class Analyzer {
 	public void clearImages() {
 		movieLoaded = false;
 		totalFrames = 0;
-		flies = new LinkedList<Fly>();
+		flies.clear();
 		images = new File[20];
 		loadingMovie = false;
 	}
@@ -181,6 +201,10 @@ public class Analyzer {
 			}
 		}
 		return false;
+	}
+	
+	public List<RegionMaker.PointArena> passDownArenaAssignments(){
+		return regionmaker.getArenaAssignment();
 	}
 
 	/**
@@ -283,9 +307,8 @@ public class Analyzer {
 								}
 							}
 						}
-
-						if (numPixels >= sizeThreshold) {
-							// if the blob is large enough to be a fly
+						if (numPixels >= sizeThreshold && numPixels <= (sizeThreshold + pixelRange)) {
+							// if the blob is large enough to be a fly, but not too big
 
 							// create a new temporary fly object
 							double tempLocation[] = new double[2];
@@ -312,6 +335,7 @@ public class Analyzer {
 				}
 				f.addFrameInfo(frameNumber, d[0], d[1]);
 				f.setId(flies.size());
+				f.setArena(regionmaker.getArenaAssignment(), frameNumber);
 				flies.add(f);
 
 			}
@@ -436,6 +460,7 @@ public class Analyzer {
 				Fly aNewFly = flies.get((int) d[2]).copyThisFly();
 				aNewFly.addFrameInfo(frameNumber, d[0], d[1]);
 				aNewFly.setId(flies.size());
+				aNewFly.setArena(regionmaker.getArenaAssignment(), frameNumber);
 				flies.add(aNewFly);
 			}
 		}
@@ -606,6 +631,7 @@ public class Analyzer {
 		}
 	}
 
+
 	public int getFramesInMovie(String filename) {
 		IContainer container = IContainer.make();
 		if (container.open(filename, IContainer.Type.READ, null) < 0) {
@@ -624,6 +650,12 @@ public class Analyzer {
 	 * 
 	 * @param file
 	 */
+
+	public void playMovie(File file) {
+		IMediaReader mediaReader = ToolFactory.makeReader(file
+				.getAbsolutePath());
+	}
+
 	public void openMovie(File file) {
 		clearImages();
 		mLastPtsWrite = Global.NO_PTS;
@@ -661,6 +693,7 @@ public class Analyzer {
 		this.sampleRate = sampleRate;
 		IMediaReader mediaReader = ToolFactory.makeReader(movieFile
 				.getAbsolutePath());
+
 		// stipulate that we want BufferedImages created in BGR 24bit color
 		// space
 		mediaReader
@@ -681,8 +714,15 @@ public class Analyzer {
 		while (mediaReader.readPacket() == null) {
 			// Wait
 		}
+
+
+		//gui.showMovie(frames, 100
+		// MICRO_SECONDS_BETWEEN_FRAMES / 1000
+		//);
+
 		totalFrames = temptotalFrames;
 		gui.repaint();
+
 	}
 
 	private class ImageSnapListener extends MediaListenerAdapter {
@@ -739,6 +779,18 @@ public class Analyzer {
 		return images[imageIndex];
 	}
 
+
+	public void setFliestoArena(Point point1, Point point2, int Arena, int frame) {
+		regionmaker.setFliesToRegions(point1, point2, Arena, frame);
+	}
+
+	public void clearFlyGroups() {
+		for (Fly fly : flies){
+			fly.setArena(0);
+		}
+		regionmaker.clearData();
+	}
+
 	public BufferedImage getFirstFrameFromMovie() {
 		return firstMovieFrame;
 	}
@@ -749,6 +801,13 @@ public class Analyzer {
 
 	public double getFrameRate() {
 		return (MICRO_SECONDS_BETWEEN_FRAMES * sampleRate)/1000.0;
+	}
+
+public void sizeRangeUpdate(int value) {
+		pixelRange = value;
+		if (totalFrames > 0) {
+			updateImages();
+		}
 	}
 
 }
