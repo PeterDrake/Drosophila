@@ -27,7 +27,7 @@ public class AnalyzerPanel extends JPanel {
 	/**
 	 * The Data Panel object which this AnalyzerPanel communicates with.
 	 */
-	private DataPanel dpanel;
+	private DataTabbs dpanel;
 
 	private JDialog loadingDialog;
 
@@ -54,9 +54,7 @@ public class AnalyzerPanel extends JPanel {
 		constraints.gridheight = 3;
 		constraints.gridwidth = 1;
 		add(ipanel, constraints);
-		
-		
-		dpanel = new DataPanel(this);
+		dpanel = new DataTabbs(this);
 		constraints.anchor = constraints.NORTH;
 		constraints.gridx = 0;
 		constraints.gridy = 0;
@@ -68,7 +66,7 @@ public class AnalyzerPanel extends JPanel {
 		constraints.gridheight = 1;
 		add(dpanel, constraints);
 		
-		graphPanel = new GraphPanel(this, false, .10, "TITLE", "vertical label now this is longer ", "Xkljhfdsalkjfhasdkljfh" );
+		graphPanel = new GraphPanel(this, false, .10, "TITLE", "Instantaneous velocity (pixels)", "Seconds" );
 		constraints.gridx = 0;
 		constraints.gridy = 1;
 		constraints.gridheight = 1;
@@ -93,7 +91,7 @@ public class AnalyzerPanel extends JPanel {
 	 */
 	public void clearImages() {
 		gui.clearImages();
-
+		ipanel.clearYourImages();
 	}
 
 	/**
@@ -242,6 +240,11 @@ public class AnalyzerPanel extends JPanel {
 	public void setMoviePlaying(boolean b){
 		ipanel.setMoviePlaying(b);
 	}
+	
+	public void passDownPoints(List<Point> tempFirst, List<Point> tempSecond ){
+		
+		ipanel.passDownPoints(tempFirst, tempSecond);
+	}
 
 	public void setImageContrast(double d) {
 		gui.setImageContrast(d);		
@@ -257,7 +260,17 @@ public class AnalyzerPanel extends JPanel {
 	
 	public void contrastThresholdUpdate(int input) {
 		gui.contrastThresholdUpdate(input);
+		
+	}
+	public void passUpArenaParameters(int arena, int frame){
+		Point point1 = ipanel.getCurrentPoint1();
+		Point point2 = ipanel.getCurrentPoint2();
+		gui.passupArenaParameters(arena, frame, point1, point2);
+	}
 
+	public void clearFlyGroups() {
+		gui.clearFlyGroups();
+		
 	}
 
 	public BufferedImage getFirstFrameFromMovie() {
@@ -280,11 +293,34 @@ public class AnalyzerPanel extends JPanel {
 		
 	}
 
+	public AnalyzerGui getGui() {
+		return gui;
+	}
+	
 	public void disposeLoadingDialog() {
 		loadingDialog.setVisible(false);
 	}
 
+
+	public double getFrameRate() {
+		// TODO Auto-generated method stub
+		return gui.getFrameRate();
+	}
+
+	public void setLabels(String titleText, String xAxisText, String yAxisText) {
+		graphPanel.setLabels(titleText, xAxisText, yAxisText);
+	}
+
+	public void saveGraph(File file) {
+		graphPanel.saveGraph(file);
+	}
+		
+		
 	public String getDataForFile() {
 		return dpanel.getDataForFile();
+	}
+
+	public void sizeRangeUpdate(int value) {
+		gui.sizeRangeUpdate(value);
 	}
 }

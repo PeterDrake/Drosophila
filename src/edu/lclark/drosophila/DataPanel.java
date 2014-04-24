@@ -6,16 +6,18 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class DataPanel extends JPanel {
-	private AnalyzerPanel analyzerpanel;
-	private List<Fly> flyList;
-	private JTextArea text;
+
+	protected AnalyzerPanel analyzerPanel;
+	protected List<Fly> flyList;
+	protected JTextArea text;
+
 	/**
 	 * creates this panel which at the moment displays all the data for the analytical stories we want to show
 	 * @param analyzerpanel
 	 */
 	public DataPanel(AnalyzerPanel analyzerpanel){
 		
-		this.analyzerpanel=analyzerpanel;
+		this.analyzerPanel=analyzerpanel;
 		flyList=analyzerpanel.getFlyList();
 		text= new JTextArea(7,30);
 		JScrollPane scrollpane= new JScrollPane(text);
@@ -26,23 +28,27 @@ public class DataPanel extends JPanel {
 	 * the paint component for this piece. Directly tied into the fly list.
 	 */
 	public void paintComponent(Graphics G){
-		if(analyzerpanel.getFlyList().size()>0){
+		if(analyzerPanel.getFlyList().size()>0){
 			text.setText(createLabels());
-			text.append(createData(1,analyzerpanel.getTotalFrames()));
+			text.append(createData(1,analyzerPanel.getTotalFrames()));
 		}
 	}
 	/**
 	 * sets this panels default size
 	 */
 	public Dimension getPreferredSize(){
-		return new Dimension(400,400);
+
+//		return new Dimension(400,400);
+		return new Dimension((int)(analyzerPanel.getWidth() * (3.0 / 8.0)), (int)(analyzerPanel.getHeight() / 3.0));
 	}
 	
 	/**
 	 * sets this panels minimum size
 	 */
 	public Dimension getMinimumSize(){
-		return new Dimension(400,400);
+
+//		return new Dimension(400,400);
+		return new Dimension((int)(analyzerPanel.getWidth() * (3.0 / 8.0)), (int)(analyzerPanel.getHeight() / 3.0));
 	}
 	
 	/**
@@ -86,8 +92,8 @@ public class DataPanel extends JPanel {
 	 */
 	public String createData(int start, int end, boolean savingToFile){
 		String data= "";
-		if(analyzerpanel.getFlyList()!=null){
-		for(Fly fly : analyzerpanel.getFlyList()){
+		if(analyzerPanel.getFlyList()!=null){
+		for(Fly fly : analyzerPanel.getFlyList()){
 			data+=createFlyLine(fly,start,end, savingToFile);
 			data+="\n";
 		}
@@ -112,7 +118,7 @@ public class DataPanel extends JPanel {
 	}
 	public String getDataForFile() {
 		String data = createLabels(true);
-		data += createData(1, analyzerpanel.getTotalFrames(), true);
+		data += createData(1, analyzerPanel.getTotalFrames(), true);
 		return data;
 	}
 	

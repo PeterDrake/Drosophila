@@ -1,9 +1,13 @@
 package edu.lclark.drosophila;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -37,6 +41,10 @@ public class ImagePanel extends JPanel {
 
 	private int numberOfImages;
 
+	private Point currentpoint1;
+	private Point currentpoint2;
+	private double scale;
+
 	/**
 	 * Boolean for if we are trying to load the first frame from a movie.
 	 */
@@ -57,6 +65,16 @@ public class ImagePanel extends JPanel {
 	 * The current frame of the movie
 	 */
 	private BufferedImage image;
+
+	/**
+	 * Past first points of region rectangles
+	 */
+	private List<Point> pastFirstPoints;
+
+	/**
+	 * Past second points of region rectangles
+	 */
+	private List<Point> pastSecondPoints;
 
 	private boolean moviePlaying;
 
@@ -85,6 +103,10 @@ public class ImagePanel extends JPanel {
 		this.analyzerPanel = a;
 		flydentifiers = false;
 		imageIndex = 0;
+		addMouseListener(new MouseHandler());
+		pastFirstPoints= new LinkedList<Point>();
+		pastSecondPoints= new LinkedList<Point>();
+		
 	}
 
 	/**
@@ -98,12 +120,14 @@ public class ImagePanel extends JPanel {
 	 * Returns the preferred size of this panel as a Dimension object.
 	 */
 	public Dimension getPreferredSize() {
-		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+		return new Dimension((int) (analyzerPanel.getWidth() * (5.0 / 8.0)), analyzerPanel.getHeight());
+//		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 	}
 
 	/** Returns the minimum size of this panel as a Dimension object */
 	public Dimension getMinimumSize() {
-		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+		return new Dimension((int) (analyzerPanel.getWidth() * (5.0 / 8.0)), analyzerPanel.getHeight());
+//		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 	}
 
 	/**
@@ -111,6 +135,10 @@ public class ImagePanel extends JPanel {
 	 */
 	public void incrementIndex() {
 		imageIndex++;
+	}
+
+	public int getImageIndex() {
+		return imageIndex;
 	}
 
 	/**
@@ -123,14 +151,37 @@ public class ImagePanel extends JPanel {
 		if (moviePlaying) {
 			int imgWidth = image.getWidth(null);
 			int imgHeight = image.getHeight(null);
-
+			
 			double xScale = this.getWidth() / (double) imgWidth;
 			double yScale = this.getHeight() / (double) imgHeight;
-			double scale = Math.min(xScale, yScale);
-
+			scale = Math.min(xScale, yScale);
 			g.drawImage(image, 0, 0, (int) (imgWidth * scale),
 					(int) (imgHeight * scale), null);
 		} else {
+
+//			int totalImages = analyzerPanel.getTotalFrames();
+//			if (imageIndex < 0) {
+//				imageIndex = 0;
+//			} else if (imageIndex >= totalImages) {
+//				imageIndex = totalImages - 1;
+//			}
+//			// String filePath = analyzerPanel.passdownImage(imageIndex);
+//			File file = null;
+//			if (imageIndex >= 0) {
+//				file = analyzerPanel.passdownFile(imageIndex);
+//			} else {
+//				return;
+//			}
+//			if (file != null) {
+//				// Image image = new ImageIcon(filePath).getImage();
+//				BufferedImage image = null;
+//				try {
+//					image = ImageIO.read(file);
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//					System.exit(0);
+//				}
 
 			if (!analyzerPanel.getMovieLoaded()) {
 
@@ -170,48 +221,57 @@ public class ImagePanel extends JPanel {
 				imageIndex = 0;
 			}
 			if (image != null) {
+
 				int imgWidth = image.getWidth(null);
 				int imgHeight = image.getHeight(null);
 
 				double xScale = this.getWidth() / (double) imgWidth;
 				double yScale = this.getHeight() / (double) imgHeight;
-				double scale = Math.min(xScale, yScale);
+
+				scale = Math.min(xScale, yScale);
+				System.out.println("scale is " + scale);
 
 				double imageContrast = analyzerPanel.getImageContrast();
+			//	if (imageContrast != oldImageContrast) {
+					for (int i = 0; i < image.getWidth(null); i++) {
+						for (int j = 0; j < image.getHeight(null); j++) {
+							int rgb = image.getRGB(i, j);
+							int red = (rgb >> 16) & 0xFF;
+							int green = (rgb >> 8) & 0xFF;
+							int blue = rgb & 0xFF;
+							red *= imageContrast;
+							green *= imageContrast;
+							blue *= imageContrast;
+							if (red > 255) {
+								red = 255;
+							}
+							if (green > 255) {
+								green = 255;
+							}
+							if (blue > 255) {
+								blue = 255;
+							}
+							rgb = 255 << 24;
+							rgb += red << 16;
+							rgb += green << 8;
+							rgb += blue;
+							image.setRGB(i, j, rgb);
 
-				// if(imageContrast != oldImageContrast) {
-				for (int i = 0; i < image.getWidth(null); i++) {
-					for (int j = 0; j < image.getHeight(null); j++) {
-						int rgb = image.getRGB(i, j);
-						int red = (rgb >> 16) & 0xFF;
-						int green = (rgb >> 8) & 0xFF;
-						int blue = rgb & 0xFF;
-						red *= imageContrast;
-						green *= imageContrast;
-						blue *= imageContrast;
-						if (red > 255) {
-							red = 255;
 						}
-						if (green > 255) {
-							green = 255;
-						}
-						if (blue > 255) {
-							blue = 255;
-						}
-						rgb = 255 << 24;
-						rgb += red << 16;
-						rgb += green << 8;
-						rgb += blue;
-						image.setRGB(i, j, rgb);
 					}
-				}
+					oldImage = image;
+					oldImageContrast = imageContrast;
+				//}
+
 				oldImage = image;
 				oldImageContrast = imageContrast;
 				// }
 
+
 				g.drawImage(oldImage, 0, 0, (int) (imgWidth * scale),
 						(int) (imgHeight * scale), null);
 				// g.drawImage(image, 0, 0, null);
+
 
 				if (flydentifiers) {
 					List<Fly> flies = analyzerPanel.getFlyList();
@@ -261,7 +321,31 @@ public class ImagePanel extends JPanel {
 				}
 			}
 		}
-	}
+		if (currentpoint1 != null && currentpoint2 != null) {
+			System.out.println("drawing square");
+			g.setColor(Color.BLACK);
+			// Point first[] = (Point[]) pastFirstPoints.toArray();
+			// Point second[] = (Point[]) pastSecondPoints.toArray();
+			if (!pastFirstPoints.isEmpty()) {
+				for (int i = 0; i < pastFirstPoints.size(); i++) {
+					System.out.println(pastFirstPoints.get(i));
+					g.drawRect((int)(pastFirstPoints.get(i).x*scale),
+							(int)(pastFirstPoints.get(i).y*scale), (int)(Math.abs(pastFirstPoints.get(i).x
+									- pastSecondPoints.get(i).x)*scale),
+							(int)(Math.abs(pastSecondPoints.get(i).y
+									- pastFirstPoints.get(i).y)*scale));
+				}
+			}
+			g.setColor(Color.RED);
+			int xPoints[] = { currentpoint1.x, currentpoint2.x,
+					currentpoint2.x, currentpoint1.x };
+			int yPoints[] = { currentpoint1.y, currentpoint1.y,
+					currentpoint2.y, currentpoint2.y };
+			g.drawPolygon(xPoints, yPoints, 4);
+			}
+		}
+
+	
 
 	/**
 	 * Toggles whether or not fly trajectories are drawn over identified flies,
@@ -285,6 +369,12 @@ public class ImagePanel extends JPanel {
 		analyzerPanel.repaint();
 	}
 
+	public void passDownPoints(List<Point> tempFirst, List<Point> tempSecond) {
+		System.out.println("list is being set");
+		pastFirstPoints = tempFirst;
+		pastSecondPoints = tempSecond;
+	}
+
 	/**
 	 * Sets this ImagePanel's displayed image index to the given
 	 * 
@@ -298,8 +388,60 @@ public class ImagePanel extends JPanel {
 		image = b;
 	}
 
+
+	public Point getCurrentPoint1() {
+		double x = (double) currentpoint1.x;
+		double scalemath = x / scale;
+		System.out.println("scale" + scale);
+		System.out.println("scaled math " + scalemath);
+		Point sent = new Point((int) (currentpoint1.x / scale),
+				(int) (currentpoint1.y / scale));
+		return sent;
+	}
+
+	public Point getCurrentPoint2() {
+		Point sent = new Point((int) (currentpoint2.x / scale),
+				(int) (currentpoint2.y / scale));
+		return sent;
+	}
+
+	public class MouseHandler extends MouseAdapter {
+		public void mousePressed(MouseEvent event) {
+			System.out.println("point" + event.getPoint());
+			currentpoint1 = event.getPoint();
+		}
+
+		public void mouseClicked(MouseEvent event) {
+		}
+
+		public void mouseReleased(MouseEvent event) {
+			System.out.println("release point" + event.getPoint());
+			currentpoint2 = event.getPoint();
+			// analyzerPanel.passUpArenaParameters();
+			repaint();
+		}
+
+		public class MouseMotionHandler implements MouseMotionListener {
+
+			@Override
+			public void mouseDragged(MouseEvent event) {
+			}
+
+			@Override
+			public void mouseMoved(MouseEvent event) {
+
+			}
+
+		}
+
+	}
 	public void setMovieLoading(boolean b) {
 		movieLoading = b;
+	}
 
+	public void clearYourImages() {
+		image = null;
+		oldImage = null;
+		savedImage = null;
 	}
 }
