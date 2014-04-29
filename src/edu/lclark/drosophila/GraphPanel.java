@@ -140,16 +140,17 @@ public class GraphPanel extends JPanel {
 		g.drawString(title,(GPanelWidth-stringWidth)/2 , topMarg/3);
 		
 		// drawing the grid lines and the data for the grid lines
+		// Y - AXIS
 		double d = videoLength/((GPanelWidth-(leftMarg+rightMarg))/gridxOffset);
 		for (int i = 0; i*gridxOffset <= GPanelWidth - (leftMarg + rightMarg); i++) {
 			g.drawLine((int)(gridxOffset * i) + leftMarg, GPanelHeight-bottomMarg,
 					(int)(gridxOffset * i) + leftMarg, topMarg);
 			
-			String tempXValue = String.format("%.2f", d*i / 1000);		
+			String tempXValue = String.format("%.2f", d*(i + startFrame) / 1000);		
 			stringWidth=(int) f.getStringBounds(tempXValue, g2d.getFontRenderContext()).getWidth();		
 			g.drawString(tempXValue, (int)(gridxOffset * i) + leftMarg - stringWidth / 2, GPanelHeight-(bottomMarg/2));
 		}
-		
+		// Y - AXIS
 		d = maxVelocity/((GPanelHeight-(topMarg+bottomMarg))/gridyOffset);
 		for( int i = 0; i*gridyOffset <= GPanelHeight - (topMarg + bottomMarg); i++) {
 			g.drawLine(leftMarg,(int) -(gridyOffset * i) + GPanelHeight - bottomMarg, GPanelWidth-rightMarg,
@@ -157,7 +158,7 @@ public class GraphPanel extends JPanel {
 			
 			String tempYValue =String.format("%.2f", d*i);
 			int stringHeight=(int) f.getStringBounds(tempYValue, g2d.getFontRenderContext()).getHeight();	
-			g.drawString(String.format("%.2f", (d*i)), leftMarg/2, (int)(-gridyOffset * i) + GPanelHeight - bottomMarg + stringHeight/2);
+			g.drawString(String.format("%.2f", i * d), leftMarg/2, (int)(-gridyOffset * i) + GPanelHeight - bottomMarg + stringHeight/2);
 		}
 
 		g.setColor(Color.BLACK);
