@@ -21,7 +21,6 @@ public class ArenaAnalyzer {
 			avg+=f.averageVelFly(start, end);			
 		}
 		avg= avg/ arenaflies.size();
-		System.out.println("Arena "+ Arena+ "  avg "+ avg);
 		return avg;
 		}
 }

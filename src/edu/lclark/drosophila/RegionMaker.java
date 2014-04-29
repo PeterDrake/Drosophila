@@ -53,6 +53,7 @@ public class RegionMaker {
 		PointArena pointarenapair = new PointArena(topleft,bottomright,arena);
 		ArenaAssignment.add(pointarenapair);
 		analyzer.passDownPoints();
+		System.out.println("set Arena "+arena);
 	}
 
 	private Point gettopleft(Point point1, Point point2) {

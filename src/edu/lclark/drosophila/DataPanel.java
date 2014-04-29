@@ -30,8 +30,12 @@ public class DataPanel extends JPanel {
 	public void paintComponent(Graphics G){
 		if(analyzerPanel.getFlyList().size()>0){
 		text.setText(createLabels());
-
+		if(getMovieLoaded()){
 		text.append(createData(1,analyzerPanel.getTotalFrames()-1));
+		}
+		else{
+			text.append(createData(1,analyzerPanel.getTotalFrames()));
+		}
 
 		}
 	}
@@ -122,6 +126,9 @@ public class DataPanel extends JPanel {
 		String data = createLabels(true);
 		data += createData(1, analyzerPanel.getTotalFrames(), true);
 		return data;
+	}
+	public boolean getMovieLoaded(){
+		return analyzerPanel.getMovieLoaded();
 	}
 	
 }

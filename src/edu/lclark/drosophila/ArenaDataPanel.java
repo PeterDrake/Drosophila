@@ -1,13 +1,16 @@
 package edu.lclark.drosophila;
 
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class ArenaDataPanel extends DataPanel{
-	List<Integer> knownArenas;
+	SortedSet<Integer> knownArenas;
 	public ArenaDataPanel(AnalyzerPanel a){
 		super(a);
-		knownArenas = new LinkedList<Integer>();
+		knownArenas = new TreeSet<Integer>();
 		
 	}
 	
@@ -22,9 +25,12 @@ public class ArenaDataPanel extends DataPanel{
 	 * @return String Data
 	 */
 	public String createData(int start, int end){
+		knownArenas.clear();
 		String Data= "";
+		Hashtable<Integer ,String> lines = new Hashtable<Integer, String>();
 		boolean known;
 		if(analyzerPanel.getFlyList()!=null){
+			System.out.println("not null");
 		for(Fly fly : analyzerPanel.getFlyList()){
 			known = false;
 			for (Integer i : knownArenas){
@@ -33,15 +39,18 @@ public class ArenaDataPanel extends DataPanel{
 					break;
 				}
 			}
-				if(!known){
+			//	if(!known){
 					knownArenas.add(fly.getArena());
-					Data+=createGroupLine(fly.getArena(),start,end);
+					lines.put(fly.getArena(),createGroupLine(fly.getArena(),start,end));
+				}
+				for(int i : knownArenas){
+					Data+=lines.get(i);
 					Data+="\n";
 				}
-			}
+			
 		}
 		return Data;
-	}
+		}
 	/**
 	 * takes a single fly and creates a string to display its avg velocity and total distance"
 	 * @param fly
