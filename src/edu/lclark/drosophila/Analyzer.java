@@ -55,6 +55,11 @@ public class Analyzer {
 	private int temptotalFrames;
 	
 	/**
+	 * True if the movie that is loaded has been analyzed, otherwise false.
+	 */
+	private boolean movieAnalyzed;
+	
+	/**
 	 * True if the currently loaded file is a movie. Otherwise, it is false.
 	 * <p>
 	 * This is used so that the proper constructor is called for making a new
@@ -179,6 +184,7 @@ public class Analyzer {
 		flies.clear();
 		images = new File[20];
 		loadingMovie = false;
+		movieAnalyzed = false;
 	}
 
 	/**
@@ -618,6 +624,7 @@ public class Analyzer {
 					// TODO this should probably create a new flies List, since
 					// it
 					// is re running flydentify on all images.
+					flies.clear();
 					BufferedImage image = ImageIO.read(images[i]);
 					flydentify(image, i);
 				}
@@ -687,6 +694,12 @@ public class Analyzer {
 	}
 
 	public void analyzeMovie(int sampleRate) {
+		if(movieLoaded){
+			File f = movieFile;
+			clearImages();
+			openMovie(f);
+			
+		}
 		this.sampleRate = sampleRate;
 		IMediaReader mediaReader = ToolFactory.makeReader(movieFile
 				.getAbsolutePath());
@@ -718,6 +731,7 @@ public class Analyzer {
 		//);
 
 		totalFrames = temptotalFrames;
+		movieAnalyzed = true;
 		gui.repaint();
 
 	}
@@ -805,6 +819,10 @@ public void sizeRangeUpdate(int value) {
 		if (totalFrames > 0) {
 			updateImages();
 		}
+	}
+
+	public boolean getMovieAnalyzed(){
+		return movieAnalyzed;
 	}
 
 }

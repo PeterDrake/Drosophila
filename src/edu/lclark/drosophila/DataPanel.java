@@ -29,10 +29,8 @@ public class DataPanel extends JPanel {
 	 */
 	public void paintComponent(Graphics G){
 		if(analyzerPanel.getFlyList().size()>0){
-		text.setText(createLabels());
-
-		text.append(createData(1,analyzerPanel.getTotalFrames()-1));
-
+			text.setText(createLabels());
+			text.append(createData(1,analyzerPanel.getTotalFrames()));
 		}
 	}
 	/**
