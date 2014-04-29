@@ -18,7 +18,7 @@ public class GraphPanel extends JPanel {
 
 	private AnalyzerPanel analyzerPanel;
 	
-	private double[] averageVelocity;
+	private double[][] averageVelocity;
 	
 	private double frameRate;
 	
@@ -35,17 +35,17 @@ public class GraphPanel extends JPanel {
 	
 	private boolean drawPoints;
 
-	public GraphPanel() {
-		drawPoints = false;
-		double tempAverageVelocity[] = { 85, 56, 42, 3, 7, 11, 46, 36 }; // test data! use analyzerPanel.getAverageVelocity 			
-		averageVelocity = tempAverageVelocity;
-		frameRate = .10; // this may not be the real frameRate
-		videoLength = averageVelocity.length * frameRate;
-		xLabel = "Time in frames";
-		yLabel = "Average Velocity (in pixels per frame)";
-		title = "Average Velocity vs Time";
-		color = Color.BLACK;
-	}
+//	public GraphPanel() {
+//		drawPoints = false;
+//		double tempAverageVelocity[] = { 85, 56, 42, 3, 7, 11, 46, 36 }; // test data! use analyzerPanel.getAverageVelocity 			
+//		averageVelocity = tempAverageVelocity;
+//		frameRate = .10; // this may not be the real frameRate
+//		videoLength = averageVelocity.length * frameRate;
+//		xLabel = "Time in frames";
+//		yLabel = "Average Velocity (in pixels per frame)";
+//		title = "Average Velocity vs Time";
+//		color = Color.BLACK;
+//	}
 
 	public GraphPanel(AnalyzerPanel analyzerPanel, boolean drawPoints, double frameRate, String title, String yLabel, String xLabel) {
 		this.analyzerPanel = analyzerPanel;
@@ -84,15 +84,18 @@ public class GraphPanel extends JPanel {
 		int GPanelWidth= this.getWidth();
 		int GPanelHeight=this.getHeight();
 		g.fillRect(0, 0, GPanelWidth, GPanelHeight);
-		averageVelocity = analyzerPanel.getAverageVelocity();
+		averageVelocity = analyzerPanel.getAverageVelocity(analyzerPanel.getRegionsOfInterest());
 		videoLength = averageVelocity.length * analyzerPanel.getFrameRate();
 		g.setColor(Color.BLACK);
 
 		double maxVelocity = 0;
 
 		for (int i = 0; i < averageVelocity.length; i++) {
-			if (averageVelocity[i] > maxVelocity) {
-				maxVelocity = averageVelocity[i];
+			for(int j = 0; j<averageVelocity[i].length; j++){
+				
+				if (averageVelocity[i][j] > maxVelocity) {
+				maxVelocity = averageVelocity[i][j];
+				}
 			}
 		}
 		
@@ -152,19 +155,20 @@ public class GraphPanel extends JPanel {
 		g.drawRect(leftMarg, topMarg, GPanelWidth - (leftMarg+rightMarg), GPanelHeight - (topMarg+bottomMarg));
 		g.setColor(color);
 		for (int i = 0; i < averageVelocity.length; i++) {
+			for(int j = 0; j< averageVelocity[i].length; j++){
 			
 			// draw the points
 			if(drawPoints) {
-				g.fillOval((int) (xOffSet + i * widthOffset),(int) (yOffSet - averageVelocity[i] * heightOffset), 6, 6);
+				g.fillOval((int) (xOffSet + i * widthOffset),(int) (yOffSet - averageVelocity[i][j] * heightOffset), 6, 6);
 			}
 			if (i != 0) {
 				g.drawLine(
 						(int) (xOffSet + i * widthOffset + 3),
-						(int) (yOffSet - averageVelocity[i] * heightOffset) + 3,
+						(int) (yOffSet - averageVelocity[i][j] * heightOffset) + 3,
 						(int) (xOffSet + (i - 1) * widthOffset + 3),
-						(int) (yOffSet - averageVelocity[i - 1] * heightOffset + 3));
+						(int) (yOffSet - averageVelocity[i][j-1] * heightOffset + 3));
 			}
-
+			}
 		}
 		g.setColor(Color.LIGHT_GRAY);
 		g2d.rotate(-Math.PI/2.0);
