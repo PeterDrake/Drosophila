@@ -84,14 +84,11 @@ public class Analyzer {
 	private double SECONDS_BETWEEN_FRAMES;
 
 	/**
-<<<<<<< HEAD
-=======
 	 * The number of frames per second in a movie file.
 	 */
 	private double framesPerSecond;
 
 	/**
->>>>>>> master
 	 * The number of microseconds between frames in a movie file
 	 */
 	private long MICRO_SECONDS_BETWEEN_FRAMES;
