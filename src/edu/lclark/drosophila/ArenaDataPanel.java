@@ -34,7 +34,6 @@ public class ArenaDataPanel extends DataPanel{
 		Hashtable<Integer ,String> lines = new Hashtable<Integer, String>();
 		boolean known;
 		if(analyzerPanel.getFlyList()!=null){
-			System.out.println("not null");
 		for(Fly fly : analyzerPanel.getFlyList()){
 			known = false;
 			for (Integer i : knownArenas){
