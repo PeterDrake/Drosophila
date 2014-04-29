@@ -21,7 +21,6 @@ import com.xuggle.xuggler.Global;
 
 import com.xuggle.xuggler.IContainer;
 
-
 public class Analyzer {
 
 	private int sizeThreshold;
@@ -53,12 +52,12 @@ public class Analyzer {
 	private int totalFrames;
 
 	private int temptotalFrames;
-	
+
 	/**
 	 * True if the movie that is loaded has been analyzed, otherwise false.
 	 */
 	private boolean movieAnalyzed;
-	
+
 	/**
 	 * True if the currently loaded file is a movie. Otherwise, it is false.
 	 * <p>
@@ -71,7 +70,6 @@ public class Analyzer {
 	 * Stores all of the images being analyzed.
 	 */
 	private File[] images;
-
 
 	/**
 	 * The name of the movie file that we have loaded
@@ -112,16 +110,15 @@ public class Analyzer {
 	 */
 	private double imageContrast = 1.0;
 
-
-
 	private RegionMaker regionmaker;
+
+	private ArenaAnalyzer arenaAnalyzer;
 
 	private double duration;
 
-	private int sampleRate=1;
+	private int sampleRate = 1;
 
 	private int pixelRange;
-
 
 	public Analyzer() {
 		movieLoaded = false;
@@ -130,7 +127,8 @@ public class Analyzer {
 		frames = new ArrayList<BufferedImage>();
 		images = new File[20];
 		regionmaker = new RegionMaker(this);
-		//passDownPoints();
+		arenaAnalyzer = new ArenaAnalyzer(this);
+		// passDownPoints();
 	}
 
 	public void flydentify(BufferedImage image) {
@@ -144,8 +142,8 @@ public class Analyzer {
 
 		mLastPtsWrite = Global.NO_PTS;
 	}
-	
-	public void passDownPoints(){
+
+	public void passDownPoints() {
 		List<Point> tempFirst = regionmaker.getPastfirstpoints();
 		List<Point> tempSecond = regionmaker.getPastsecondpoints();
 		gui.passDownPoints(tempFirst, tempSecond);
@@ -161,7 +159,8 @@ public class Analyzer {
 	 * @return average velocity of flies from start to end
 	 */
 
-	public double[] averageVelMultFlies(List<Fly> flies, int start, int end) {
+	public static double[] averageVelMultFlies(List<Fly> flies, int start,
+			int end) {
 		double[] avgVel = new double[end - start];
 		double tempAvg;
 		for (int i = start; i < end; i++) {
@@ -194,7 +193,7 @@ public class Analyzer {
 	 * to flies on other frames.
 	 * 
 	 * @param array
-	 *            The boolean array being searched for any false values. 
+	 *            The boolean array being searched for any false values.
 	 * @return True if there are any false values in the array.
 	 */
 	public boolean containsFalse(boolean[] array) {
@@ -205,8 +204,8 @@ public class Analyzer {
 		}
 		return false;
 	}
-	
-	public List<RegionMaker.PointArena> passDownArenaAssignments(){
+
+	public List<RegionMaker.PointArena> passDownArenaAssignments() {
 		return regionmaker.getArenaAssignment();
 	}
 
@@ -310,8 +309,10 @@ public class Analyzer {
 								}
 							}
 						}
-						if (numPixels >= sizeThreshold && numPixels <= (sizeThreshold + pixelRange)) {
-							// if the blob is large enough to be a fly, but not too big
+						if (numPixels >= sizeThreshold
+								&& numPixels <= (sizeThreshold + pixelRange)) {
+							// if the blob is large enough to be a fly, but not
+							// too big
 
 							// create a new temporary fly object
 							double tempLocation[] = new double[2];
@@ -635,16 +636,14 @@ public class Analyzer {
 		}
 	}
 
-
 	public int getFramesInMovie(String filename) {
 		IContainer container = IContainer.make();
 		if (container.open(filename, IContainer.Type.READ, null) < 0) {
 			throw new IllegalArgumentException("Could not open file:"
 					+ filename);
 		}
-		duration = container.getDuration()/1000000.0;
-		framesPerSecond = container.getStream(0).getFrameRate()
-				.getDouble();
+		duration = container.getDuration() / 1000000.0;
+		framesPerSecond = container.getStream(0).getFrameRate().getDouble();
 		container.close();
 		return (int) (duration * framesPerSecond);
 	}
@@ -665,7 +664,7 @@ public class Analyzer {
 		mLastPtsWrite = Global.NO_PTS;
 		movieLoaded = true;
 		movieFile = file;
-		firstMovieFrame=null;
+		firstMovieFrame = null;
 		IMediaReader mediaReader = ToolFactory.makeReader(file
 				.getAbsolutePath());
 		// stipulate that we want BufferedImages created in BGR 24bit color
@@ -673,12 +672,12 @@ public class Analyzer {
 		mediaReader
 				.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
 		totalFrames = getFramesInMovie(file.getAbsolutePath());
-		SECONDS_BETWEEN_FRAMES = duration/totalFrames;
+		SECONDS_BETWEEN_FRAMES = duration / totalFrames;
 		MICRO_SECONDS_BETWEEN_FRAMES = (long) (Global.DEFAULT_PTS_PER_SECOND * SECONDS_BETWEEN_FRAMES);
 		mediaReader.addListener(new ImageSnapListener(true));
 		// read out the contents of the media file and
 		// dispatch events to the attached listener
-		
+
 		loadingMovie = true;
 		while (mediaReader.readPacket() == null) {
 			if (firstMovieFrame != null) {
@@ -686,7 +685,7 @@ public class Analyzer {
 				break;
 			}
 		}
-		
+
 		gui.repaint();
 		// gui.showMovie(frames, 100
 		// MICRO_SECONDS_BETWEEN_FRAMES / 1000
@@ -694,11 +693,11 @@ public class Analyzer {
 	}
 
 	public void analyzeMovie(int sampleRate) {
-		if(movieLoaded){
+		if (movieLoaded) {
 			File f = movieFile;
 			clearImages();
 			openMovie(f);
-			
+
 		}
 		this.sampleRate = sampleRate;
 		IMediaReader mediaReader = ToolFactory.makeReader(movieFile
@@ -708,15 +707,16 @@ public class Analyzer {
 		// space
 		mediaReader
 				.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
-		totalFrames = getFramesInMovie(movieFile.getAbsolutePath()) / sampleRate;
+		totalFrames = getFramesInMovie(movieFile.getAbsolutePath())
+				/ sampleRate;
 		System.err.println("Total Frames is: " + totalFrames);
 		System.err.println("Duration is " + duration);
-		SECONDS_BETWEEN_FRAMES = duration/totalFrames;
-		System.err.println("Seconds between frames is: " + SECONDS_BETWEEN_FRAMES);
+		SECONDS_BETWEEN_FRAMES = duration / totalFrames;
+		System.err.println("Seconds between frames is: "
+				+ SECONDS_BETWEEN_FRAMES);
 		MICRO_SECONDS_BETWEEN_FRAMES = (long) (Global.DEFAULT_PTS_PER_SECOND * SECONDS_BETWEEN_FRAMES);
-		System.err.println("micro seconds between frames is: " + MICRO_SECONDS_BETWEEN_FRAMES);
-
-
+		System.err.println("micro seconds between frames is: "
+				+ MICRO_SECONDS_BETWEEN_FRAMES);
 
 		mediaReader.addListener(new ImageSnapListener(false));
 		// read out the contents of the media file and
@@ -725,10 +725,9 @@ public class Analyzer {
 			// Wait
 		}
 
-
-		//gui.showMovie(frames, 100
+		// gui.showMovie(frames, 100
 		// MICRO_SECONDS_BETWEEN_FRAMES / 1000
-		//);
+		// );
 
 		totalFrames = temptotalFrames;
 		movieAnalyzed = true;
@@ -761,19 +760,19 @@ public class Analyzer {
 							/ Global.DEFAULT_PTS_PER_SECOND;
 					// frames.add(event.getImage());
 
-					if(increment % sampleRate == 0)
-					{
+					if (increment % sampleRate == 0) {
 						flydentify(event.getImage(), increment / sampleRate);
 						System.out.printf(
 								"at elapsed time of %6.3f seconds wrote: %s\n",
 								seconds, "<imaginary file>");
 						// update last write time
-						mLastPtsWrite += MICRO_SECONDS_BETWEEN_FRAMES * sampleRate;
+						mLastPtsWrite += MICRO_SECONDS_BETWEEN_FRAMES
+								* sampleRate;
 					}
 					increment++;
 				}
 			}
-			temptotalFrames=increment;
+			temptotalFrames = increment;
 		}
 	}
 
@@ -790,13 +789,12 @@ public class Analyzer {
 		return images[imageIndex];
 	}
 
-
 	public void setFliestoArena(Point point1, Point point2, int Arena, int frame) {
 		regionmaker.setFliesToRegions(point1, point2, Arena, frame);
 	}
 
 	public void clearFlyGroups() {
-		for (Fly fly : flies){
+		for (Fly fly : flies) {
 			fly.setArena(0);
 		}
 		regionmaker.clearData();
@@ -811,17 +809,21 @@ public class Analyzer {
 	}
 
 	public double getFrameRate() {
-		return (MICRO_SECONDS_BETWEEN_FRAMES * sampleRate)/1000.0;
+		return (MICRO_SECONDS_BETWEEN_FRAMES * sampleRate) / 1000.0;
 	}
 
-public void sizeRangeUpdate(int value) {
+	public double calcArenaAverageVelocityinFrame(int Arena, int start, int end) {
+		return arenaAnalyzer.AvgVelocityofArena(Arena, start, end);
+	}
+
+	public void sizeRangeUpdate(int value) {
 		pixelRange = value;
 		if (totalFrames > 0) {
 			updateImages();
 		}
 	}
 
-	public boolean getMovieAnalyzed(){
+	public boolean getMovieAnalyzed() {
 		return movieAnalyzed;
 	}
 

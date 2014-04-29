@@ -4,7 +4,11 @@ import java.awt.*;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-
+/**
+ * Class that takes care of setting flies to Arenas in the model.
+ * @author jpoley
+ *
+ */
 public class RegionMaker {
 	public final static int MAXSQUARES = 50;
 	Analyzer analyzer;
@@ -36,7 +40,6 @@ public class RegionMaker {
 	
 	public void setFliesToRegions(Point point1, Point point2, int arena,
 			int frame) {
-		System.out.println("this method is being called for arena" + arena);
 		flies = analyzer.getFlies();
 		Point topleft = gettopleft(point1, point2);
 		Point bottomright = getbottomright(point1, point2);
@@ -79,7 +82,6 @@ public class RegionMaker {
 		pastfirstpoints.clear();
 		pastsecondpoints.clear();
 		ArenaAssignment.clear();
-		System.out.println("is first points clear?"+pastfirstpoints.isEmpty()+ " is Arena Assignments clear?"+ArenaAssignment.isEmpty());
 	}
 
 	private Point getbottomright(Point point1, Point point2) {

@@ -229,7 +229,6 @@ public class ImagePanel extends JPanel {
 				double yScale = this.getHeight() / (double) imgHeight;
 
 				scale = Math.min(xScale, yScale);
-				System.out.println("scale is " + scale);
 
 				double imageContrast = analyzerPanel.getImageContrast();
 			//	if (imageContrast != oldImageContrast) {
@@ -370,7 +369,6 @@ public class ImagePanel extends JPanel {
 	}
 
 	public void passDownPoints(List<Point> tempFirst, List<Point> tempSecond) {
-		System.out.println("list is being set");
 		pastFirstPoints = tempFirst;
 		pastSecondPoints = tempSecond;
 	}
@@ -390,11 +388,7 @@ public class ImagePanel extends JPanel {
 
 
 	public Point getCurrentPoint1() {
-		double x = (double) currentpoint1.x;
-		double scalemath = x / scale;
-		System.out.println("scale" + scale);
-		System.out.println("scaled math " + scalemath);
-		Point sent = new Point((int) (currentpoint1.x / scale),
+			Point sent = new Point((int) (currentpoint1.x / scale),
 				(int) (currentpoint1.y / scale));
 		return sent;
 	}
@@ -407,7 +401,6 @@ public class ImagePanel extends JPanel {
 
 	public class MouseHandler extends MouseAdapter {
 		public void mousePressed(MouseEvent event) {
-			System.out.println("point" + event.getPoint());
 			currentpoint1 = event.getPoint();
 		}
 
@@ -415,7 +408,6 @@ public class ImagePanel extends JPanel {
 		}
 
 		public void mouseReleased(MouseEvent event) {
-			System.out.println("release point" + event.getPoint());
 			currentpoint2 = event.getPoint();
 			// analyzerPanel.passUpArenaParameters();
 			repaint();
