@@ -48,7 +48,7 @@ public class ButtonToolbar extends JMenuBar {
 			analyzerPanel.clearFlyGroups();
 			analyzerPanel.clearImages();
 			analyzerPanel.repaint();
-
+			saveGraph.setEnabled(false);
 		}
 	}
 
@@ -332,6 +332,32 @@ public class ButtonToolbar extends JMenuBar {
 			}
 		}
 	}
+	
+	private class SetRangeAction implements ChangeListener {
+
+		/**
+		 * Event which sets the size threshold when the slider is moved
+		 * 
+		 */
+		public void stateChanged(ChangeEvent e) {
+			final JSlider Source = (JSlider) e.getSource();
+			if (!Source.getValueIsAdjusting()) {
+				SwingUtilities.invokeLater(new Runnable(){
+					@Override
+					public void run(){
+				
+				analyzerPanel.sizeRangeUpdate((int) Source.getValue());
+				rangeText.setText("" + (int) Source.getValue());
+				analyzerPanel.repaint();
+					}
+				});
+				
+			}
+			if (Source.getValueIsAdjusting()) {
+				rangeText.setText("" + (int) Source.getValue());
+			}
+		}
+	}
 
 	/**
 	 * The action listener that will adjust the Threshold as the textbox is
@@ -365,12 +391,10 @@ public class ButtonToolbar extends JMenuBar {
 		
 			try {
 				int value = Integer.parseInt(text);
-				if(value>=MIN_SLIDER_THRESHOLD&&value<=MAX_SLIDER_THRESHHOLD){
-				analyzerPanel.sizeThresholdUpdate(value);
+				if(value>=MIN_SLIDER_THRESHOLD&&value<=MAX_PIXEL_THRESHOLD){
 				setThreshold.setValue(value);
 				}
 				else{
-					analyzerPanel.sizeThresholdUpdate(DEFAULT_SLIDER_THRESHOLD);
 					setThreshold.setValue(DEFAULT_SLIDER_THRESHOLD);
 				}
 			} catch (NumberFormatException E) {
@@ -381,6 +405,48 @@ public class ButtonToolbar extends JMenuBar {
 		}
 	}
 
+	
+	private class SetRangeEntered implements DocumentListener {
+		public void changedUpdate(DocumentEvent e) {
+			reportchange(e);
+		}
+
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			reportchange(e);
+		}
+
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			reportchange(e);
+		}
+
+		public void reportchange(DocumentEvent e) {
+			Document Source = e.getDocument();
+			String text = "25";
+			try {
+				text = Source.getText(0, Source.getLength());
+			} catch (BadLocationException e1) {
+				e1.getStackTrace();
+				System.exit(1);
+				}
+
+		
+			try {
+				int value = Integer.parseInt(text);
+				if(value>=MIN_SLIDER_THRESHOLD&&value<=MAX_PIXEL_THRESHOLD){
+				setRange.setValue(value);
+				}
+				else{
+					setRange.setValue(DEFAULT_SLIDER_THRESHOLD);
+				}
+			} catch (NumberFormatException E) {
+				E.getStackTrace();
+				//does nothing waits for a valid argument
+
+			}
+		}
+	}
 	
 	/**
 	 * The action listener which changes the Analyzer's size threshold when the
@@ -455,12 +521,10 @@ public class ButtonToolbar extends JMenuBar {
 
 			try {
 				int value = Integer.parseInt(text);
-				if(value>=MIN_SLIDER_THRESHOLD&&value<=MAX_SLIDER_THRESHHOLD){
-				analyzerPanel.contrastThresholdUpdate(value);
+				if(value>=MIN_SLIDER_THRESHOLD&&value<=MAX_SLIDER_THRESHOLD){
 				setContrastThreshold.setValue(value);
 				}
 				else{
-					analyzerPanel.contrastThresholdUpdate(DEFAULT_CONTRAST_THRESHOLD);
 					setContrastThreshold.setValue(DEFAULT_CONTRAST_THRESHOLD);
 				}
 			} catch (NumberFormatException E) {
@@ -586,7 +650,9 @@ public class ButtonToolbar extends JMenuBar {
 	/**
 	 * The Highest possible value for the pixel threshold;
 	 */
-	private static final int MAX_SLIDER_THRESHHOLD = 255;
+	private static final int MAX_SLIDER_THRESHOLD = 255;
+	
+	private static final int MAX_PIXEL_THRESHOLD = 1000;
 	/**
 	 * The lowest possible value for the pixel theshold;
 	 */
@@ -634,6 +700,10 @@ public class ButtonToolbar extends JMenuBar {
 	 */
 
 	private JMenuItem saveData;
+
+	private JSlider setRange;
+
+	private JTextField rangeText;
 	public ButtonToolbar(AnalyzerPanel a) {
 		this.analyzerPanel = a;
 //		this.setLayout(new GridBagLayout());
@@ -644,7 +714,7 @@ public class ButtonToolbar extends JMenuBar {
 			
 		
 		fileChooser = new JFileChooser();
-		getImage = new JMenuItem("Open an Image");
+		getImage = new JMenuItem("Open an image");
 		fileMenu.add(getImage);
 		GetImageAction getImageAction = new GetImageAction(this);
 		getImage.addActionListener(getImageAction);
@@ -660,8 +730,10 @@ public class ButtonToolbar extends JMenuBar {
 		fileMenu.add(analyzeMovie);
 		AnalyzeMovieAction analyzeMovieAction = new AnalyzeMovieAction();
 		analyzeMovie.addActionListener(analyzeMovieAction);
+
+		fileMenu.addSeparator();
 		
-		saveGraph = new JMenuItem("Save Graph");
+		saveGraph = new JMenuItem("Save graph to file");
 		fileMenu.add(saveGraph);
 		SaveGraphAction saveGraphAction = new SaveGraphAction();
 		saveGraph.addActionListener(saveGraphAction);
@@ -670,7 +742,6 @@ public class ButtonToolbar extends JMenuBar {
 		SaveDataAction saveDataAction = new SaveDataAction(this);
 		saveData.addActionListener(saveDataAction);
 		
-		fileMenu.addSeparator();
 		fileMenu.add(saveData);
 		
 		clearImages = new JMenuItem("Clear all images");
@@ -687,9 +758,9 @@ public class ButtonToolbar extends JMenuBar {
 		editMenu.add(SliderLabel);
 		
 		setThreshold = new JSlider(JSlider.HORIZONTAL, MIN_SLIDER_THRESHOLD,
-				MAX_SLIDER_THRESHHOLD, DEFAULT_SLIDER_THRESHOLD);
-		setThreshold.setMajorTickSpacing(50);
-		setThreshold.setMinorTickSpacing(10);
+				MAX_PIXEL_THRESHOLD, DEFAULT_SLIDER_THRESHOLD);
+		setThreshold.setMajorTickSpacing(250);
+		setThreshold.setMinorTickSpacing(50);
 		setThreshold.setPaintLabels(true);
 		setThreshold.setPaintTicks(true);
 		setThreshold.setToolTipText("Sets the Pixel Threshold");
@@ -706,13 +777,33 @@ public class ButtonToolbar extends JMenuBar {
 		
 		editMenu.add(thresholdText);
 		
+		editMenu.add(new JLabel("Pixel Range"));
+		setRange = new JSlider(JSlider.HORIZONTAL, MIN_SLIDER_THRESHOLD,
+				MAX_PIXEL_THRESHOLD, DEFAULT_SLIDER_THRESHOLD);
+		setRange.setMajorTickSpacing(250);
+		setRange.setMinorTickSpacing(50);
+		setRange.setPaintLabels(true);
+		setRange.setPaintTicks(true);
+		setRange.setToolTipText("Sets the Pixel Range");
+		editMenu.add(setRange);
+		SetRangeAction setRangeAction = new SetRangeAction();
+		setRange.addChangeListener(setRangeAction);
+		
+		rangeText = new JTextField("0");
+		rangeText.setPreferredSize(new Dimension(100, 25));
+		rangeText.setText("" + DEFAULT_SLIDER_THRESHOLD);
+		SetRangeEntered setRangeEntered = new SetRangeEntered();
+		rangeText.getDocument().addDocumentListener(setRangeEntered);
+		
+		editMenu.add(rangeText);
+		
 		editMenu.addSeparator();
 		
 		ContrastLabel = new JLabel("Contrast Threshold");
 		
 		editMenu.add(ContrastLabel);
 		
-		setContrastThreshold = new JSlider(JSlider.HORIZONTAL, MIN_SLIDER_THRESHOLD,MAX_SLIDER_THRESHHOLD,DEFAULT_CONTRAST_THRESHOLD);
+		setContrastThreshold = new JSlider(JSlider.HORIZONTAL, MIN_SLIDER_THRESHOLD,MAX_SLIDER_THRESHOLD,DEFAULT_CONTRAST_THRESHOLD);
 		setContrastThreshold.setMajorTickSpacing(50);
 		setContrastThreshold.setMinorTickSpacing(10);
 		setContrastThreshold.setPaintLabels(true);
@@ -864,6 +955,7 @@ public class ButtonToolbar extends JMenuBar {
 		analyzeMovie.setEnabled(analyzerPanel.getMovieLoaded());
 		totalFrames.setText(""+analyzerPanel.getTotalFrames());
 		sampleRate.setEnabled(analyzerPanel.getMovieLoaded());
+		saveGraph.setEnabled(analyzerPanel.getFlyList().size() > 0);
 	}
 
 	/**

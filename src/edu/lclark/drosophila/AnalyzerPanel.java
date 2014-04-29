@@ -91,7 +91,7 @@ public class AnalyzerPanel extends JPanel {
 	 */
 	public void clearImages() {
 		gui.clearImages();
-
+		ipanel.clearYourImages();
 	}
 
 	/**
@@ -293,6 +293,10 @@ public class AnalyzerPanel extends JPanel {
 		
 	}
 
+	public AnalyzerGui getGui() {
+		return gui;
+	}
+	
 	public void disposeLoadingDialog() {
 		loadingDialog.setVisible(false);
 	}
@@ -315,7 +319,24 @@ public class AnalyzerPanel extends JPanel {
 	public String getDataForFile() {
 		return dpanel.getDataForFile();
 	}
+/**
+ * Delegate method that asks the model for the average velocity of a group of flies in an arena between frames start and end
+ * @param Arena
+ * @param start
+ * @param end
+ * @return
+ */
 	public double calcAverageVelocityforArena(int Arena, int start, int end){
 		return gui.calcArenaAverageVelocityinFrame(Arena, start, end);
+	}
+
+
+	public void sizeRangeUpdate(int value) {
+		gui.sizeRangeUpdate(value);
+	}
+	
+	public boolean getMovieAnalyzed(){
+		return gui.getMovieAnalyzed();
+
 	}
 }

@@ -5,7 +5,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
+/**
+ *  An extension of data panel that displays the average velocity between the start and the end. work could be done to add in smaller frame selection capabilities.
+ * @author jpoley
+ *@author iShoshani
+ */
 public class ArenaDataPanel extends DataPanel{
 	SortedSet<Integer> knownArenas;
 	public ArenaDataPanel(AnalyzerPanel a){

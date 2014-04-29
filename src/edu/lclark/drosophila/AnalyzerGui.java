@@ -200,4 +200,12 @@ public class AnalyzerGui extends JFrame {
 		return analyzer.calcArenaAverageVelocityinFrame(Arena, start, end);
 	}
 
+	public void sizeRangeUpdate(int value) {
+		analyzer.sizeRangeUpdate(value);
+	}
+	
+	public boolean getMovieAnalyzed(){
+		return analyzer.getMovieAnalyzed();
+	}
+
 }

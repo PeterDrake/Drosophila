@@ -7,7 +7,13 @@ public class ArenaAnalyzer {
 	public ArenaAnalyzer(Analyzer a){
 		this.analyzer=a;
 	}
-	
+	/**
+	 * Calculates the Velocity of an Arena between frames start and end.
+	 * @param Arena
+	 * @param start
+	 * @param end
+	 * @return
+	 */
 	public double AvgVelocityofArena(int Arena,int start, int end){
 		fullflylist=analyzer.getFlies();
 		List<Fly> arenaflies = new LinkedList<Fly>();

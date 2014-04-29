@@ -4,7 +4,11 @@ import java.awt.*;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-
+/**
+ * Class that takes care of setting flies to Arenas in the model.
+ * @author jpoley
+ *
+ */
 public class RegionMaker {
 	public final static int MAXSQUARES = 50;
 	Analyzer analyzer;
