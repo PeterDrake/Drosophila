@@ -52,6 +52,17 @@ public class AnalyzerGui extends JFrame {
 		
 		return tempRegionsFlies;
 	}
+	
+	public double[][] getAverageVelocity(int[] regionsOfInterest,
+			int startFrame, int endFrame) {
+		double[][] tempRegionsFlies = new double[regionsOfInterest.length][]; 
+		for (int i = 0; i < regionsOfInterest.length; i++) {
+			tempRegionsFlies[i] = analyzer.averageVelMultFlies(analyzer.getFlies(regionsOfInterest[i]), startFrame, endFrame);
+		}
+		
+		return tempRegionsFlies;
+	}
+
 
 	/**
 	 * Removes the currently attached images and fly data from the Analyzer.
@@ -209,5 +220,4 @@ public class AnalyzerGui extends JFrame {
 	public void sizeRangeUpdate(int value) {
 		analyzer.sizeRangeUpdate(value);
 	}
-
 }

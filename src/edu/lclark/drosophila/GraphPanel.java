@@ -34,6 +34,8 @@ public class GraphPanel extends JPanel {
 	
 	
 	private boolean drawPoints;
+	private int startFrame;
+	private int endFrame;
 
 //	public GraphPanel() {
 //		drawPoints = false;
@@ -84,8 +86,15 @@ public class GraphPanel extends JPanel {
 		int GPanelWidth= this.getWidth();
 		int GPanelHeight=this.getHeight();
 		g.fillRect(0, 0, GPanelWidth, GPanelHeight);
-		averageVelocity = analyzerPanel.getAverageVelocity(analyzerPanel.getRegionsOfInterest());
-		videoLength = averageVelocity.length * analyzerPanel.getFrameRate();
+		if(startFrame == 0 && endFrame == 0)
+		{
+			averageVelocity = analyzerPanel.getAverageVelocity(analyzerPanel.getRegionsOfInterest());
+		}
+		else
+		{
+			averageVelocity = analyzerPanel.getAverageVelocity(analyzerPanel.getRegionsOfInterest(), startFrame, endFrame);
+		}
+		videoLength = averageVelocity[0].length * analyzerPanel.getFrameRate();
 		g.setColor(Color.BLACK);
 
 		double maxVelocity = 0;
@@ -109,7 +118,7 @@ public class GraphPanel extends JPanel {
 		int yOffSet = GPanelHeight - bottomMarg-3;
 		
 		double widthOffset = (GPanelWidth - (leftMarg+rightMarg))
-				/ (double) (averageVelocity.length - 1);
+				/ (double) (averageVelocity[0].length - 1);
 		
 		double gridxOffset = 40.0;//(GPanelWidth - (leftMarg+rightMarg)) / 10.0;
 		double gridyOffset = 40.0;//(GPanelHeight -(topMarg+bottomMarg))/ 10.0; 
@@ -159,16 +168,17 @@ public class GraphPanel extends JPanel {
 			
 			// draw the points
 			if(drawPoints) {
-				g.fillOval((int) (xOffSet + i * widthOffset),(int) (yOffSet - averageVelocity[i][j] * heightOffset), 6, 6);
+				g.fillOval((int) (xOffSet + j * widthOffset),(int) (yOffSet - averageVelocity[i][j] * heightOffset), 6, 6);
 			}
-			if (i != 0) {
+			if (j != 0) {
 				g.drawLine(
-						(int) (xOffSet + i * widthOffset + 3),
+						(int) (xOffSet + j * widthOffset + 3),
 						(int) (yOffSet - averageVelocity[i][j] * heightOffset) + 3,
-						(int) (xOffSet + (i - 1) * widthOffset + 3),
+						(int) (xOffSet + (j - 1) * widthOffset + 3),
 						(int) (yOffSet - averageVelocity[i][j-1] * heightOffset + 3));
 			}
 			}
+			g.setColor(new Color((int) ((double)(i * 255)/ averageVelocity.length), (int) (Math.random() * 255), 50));
 		}
 		g.setColor(Color.LIGHT_GRAY);
 		g2d.rotate(-Math.PI/2.0);
@@ -208,5 +218,10 @@ public class GraphPanel extends JPanel {
 			System.err.println("Invalid IO Exception");
 			e.printStackTrace();
 		}
+	}
+
+	public void setDataRange(int start, int end) {
+		startFrame = start;
+		endFrame = end;
 	}
 }
