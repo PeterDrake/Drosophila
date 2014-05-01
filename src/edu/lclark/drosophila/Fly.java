@@ -1,16 +1,19 @@
 package edu.lclark.drosophila;
 
-import java.awt.Point;
-import java.util.Hashtable;
 import java.util.List;
+
+/**
+ * The Fly class is a datastructure which stores the 
+ * coordinate, arena, and velocity data for an individual fly.
+ */
 public class Fly {
 
-
-	/** Id number to be able to tell flies apart */
+	/** Id number to be able to tell flies apart. */
 	private int id;
 	
-	/** The number of frames this fly stores info for */
+	/** The number of frames this fly stores information from. */
 	private int numFrames;
+	
 	/**
 	 * Stores all x positions of the fly for all frames. For example, x[4]
 	 * stores the fly's x position in frame 4.
@@ -34,20 +37,27 @@ public class Fly {
 	 * example, vy[3] stores the velocity of this fly in frame 3.
 	 */
 	private double[] vy;
+	
 	/**
-	 * A integer to check which region of interest this fly exists in.
+	 * A integer to check which region of interest (or, "arena") this fly exists in.
 	 */
-	private int Arena;
+	private int arena;
+	
+	/**
+	 * A getter for the region of interest (arena) this fly was found in.
+	 * @return the arena number this fly resides in.
+	 */
 	public int getArena() {
-		return Arena;
+		return arena;
 	}
 
 	/**
 	 * A constructor for the Fly class, if an image or images are loaded. All
-	 * arrays are initialized to size 20
+	 * arrays are initialized to size 20 by default.
+	 * <p>
+	 * This is not the constructor to use if a movie is loaded.
+	 * @see {@link #Fly(int)} for the constructor if a movie is loaded.
 	 */
-	
-	
 	public Fly() {
 		id = -1;
 		numFrames = 20;
@@ -81,6 +91,7 @@ public class Fly {
 			y[i] = -1;
 		}
 	}
+	
 	/**
 	 * A constructor only for testing purposes.
 	 */
@@ -95,7 +106,8 @@ public class Fly {
 		}
 
 	/**
-	 *  this calculates total distance of one fly over multiple frames
+	 *  This method calculates the total distance traveled of one fly over multiple frames.
+	 *  
 	 * @param fly
 	 * @param start
 	 * @param end
@@ -154,7 +166,11 @@ public class Fly {
 		}
 	}
 	
-	/** Copies the data from this fly to a new Fly */
+	/**
+	 * Copies the data from this fly to a new Fly.
+	 * 
+	 * @return a new Fly object identical to the Fly this method is called on.
+	 */
 	public Fly copyThisFly(){
 		Fly newFly = new Fly(numFrames);
 		for(int i = 0; i < numFrames; i++){
@@ -166,21 +182,34 @@ public class Fly {
 		return newFly;
 	}
 
+	/**
+	 * A getter for the array which stores all x velocity values for this fly.
+	 * 
+	 * @return the array which holds all x velocity values for this fly.
+	 */
 	public double[] getVx() {
 		return vx;
 	}
 
+	/**
+	 * A getter for the array which stores all y velocity values for this fly.
+	 * 
+	 * @return the array which holds all y velocity values for this fly.
+	 */
 	public double[] getVy() {
 		return vy;
 	}
+	
 	/**
-	 * returns the 2-dimensional velocity at a particular frame;
+	 * Returns the 2-dimensional velocity at a particular frame.
+	 * 
 	 * @param frame
 	 * @return double velocity
 	 */
 	public double getVelocityatFrame(int frame){
 		return (Math.sqrt((vx[frame]*vx[frame]+vy[frame]*vy[frame])));
 	}
+	
 	/**
 	 * Getter for this fly's x position.
 	 * 
@@ -205,6 +234,7 @@ public class Fly {
 
 	/**
 	 * Returns the identification number of this fly.
+	 * 
 	 * @return the identification number of this fly.
 	 */
 	public int getId(){
@@ -213,41 +243,84 @@ public class Fly {
 	
 	/**
 	 * Sets the id of this fly to the given integer.
+	 * 
 	 * @param id the integer which this fly's id number will be set to.
 	 */
 	public void setId(int id){
 		this.id = id;
 	}
 
+	/**
+	 * Sets the x velocity array of this fly to the provided array.
+	 * <p> 
+	 * WARNING: This should only be used for testing purposes.
+	 * 
+	 * @param vx the array of x velocity values.
+	 */
 	public void setVx(double[] vx) {
 		this.vx = vx;
 	}
 
+	/**
+	 * Sets the y velocity array of this fly to the provided array.
+	 * <p> 
+	 * WARNING: This should only be used for testing purposes.
+	 * 
+	 * @param vy the array of y velocity values.
+	 */
 	public void setVy(double[] vy) {
 		this.vy = vy;
 	}
 
+	/**
+	 * Sets the x location array of this fly to the provided array.
+	 * <p> 
+	 * WARNING: This should only be used for testing purposes.
+	 * 
+	 * @param x the array of x coordinate values which this fly will store.
+	 */
 	protected void setX(double[] x) {
 		this.x = x;
 	}
 
+	/**
+	 * Sets the y location array of this fly to the provided array.
+	 * <p> 
+	 * WARNING: This should only be used for testing purposes.
+	 * 
+	 * @param y the array of y coordinate values which this fly will store.
+	 */
 	protected void setY(double[] y) {
 		this.y = y;
 	}
+	
+	/**
+	 * Sets the arena id that this fly resides in to the given integer.
+	 * 
+	 * @param Arena integer number of the arena in which this fly resides.
+	 */
 	protected void setArena(int Arena){
-		this.Arena=Arena;
+		this.arena=Arena;
 	}
-	protected void setArena(List<RegionMaker.PointArena> arenamap,int frame){
+	
+	/**
+	 * Automatically assigns this fly to its proper arena, 
+	 * based on which frame it is in and the arena map.
+	 * 
+	 * @param arenamap the arena map.
+	 * @param frame the current frame being examined.
+	 */
+	protected void setArena(List<RegionMaker.PointArena> arenamap, int frame){
 		Fly f = this;
 		for(RegionMaker.PointArena  i : arenamap){
 			if (f.getX(frame) >= i.getTopleft().x && f.getX(frame) <= i.getBottomright().x
 					&& f.getY(frame) >= i.getTopleft().y
 					&& f.getY(frame) <= i.getBottomright().y) {
 				f.setArena(i.getArena());
-							}
-			
+			}
 		}
 	}
+	
 	public String toString(){
 		String str= ""+getId();
 		return str;

@@ -5,7 +5,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,20 +12,33 @@ import javax.imageio.ImageIO;
 
 import com.xuggle.mediatool.IMediaReader;
 import com.xuggle.mediatool.ToolFactory;
-import com.xuggle.mediatool.IMediaReader;
 import com.xuggle.mediatool.MediaListenerAdapter;
-import com.xuggle.mediatool.ToolFactory;
 import com.xuggle.mediatool.event.IVideoPictureEvent;
 import com.xuggle.xuggler.Global;
 
 import com.xuggle.xuggler.IContainer;
-
+/**
+ * This class does most of the calculations for the program, 
+ * including identifying and tracking flies and loading and analyzing movies and images.
+ * To run the program, run this class.
+ */
 public class Analyzer {
 
+	/**
+	 * The minimum number of pixels a dark spot must be to count as a fly.
+	 * Set by the user.
+	 */
 	private int sizeThreshold;
 
+	/**
+	 * A reference to the GUI.
+	 */
 	private static AnalyzerGui gui;
 
+	/**
+	 * The minimum contrast between fly and background for a dark spot to count as a fly.
+	 * Set by the user.
+	 */
 	private int contrastThreshold = 200;
 
 	public static void main(String[] args) {
@@ -51,6 +63,11 @@ public class Analyzer {
 	 */
 	private int totalFrames;
 
+	/**
+	 * The number of frames the analyzer has analyzed, and displayed on screen.
+	 * This is currently different than totalFrames, because of the movie analysis bug
+	 * that makes the analyzer skip the last couple of frames of the movie.
+	 */
 	private int temptotalFrames;
 
 	/**
@@ -77,27 +94,29 @@ public class Analyzer {
 	private File movieFile;
 
 	/**
-	 * The first frame in the movie, for displaying
+	 * The first frame in the movie, for displaying in the GUI
 	 */
 	private BufferedImage firstMovieFrame;
 
 	/**
 	 * The number of seconds between frames in a movie file
 	 */
-	private double SECONDS_BETWEEN_FRAMES;
+	private double secondsBetweenFrames;
 
 	/**
-	 * <<<<<<< HEAD ======= The number of frames per second in a movie file.
+	 * The number of frames per second in a movie file.
 	 */
 	private double framesPerSecond;
 
 	/**
-	 * >>>>>>> master The number of microseconds between frames in a movie file
+	 * The number of microseconds between frames in a movie file
 	 */
-	private long MICRO_SECONDS_BETWEEN_FRAMES;
+	private long microSecondsBetweenFrames;
 
-	// Time of last frame write
-	// PTS means ... picture time stamp?
+	/**
+	 * Time of last frame write
+	 * PTS means ... picture time stamp?
+	 */
 	private long mLastPtsWrite;
 
 	/**
@@ -110,55 +129,65 @@ public class Analyzer {
 	 */
 	private double imageContrast = 1.0;
 
-	private RegionMaker regionmaker;
+	/**
+	 * A reference to the regionMaker
+	 */
+	private RegionMaker regionMaker;
 
+	/**
+	 * A reference to the arenaAnalyzer
+	 */
 	private ArenaAnalyzer arenaAnalyzer;
 
+	/**
+	 * The duration of the movie in seconds
+	 */
 	private double duration;
 
+	/**
+	 * The sample rate of the movie, samples every nth frame
+	 * <p>
+	 * For example, a sample rate of 1 samples every frame, of 2 samples every other frame.
+	 */
 	private int sampleRate = 1;
 
+	/**
+	 * The range of acceptable pixel values for size of flies.
+	 */
 	private int pixelRange;
 
+	/**
+	 * The constructor for the Analyzer class, initializes most of the fields.
+	 */
 	public Analyzer() {
 		movieLoaded = false;
 		totalFrames = 0;
 		flies = new LinkedList<Fly>();
 		frames = new ArrayList<BufferedImage>();
 		images = new File[20];
-		regionmaker = new RegionMaker(this);
+		regionMaker = new RegionMaker(this);
 		arenaAnalyzer = new ArenaAnalyzer(this);
-		// passDownPoints();
 	}
 
-	public void flydentify(BufferedImage image) {
-		// just for a single image
-		flies = new LinkedList<Fly>();
-		totalFrames = 1;
-		flydentify(image, 0);
-
-		System.out.println("number of flies: " + flies.size());
-		images = new File[20];
-
-		mLastPtsWrite = Global.NO_PTS;
-	}
-
+	/**
+	 * Passes the top left and bottom right corners of all arenas
+	 * <p>
+	 * Used to draw arenas in the image panel
+	 */
 	public void passDownPoints() {
-		List<Point> tempFirst = regionmaker.getPastfirstpoints();
-		List<Point> tempSecond = regionmaker.getPastsecondpoints();
+		List<Point> tempFirst = regionMaker.getPastfirstpoints();
+		List<Point> tempSecond = regionMaker.getPastsecondpoints();
 		gui.passDownPoints(tempFirst, tempSecond);
 	}
 
 	/**
-	 * this method calls the above method on an array of flies and computes the
-	 * average
+	 * this method computes the average velocity of each fly for a list of flies
 	 * 
 	 * @param flies
 	 * @param start
 	 * @param end
 	 * @return average velocity of flies from start to end
 	 */
-
 	public static double[] averageVelMultFlies(List<Fly> flies, int start,
 			int end) {
 		double[] avgVel = new double[end - start];
@@ -205,8 +234,12 @@ public class Analyzer {
 		return false;
 	}
 
+	/**
+	 * Returns the arena assignments form the regionMaker
+	 * @return the list of arena assignments
+	 */
 	public List<RegionMaker.PointArena> passDownArenaAssignments() {
-		return regionmaker.getArenaAssignment();
+		return regionMaker.getArenaAssignment();
 	}
 
 	/**
@@ -254,17 +287,12 @@ public class Analyzer {
 						blue = 255;
 					}
 					double avg = red * 0.2989 + green * .587 + blue * .114;
-					if ((int) (Math.round(avg)) <= contrastThreshold) { // if
-																		// the
-																		// color
-																		// is
-																		// dark
-																		// enough
+					//if the color is dark enough
+					if ((int) (Math.round(avg)) <= contrastThreshold) { 
 						int totalX = 0;
 						int totalY = 0;
 						int numPixels = 0;
-						// initialize values to find the center of mass of the
-						// fly.
+						// initialize values to find center of mass of the fly.
 						// searchPixel(i, j, searchArray, image);
 						curIdx = 0;
 						stack[curIdx][0] = i;
@@ -339,7 +367,7 @@ public class Analyzer {
 				}
 				f.addFrameInfo(frameNumber, d[0], d[1]);
 				f.setId(flies.size());
-				f.setArena(regionmaker.getArenaAssignment(), frameNumber);
+				f.setArena(regionMaker.getArenaAssignment(), frameNumber);
 				flies.add(f);
 
 			}
@@ -464,7 +492,7 @@ public class Analyzer {
 				Fly aNewFly = flies.get((int) d[2]).copyThisFly();
 				aNewFly.addFrameInfo(frameNumber, d[0], d[1]);
 				aNewFly.setId(flies.size());
-				aNewFly.setArena(regionmaker.getArenaAssignment(), frameNumber);
+				aNewFly.setArena(regionMaker.getArenaAssignment(), frameNumber);
 				flies.add(aNewFly);
 			}
 		}
@@ -533,7 +561,7 @@ public class Analyzer {
 	 * Analyzer.
 	 * 
 	 * @param index
-	 * @return
+	 * @return the image at the specific index
 	 */
 	public File getImage(int index) {
 		if (!(index < 0) && index < images.length) {
@@ -646,6 +674,11 @@ public class Analyzer {
 		}
 	}
 
+	/**
+	 * Returns the number of frames in a movie, calculated with duration of movie and frame rate
+	 * @param filename
+	 * @return the number of frames in a movie
+	 */
 	public int getFramesInMovie(String filename) {
 		IContainer container = IContainer.make();
 		if (container.open(filename, IContainer.Type.READ, null) < 0) {
@@ -663,12 +696,15 @@ public class Analyzer {
 	 * 
 	 * @param file
 	 */
-
 	public void playMovie(File file) {
 		IMediaReader mediaReader = ToolFactory.makeReader(file
 				.getAbsolutePath());
 	}
 
+	/**
+	 * Takes a movie file and displays the first image in the GUI.
+	 * @param file the movie file
+	 */
 	public void openMovie(File file) {
 		clearImages();
 		mLastPtsWrite = Global.NO_PTS;
@@ -682,8 +718,8 @@ public class Analyzer {
 		mediaReader
 				.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
 		totalFrames = getFramesInMovie(file.getAbsolutePath());
-		SECONDS_BETWEEN_FRAMES = duration / totalFrames;
-		MICRO_SECONDS_BETWEEN_FRAMES = (long) (Global.DEFAULT_PTS_PER_SECOND * SECONDS_BETWEEN_FRAMES);
+		secondsBetweenFrames = duration / totalFrames;
+		microSecondsBetweenFrames = (long) (Global.DEFAULT_PTS_PER_SECOND * secondsBetweenFrames);
 		mediaReader.addListener(new ImageSnapListener(true));
 		// read out the contents of the media file and
 		// dispatch events to the attached listener
@@ -702,6 +738,10 @@ public class Analyzer {
 		// );
 	}
 
+	/**
+	 * Runs the flydentify method on each frame of the movie that has been opened
+	 * @param sampleRate
+	 */
 	public void analyzeMovie(int sampleRate) {
 		if (movieLoaded) {
 			File f = movieFile;
@@ -721,12 +761,12 @@ public class Analyzer {
 				/ sampleRate;
 		System.err.println("Total Frames is: " + totalFrames);
 		System.err.println("Duration is " + duration);
-		SECONDS_BETWEEN_FRAMES = duration / totalFrames;
+		secondsBetweenFrames = duration / totalFrames;
 		System.err.println("Seconds between frames is: "
-				+ SECONDS_BETWEEN_FRAMES);
-		MICRO_SECONDS_BETWEEN_FRAMES = (long) (Global.DEFAULT_PTS_PER_SECOND * SECONDS_BETWEEN_FRAMES);
+				+ secondsBetweenFrames);
+		microSecondsBetweenFrames = (long) (Global.DEFAULT_PTS_PER_SECOND * secondsBetweenFrames);
 		System.err.println("micro seconds between frames is: "
-				+ MICRO_SECONDS_BETWEEN_FRAMES);
+				+ microSecondsBetweenFrames);
 
 		mediaReader.addListener(new ImageSnapListener(false));
 		// read out the contents of the media file and
@@ -745,6 +785,9 @@ public class Analyzer {
 
 	}
 
+	/**
+	 *
+	 */
 	private class ImageSnapListener extends MediaListenerAdapter {
 
 		private int increment;
@@ -762,10 +805,10 @@ public class Analyzer {
 			} else {
 				if (mLastPtsWrite == Global.NO_PTS) {
 					mLastPtsWrite = event.getTimeStamp()
-							- MICRO_SECONDS_BETWEEN_FRAMES;
+							- microSecondsBetweenFrames;
 				}
 				// if it's time to write the next frame
-				if (event.getTimeStamp() - mLastPtsWrite >= MICRO_SECONDS_BETWEEN_FRAMES) {
+				if (event.getTimeStamp() - mLastPtsWrite >= microSecondsBetweenFrames) {
 					double seconds = ((double) event.getTimeStamp())
 							/ Global.DEFAULT_PTS_PER_SECOND;
 					// frames.add(event.getImage());
@@ -776,7 +819,7 @@ public class Analyzer {
 								"at elapsed time of %6.3f seconds wrote: %s\n",
 								seconds, "<imaginary file>");
 						// update last write time
-						mLastPtsWrite += MICRO_SECONDS_BETWEEN_FRAMES
+						mLastPtsWrite += microSecondsBetweenFrames
 								* sampleRate;
 					}
 					increment++;
@@ -800,14 +843,14 @@ public class Analyzer {
 	}
 
 	public void setFliestoArena(Point point1, Point point2, int Arena, int frame) {
-		regionmaker.setFliesToRegions(point1, point2, Arena, frame);
+		regionMaker.setFliesToRegions(point1, point2, Arena, frame);
 	}
 
 	public void clearFlyGroups() {
 		for (Fly fly : flies) {
 			fly.setArena(0);
 		}
-		regionmaker.clearData();
+		regionMaker.clearData();
 	}
 
 	public BufferedImage getFirstFrameFromMovie() {
@@ -819,7 +862,7 @@ public class Analyzer {
 	}
 
 	public double getFrameRate() {
-		return (MICRO_SECONDS_BETWEEN_FRAMES * sampleRate) / 1000.0;
+		return (microSecondsBetweenFrames * sampleRate) / 1000.0;
 	}
 
 	public double calcArenaAverageVelocityinFrame(int Arena, int start, int end) {
