@@ -24,6 +24,8 @@ public class AnalyzerPanel extends JPanel {
 	 * The ImagePanel object which this AnalyzerPanel communicates with.
 	 */
 	private ImagePanel ipanel;
+	
+	private int[] regionsOfInterest = new int[1];
 	/**
 	 * The Data Panel object which this AnalyzerPanel communicates with.
 	 */
@@ -171,7 +173,7 @@ public class AnalyzerPanel extends JPanel {
 
 	public void setDrawTrajectories(int startFrame, int endFrame) {
 		ipanel.setDrawTrajectories(startFrame, endFrame);
-
+		graphPanel.setDataRange(startFrame - 1, endFrame -1);
 	}
 
 	/**
@@ -334,9 +336,32 @@ public class AnalyzerPanel extends JPanel {
 	public void sizeRangeUpdate(int value) {
 		gui.sizeRangeUpdate(value);
 	}
+
+	public void setRegionsOfInterest(DefaultListModel<Integer> listModel) {
+		Object[] regions = listModel.toArray();
+		
+		int[] tempArray = new int[regions.length];
+		for (int i = 0; i < regions.length; i++) {
+			tempArray[i]=Integer.parseInt(regions[i].toString());
+		}
+		regionsOfInterest = tempArray;
+	}
+
+	protected int[] getRegionsOfInterest() {
+		return regionsOfInterest;
+	}
+
+	public double[][] getAverageVelocity(int[] regionsOfInterest2) {
+		return gui.getAverageVelocity(regionsOfInterest2);
+	}
+
+	public double[][] getAverageVelocity(int[] regionsOfInterest2,
+			int startFrame, int endFrame) {
+		return gui.getAverageVelocity(regionsOfInterest2, startFrame, endFrame);
+	}
+
 	
 	public boolean getMovieAnalyzed(){
 		return gui.getMovieAnalyzed();
-
 	}
 }
