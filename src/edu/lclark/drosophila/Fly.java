@@ -244,9 +244,7 @@ public class Fly {
 					&& f.getY(frame) >= i.getTopleft().y
 					&& f.getY(frame) <= i.getBottomright().y) {
 				f.setArena(i.getArena());
-				System.out.println("set fly " + f + " at " + f.getX(frame)
-						+ " and " + f.getY(frame) + " to Arena " + i.getArena());
-			}
+							}
 			
 		}
 	}

@@ -170,9 +170,11 @@ public class GraphPanel extends JPanel {
 
 		g.setColor(Color.BLACK);
 		g.drawRect(leftMarg, topMarg, GPanelWidth - (leftMarg+rightMarg), GPanelHeight - (topMarg+bottomMarg));
+
 		
 		
-	
+if((analyzerPanel.getMovieLoaded() && analyzerPanel.getMovieAnalyzed()) 
+		|| (!analyzerPanel.getMovieLoaded() && analyzerPanel.getTotalFrames() >= 2)){
 		for (int i = 0; i < averageVelocity.length; i++) {
 			
 			g.setColor(colors[i%colors.length]);
@@ -191,13 +193,13 @@ public class GraphPanel extends JPanel {
 				g.drawString("Arena " + analyzerPanel.getRegionsOfInterest()[i], (GPanelWidth - rightMarg -50), (int) (i*15));
 			}
 			}
-			
 		}
 		g.setColor(Color.LIGHT_GRAY);
 		g2d.rotate(-Math.PI/2.0);
 		g2d.translate(-GPanelHeight,0);
 		stringWidth=(int) f.getStringBounds(yLabel, g2d.getFontRenderContext()).getWidth();
 		VertDrawString(yLabel,(GPanelHeight-topMarg+bottomMarg-stringWidth)/2 ,leftMarg/3, g2d);
+}
 
 	}
 

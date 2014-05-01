@@ -73,7 +73,6 @@ public class ButtonToolbar extends JMenuBar {
 		 * Tells the AnalyzerPanel clear fly regions
 		 */
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("this gets fired");
 			analyzerPanel.clearFlyGroups();
 			analyzerPanel.repaint();
 		}
