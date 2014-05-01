@@ -32,6 +32,8 @@ public class GraphPanel extends JPanel {
 	
 	private Color color;
 	
+	private Color[] colors ={Color.BLUE, Color.red, Color.magenta, Color.cyan, Color.green, Color.YELLOW, Color.orange, Color.pink};
+	
 	
 	private boolean drawPoints;
 	private int startFrame;
@@ -57,6 +59,7 @@ public class GraphPanel extends JPanel {
 		this.yLabel = yLabel;
 		this.xLabel = xLabel;
 		color = Color.RED;
+		
 	}
 
 	public Dimension getPreferredSize() {
@@ -94,7 +97,11 @@ public class GraphPanel extends JPanel {
 		{
 			averageVelocity = analyzerPanel.getAverageVelocity(analyzerPanel.getRegionsOfInterest(), startFrame, endFrame);
 		}
-		videoLength = averageVelocity[0].length * analyzerPanel.getFrameRate();
+		if(averageVelocity!=null){
+			videoLength = averageVelocity[0].length * analyzerPanel.getFrameRate();
+		}else{
+			videoLength=0;
+		}
 		g.setColor(Color.BLACK);
 
 		double maxVelocity = 0;
@@ -163,10 +170,13 @@ public class GraphPanel extends JPanel {
 
 		g.setColor(Color.BLACK);
 		g.drawRect(leftMarg, topMarg, GPanelWidth - (leftMarg+rightMarg), GPanelHeight - (topMarg+bottomMarg));
-		g.setColor(color);
+		
+		
+	
 		for (int i = 0; i < averageVelocity.length; i++) {
-			for(int j = 0; j< averageVelocity[i].length; j++){
 			
+			g.setColor(colors[i%colors.length]);
+			for(int j = 0; j< averageVelocity[i].length; j++){
 			// draw the points
 			if(drawPoints) {
 				g.fillOval((int) (xOffSet + j * widthOffset),(int) (yOffSet - averageVelocity[i][j] * heightOffset), 6, 6);
@@ -177,9 +187,11 @@ public class GraphPanel extends JPanel {
 						(int) (yOffSet - averageVelocity[i][j] * heightOffset) + 3,
 						(int) (xOffSet + (j - 1) * widthOffset + 3),
 						(int) (yOffSet - averageVelocity[i][j-1] * heightOffset + 3));
+			}else{
+				g.drawString("Arena " + analyzerPanel.getRegionsOfInterest()[i], (GPanelWidth - rightMarg -50), (int) (i*15));
 			}
 			}
-			g.setColor(new Color((int) ((double)(i * 255)/ averageVelocity.length), (int) (Math.random() * 255), 50));
+			
 		}
 		g.setColor(Color.LIGHT_GRAY);
 		g2d.rotate(-Math.PI/2.0);
