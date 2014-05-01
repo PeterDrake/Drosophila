@@ -21,15 +21,23 @@ For Videos:
 	A popup will appear to say that the video being Analyzed. When it disappears, the Data will be ready.
 	Information and Graphs will be displayed in the Tabbed panel and the Graph Panel.
 7. You can change the labels on the Graph by clicking "edit the Graph axes' in the edit menu.
+	Under Areas you can find the Regions to analyze graph, which allows you to see the different areas compared on the graph. Simply choose which areas to add, hit add then hit apply when you are done.
 8. To save the information from the displays, click "save Graph to file"  to save the graph as a .png or "save Chart data to File" to save the chart data as a comma separated list. Both are under the File menu.
 9. To view the flies trajectories, enter numbers of the first frame and the last frame in the appropriate text boxes. Then, under, draw, click the icon of the fly with the trail behind it. It's the second one.
 10. To start the process over, click clear all images to clear all images and video from the program. Data will remain until a new video is loaded, as will Groups.
 
 Developer Notes:
 -The fly object is the basic model of a fly. It holds its x and y positions in various frames, and holds ways to calculate individual data.
+-Regions of interest are in different places called Arena's, Areas, Regions, and Groups. they all mean the same thing though, and should probably be standardized
 -The model is generally held inside the Analyzer class and the various classes that are connected to it.
+--Flydentify is the function that goes through all the images, creates flies, and sets their locations in each image.
+--Flies is a list that holds all the flies
+--Region maker handles the placing of flies in areas. 
+--ArenaAnalyzer handles figuring out the math involved with the fly groups
+
 -The Algorithm for figuring out where the next fly is is not ideal. A good project would be to improve flydentify, which detects flies and finds out where their paths it, to be more accurate.
 --Needs more developer commentary to explain what the hell is going on in flydentify.
+
 -The gui is launched in the GUI class, which holds an Analyzer Panel class which is launched as a frame from the Gui class. It also holds delegate methods for the analyzer panel to communicate with the model.
 -Analyzer panel holds all the panels that will be displayed on the screen, and holds ways for the individual displays to interface with the model
 --Image Panel holds the image drawing methods, as well as methods to draw boxes to decide which Area's are areas of interest.
@@ -38,4 +46,32 @@ Developer Notes:
 ---DataPanel displays the individual fly information. However, there is no way at the moment to know exactly which fly is which.
 ===GroupPanel is pretty useless, and allows you to see which individual flies and are in which groups. It is extension of DataPanel, so some methods are inherited from DataPanel.
 ===ArenaPanel is in serious need of a refactor, and allows you to see the average velocity of a group. It is extension of DataPanel, so some methods are inherited from DataPanel.
---GraphPanel draws the graph. Somebody who know how it works should probably describe it better.
+--GraphPanel draws the graph. 
+---Graph Options Panel handles changes to the graphs format. It is a separate frame that pops up.
+---RegionSelectPanel Handles making the graph display different groups. It is its frame that pops up.
+The JUNIT tests are pretty sparse because we don't really have good test images and data. but YOU COULD CHANGE THAT.
+
+
+---------     ---------------       ---------------             --------------
+|Analyzer|<--->|AnalyzerGui|<------>|AnalyzerPanel|-------------|DataTabbs   |
+----------    ---------------       ---------------             --------------
+|   |   |                           |	|			\ 			|DataPanel   |
+|   |   ---Flies List<Fly>          |	|			 \			|GroupDataPanel|
+|   |								|	|			  \ 		|ArenaDataPanel|
+|   -------------					|	---------------\		----------------
+|   |RegionMaker|					|	|ButtonToolbar| \
+|   -------------  					|	---------------  \
+---------------						| 					------------
+|ArenaAnalyzer|						------------        |GraphPanel|
+---------------						|ImagePanel|		------------	
+									------------
+
+
+          _,_              __   __
+       ._(@I@)_.          /  \-/  \
+      .--{___}--.       ._\   |   /_.
+      .-/  Y  \-.       .__\__Y__/__.
+       /   |   \           _{___}_
+       \__/-\__/          ' (@I@) '
+                             ~^~
+
