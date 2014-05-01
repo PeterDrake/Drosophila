@@ -14,7 +14,7 @@ To use:
 
 For Images:
 
-	The Image should load quickly. To load more images, simply  hit load image again to choose the next image to load.
+The Image should load quickly. To load more images, simply  hit load image again to choose the next image to load.
 
 4. Under the draw tab, click the top imaged of a fly to draw the places where flies are detected on the image.
 
@@ -30,17 +30,17 @@ Hit the Clear all Groups button to get rid of all the groups.
 
 For Videos:
 
-	When You are satisfied with the detection of flies and your regions of interest, click Analyze video under the File Menu.
+When You are satisfied with the detection of flies and your regions of interest, click Analyze video under the File Menu.
 
-	You can also change the sampling rate by changing the number in the sampling rate box
+You can also change the sampling rate by changing the number in the sampling rate box
 
-	A popup will appear to say that the video being Analyzed. When it disappears, the Data will be ready.
+A popup will appear to say that the video being Analyzed. When it disappears, the Data will be ready.
 
-	Information and Graphs will be displayed in the Tabbed panel and the Graph Panel.
+Information and Graphs will be displayed in the Tabbed panel and the Graph Panel.
 	
 7. You can change the labels on the Graph by clicking "edit the Graph axes' in the edit menu.
 
-	Under Areas you can find the Regions to analyze graph, which allows you to see the different areas compared on the graph. Simply choose which areas to add, hit add then hit apply when you are done.
+Under Areas you can find the Regions to analyze graph, which allows you to see the different areas compared on the graph. Simply choose which areas to add, hit add then hit apply when you are done.
 
 8. To save the information from the displays, click "save Graph to file"  to save the graph as a .png or "save Chart data to File" to save the chart data as a comma separated list. Both are under the File menu.
 
@@ -107,7 +107,7 @@ The JUNIT tests are pretty sparse because we don't really have good test images 
 										------------
 
 
-          _,_              __   __
+          _,_              __   __      
        ._(@I@)_.          /  \-/  \
       .--{___}--.       ._\   |   /_.
       .-/  Y  \-.       .__\__Y__/__.
