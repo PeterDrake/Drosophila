@@ -52,19 +52,19 @@ Developer Notes:
 The JUNIT tests are pretty sparse because we don't really have good test images and data. but YOU COULD CHANGE THAT.
 
 
----------     ---------------       ---------------             --------------
-|Analyzer|<--->|AnalyzerGui|<------>|AnalyzerPanel|-------------|DataTabbs   |
-----------    ---------------       ---------------             --------------
-|   |   |                           |	|			\ 			|DataPanel   |
-|   |   ---Flies List<Fly>          |	|			 \			|GroupDataPanel|
-|   |								|	|			  \ 		|ArenaDataPanel|
-|   -------------					|	---------------\		----------------
-|   |RegionMaker|					|	|ButtonToolbar| \
-|   -------------  					|	---------------  \
----------------						| 					------------
-|ArenaAnalyzer|						------------        |GraphPanel|
----------------						|ImagePanel|		------------	
-									------------
+	----------     ---------------       ---------------             --------------
+	|Analyzer|<--->|AnalyzerGui|<------>|AnalyzerPanel|-------------|DataTabbs   |
+	----------    ---------------       ---------------             --------------
+	|   |   |                           |	|			\ 			|DataPanel   |
+	|   |   ---Flies List<Fly>          |	|			 \			|GroupDataPanel|
+	|   |								|	|			  \ 		|ArenaDataPanel|
+	|   -------------					|	---------------\		----------------
+	|   |RegionMaker|					|	|ButtonToolbar| \
+	|   -------------  					|	---------------  \
+	---------------						| 					------------
+	|ArenaAnalyzer|						------------        |GraphPanel|
+	---------------						|ImagePanel|		------------	
+										------------
 
 
           _,_              __   __
