@@ -545,6 +545,16 @@ public class Analyzer {
 	public List<Fly> getFlies() {
 		return flies;
 	}
+	
+	public List<Fly> getFlies(int regionOfInterest){
+		List<Fly> tempFlies = new LinkedList<Fly>();
+		for (Fly fly : flies) {
+			if(fly.getArena()==regionOfInterest){
+				tempFlies.add(fly);
+			}
+		}
+		return tempFlies;
+	}
 
 	/**
 	 * Gives a file containing an image from the array of images in this
