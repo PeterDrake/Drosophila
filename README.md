@@ -129,6 +129,6 @@ The JUNIT tests are pretty sparse because we don't really have good test images 
            |
            |
            |
-   jgs     |
+     jgs   |
           (_)
 
