@@ -15,38 +15,69 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 
 public class RegionSelectPanel extends JPanel {
-	
+
+	private class AddButtonAction implements ActionListener {
+
+		public void actionPerformed(ActionEvent e) {
+			List<Integer> tempList = leftList.getSelectedValuesList();
+			for (Integer i : tempList) {
+				leftListModel.remove(leftListModel.indexOf(i));
+				rightListModel.addElement(i);
+			}
+		}
+	}
+	private class ApplyButtonAction implements ActionListener {
+
+		public void actionPerformed(ActionEvent e) {
+			analyzerPanel.setRegionsOfInterest(rightListModel);
+			analyzerPanel.repaint();
+			frame.dispose();
+		}
+	}
+	private class RemoveButtonAction implements ActionListener {
+
+		public void actionPerformed(ActionEvent e) {
+			List<Integer> tempList = rightList.getSelectedValuesList();
+			for (Integer i : tempList) {
+				rightListModel.remove(rightListModel.indexOf(i));
+				leftListModel.addElement(i);
+
+			}
+		}
+	}
+	private JButton addButton;
 	private AnalyzerPanel analyzerPanel;
+	private JButton applyButton;
+	private List<Fly> flies;
 	private JFrame frame;
 	private JList<Integer> leftList;
-	private JList<Integer> rightList;
 	private DefaultListModel<Integer> leftListModel;
-	private DefaultListModel<Integer> rightListModel;
-	private List<Fly> flies;
 	private List<Integer> listOfRegions;
-	private JButton addButton;
-	private JButton removeButton;
-	private JButton applyButton;
-	
 
-	public RegionSelectPanel(AnalyzerPanel analyzerPanel, JFrame frame){
+	private JButton removeButton;
+
+	private JList<Integer> rightList;
+
+	private DefaultListModel<Integer> rightListModel;
+
+	public RegionSelectPanel(AnalyzerPanel analyzerPanel, JFrame frame) {
 		this.analyzerPanel = analyzerPanel;
 		this.frame = frame;
 		listOfRegions = new LinkedList<Integer>();
 		leftListModel = new DefaultListModel<Integer>();
 		rightListModel = new DefaultListModel<Integer>();
-		flies=analyzerPanel.getFlyList();
-		for(int i =0; i<flies.size(); i++){
-			if(!listOfRegions.contains(flies.get(i).getArena())){
+		flies = analyzerPanel.getFlyList();
+		for (int i = 0; i < flies.size(); i++) {
+			if (!listOfRegions.contains(flies.get(i).getArena())) {
 				listOfRegions.add(flies.get(i).getArena());
 			}
 		}
 		java.util.Collections.sort(listOfRegions);
-		for(int i = 0; i<listOfRegions.size(); i++){
+		for (int i = 0; i < listOfRegions.size(); i++) {
 			leftListModel.addElement(listOfRegions.get(i));
 		}
-		
-		leftList=new JList<Integer>(leftListModel);
+
+		leftList = new JList<Integer>(leftListModel);
 		rightList = new JList<Integer>(rightListModel);
 		this.add(leftList);
 		addButton = new JButton("Add");
@@ -60,47 +91,11 @@ public class RegionSelectPanel extends JPanel {
 		this.add(applyButton);
 		this.add(rightList);
 	}
-	
-	private class AddButtonAction implements ActionListener {
 
-		
-		public void actionPerformed(ActionEvent e) {
-			List<Integer> tempList = leftList.getSelectedValuesList();
-			for (Integer i : tempList) {
-				leftListModel.remove(leftListModel.indexOf(i));
-				rightListModel.addElement(i);
-			}
-		}
-	}
-	
-	private class RemoveButtonAction implements ActionListener {
-
-		
-		public void actionPerformed(ActionEvent e) {
-			List<Integer> tempList = rightList.getSelectedValuesList();
-			for (Integer i : tempList) {
-				rightListModel.remove(rightListModel.indexOf(i));
-				leftListModel.addElement(i);
-				
-			}
-		}
-	}
-	
-	private class ApplyButtonAction implements ActionListener {
-
-		
-		public void actionPerformed(ActionEvent e) {
-			analyzerPanel.setRegionsOfInterest(rightListModel);
-			analyzerPanel.repaint();
-			frame.dispose();
-		}
-	}
-	
 	public Dimension getPreferredSize() {
-//		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-		return new Dimension((int)(analyzerPanel.getWidth() * (3.0 / 8.0)), (int)(analyzerPanel.getHeight() * 2.0 / 3.0));
+		// return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+		return new Dimension((int) (analyzerPanel.getWidth() * (3.0 / 8.0)),
+				(int) (analyzerPanel.getHeight() * 2.0 / 3.0));
 	}
-	
-	
 
 }

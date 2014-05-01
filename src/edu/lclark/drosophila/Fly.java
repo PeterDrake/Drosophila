@@ -8,23 +8,16 @@ import java.util.List;
  */
 public class Fly {
 
+	/**
+	 * A integer to check which region of interest (or, "arena") this fly exists in.
+	 */
+	private int arena;
+	
 	/** Id number to be able to tell flies apart. */
 	private int id;
 	
 	/** The number of frames this fly stores information from. */
 	private int numFrames;
-	
-	/**
-	 * Stores all x positions of the fly for all frames. For example, x[4]
-	 * stores the fly's x position in frame 4.
-	 */
-	private double[] x;
-
-	/**
-	 * Stores all y positions of the fly for all frames. For example, y[4]
-	 * stores the fly's y position in frame 4.
-	 */
-	private double[] y;
 
 	/**
 	 * Stores the instantaneous x velocity of the fly for all frames. For
@@ -37,20 +30,19 @@ public class Fly {
 	 * example, vy[3] stores the velocity of this fly in frame 3.
 	 */
 	private double[] vy;
-	
-	/**
-	 * A integer to check which region of interest (or, "arena") this fly exists in.
-	 */
-	private int arena;
-	
-	/**
-	 * A getter for the region of interest (arena) this fly was found in.
-	 * @return the arena number this fly resides in.
-	 */
-	public int getArena() {
-		return arena;
-	}
 
+	/**
+	 * Stores all x positions of the fly for all frames. For example, x[4]
+	 * stores the fly's x position in frame 4.
+	 */
+	private double[] x;
+	
+	/**
+	 * Stores all y positions of the fly for all frames. For example, y[4]
+	 * stores the fly's y position in frame 4.
+	 */
+	private double[] y;
+	
 	/**
 	 * A constructor for the Fly class, if an image or images are loaded. All
 	 * arrays are initialized to size 20 by default.
@@ -91,7 +83,7 @@ public class Fly {
 			y[i] = -1;
 		}
 	}
-	
+
 	/**
 	 * A constructor only for testing purposes.
 	 */
@@ -104,43 +96,6 @@ public class Fly {
 			x[0] = x0;
 			y[0] = y0;
 		}
-
-	/**
-	 *  This method calculates the total distance traveled of one fly over multiple frames.
-	 *  
-	 * @param fly
-	 * @param start
-	 * @param end
-	 * @return total distance traveled from start frame to end frame
-	 */
-	public double totalDistance(int start, int end){
-		double dist=0;
-		for (int i = start; i < end; i++) {
-			dist+= java.lang.Math.pow((java.lang.Math.pow((getX(i)-getX(i+1)),2) + (java.lang.Math.pow((getY(i)-getY(i+1)),2))),.5);
-		}
-		return dist;
-	}
-	
-	/**
-	 * Calculates the mean velocity of the given fly within the time specified
-	 * by the starting and ending frames.
-	 * 
-	 * @param fly
-	 *            the fly whose average velocity is desired.
-	 * @param start
-	 *            the first frame you want the average velocity calculated from.
-	 * @param end
-	 *            the last frame you want the average velocity calculated from.
-	 * @return the mean velocity of the given fly within the given time frame.
-	 */
-	public double averageVelFly(int start, int end) {
-		double avgVel=0;
-		for (int i = start; i <= end; i++) {
-			avgVel+= getVelocityatFrame(i);
-		}
-		avgVel = avgVel/ (end-(start-1)); 
-		return avgVel;
-	}
 	
 	/**
 	 * Stores the x and y position for this fly in the given frame.
@@ -165,6 +120,27 @@ public class Fly {
 			vy[frameNumber] = Math.abs(this.y[frameNumber]-this.y[frameNumber-1]);
 		}
 	}
+
+	/**
+	 * Calculates the mean velocity of the given fly within the time specified
+	 * by the starting and ending frames.
+	 * 
+	 * @param fly
+	 *            the fly whose average velocity is desired.
+	 * @param start
+	 *            the first frame you want the average velocity calculated from.
+	 * @param end
+	 *            the last frame you want the average velocity calculated from.
+	 * @return the mean velocity of the given fly within the given time frame.
+	 */
+	public double averageVelFly(int start, int end) {
+		double avgVel=0;
+		for (int i = start; i <= end; i++) {
+			avgVel+= getVelocityatFrame(i);
+		}
+		avgVel = avgVel/ (end-(start-1)); 
+		return avgVel;
+	}
 	
 	/**
 	 * Copies the data from this fly to a new Fly.
@@ -181,6 +157,34 @@ public class Fly {
 		}
 		return newFly;
 	}
+	
+	/**
+	 * A getter for the region of interest (arena) this fly was found in.
+	 * 
+	 * @return the arena number this fly resides in.
+	 */
+	public int getArena() {
+		return arena;
+	}
+	
+	/**
+	 * Returns the identification number of this fly.
+	 * 
+	 * @return the identification number of this fly.
+	 */
+	public int getId(){
+		return id;
+	}
+
+	/**
+	 * Returns the 2-dimensional velocity at a particular frame.
+	 * 
+	 * @param frame
+	 * @return double velocity
+	 */
+	public double getVelocityatFrame(int frame){
+		return (Math.sqrt((vx[frame]*vx[frame]+vy[frame]*vy[frame])));
+	}
 
 	/**
 	 * A getter for the array which stores all x velocity values for this fly.
@@ -190,7 +194,7 @@ public class Fly {
 	public double[] getVx() {
 		return vx;
 	}
-
+	
 	/**
 	 * A getter for the array which stores all y velocity values for this fly.
 	 * 
@@ -198,16 +202,6 @@ public class Fly {
 	 */
 	public double[] getVy() {
 		return vy;
-	}
-	
-	/**
-	 * Returns the 2-dimensional velocity at a particular frame.
-	 * 
-	 * @param frame
-	 * @return double velocity
-	 */
-	public double getVelocityatFrame(int frame){
-		return (Math.sqrt((vx[frame]*vx[frame]+vy[frame]*vy[frame])));
 	}
 	
 	/**
@@ -233,14 +227,32 @@ public class Fly {
 	}
 
 	/**
-	 * Returns the identification number of this fly.
+	 * Sets the arena id that this fly resides in to the given integer.
 	 * 
-	 * @return the identification number of this fly.
+	 * @param Arena integer number of the arena in which this fly resides.
 	 */
-	public int getId(){
-		return id;
+	protected void setArena(int Arena){
+		this.arena=Arena;
 	}
 	
+	/**
+	 * Automatically assigns this fly to its proper arena, 
+	 * based on which frame it is in and the arena map.
+	 * 
+	 * @param arenamap the arena map.
+	 * @param frame the current frame being examined.
+	 */
+	protected void setArena(List<RegionMaker.PointArena> arenamap, int frame){
+		Fly f = this;
+		for(RegionMaker.PointArena  i : arenamap){
+			if (f.getX(frame) >= i.getTopleft().x && f.getX(frame) <= i.getBottomright().x
+					&& f.getY(frame) >= i.getTopleft().y
+					&& f.getY(frame) <= i.getBottomright().y) {
+				f.setArena(i.getArena());
+			}
+		}
+	}
+
 	/**
 	 * Sets the id of this fly to the given integer.
 	 * 
@@ -282,7 +294,7 @@ public class Fly {
 	protected void setX(double[] x) {
 		this.x = x;
 	}
-
+	
 	/**
 	 * Sets the y location array of this fly to the provided array.
 	 * <p> 
@@ -294,36 +306,25 @@ public class Fly {
 		this.y = y;
 	}
 	
-	/**
-	 * Sets the arena id that this fly resides in to the given integer.
-	 * 
-	 * @param Arena integer number of the arena in which this fly resides.
-	 */
-	protected void setArena(int Arena){
-		this.arena=Arena;
-	}
-	
-	/**
-	 * Automatically assigns this fly to its proper arena, 
-	 * based on which frame it is in and the arena map.
-	 * 
-	 * @param arenamap the arena map.
-	 * @param frame the current frame being examined.
-	 */
-	protected void setArena(List<RegionMaker.PointArena> arenamap, int frame){
-		Fly f = this;
-		for(RegionMaker.PointArena  i : arenamap){
-			if (f.getX(frame) >= i.getTopleft().x && f.getX(frame) <= i.getBottomright().x
-					&& f.getY(frame) >= i.getTopleft().y
-					&& f.getY(frame) <= i.getBottomright().y) {
-				f.setArena(i.getArena());
-			}
-		}
-	}
-	
 	public String toString(){
 		String str= ""+getId();
 		return str;
+	}
+	
+	/**
+	 *  This method calculates the total distance traveled of one fly over multiple frames.
+	 *  
+	 * @param fly
+	 * @param start
+	 * @param end
+	 * @return total distance traveled from start frame to end frame
+	 */
+	public double totalDistance(int start, int end){
+		double dist=0;
+		for (int i = start; i < end; i++) {
+			dist+= java.lang.Math.pow((java.lang.Math.pow((getX(i)-getX(i+1)),2) + (java.lang.Math.pow((getY(i)-getY(i+1)),2))),.5);
+		}
+		return dist;
 	}
 
 }

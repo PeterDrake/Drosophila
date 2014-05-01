@@ -13,44 +13,47 @@ import java.text.DecimalFormat;
 
 public class GraphPanel extends JPanel {
 
-	private static final int DEFAULT_WIDTH = 600;
 	private static final int DEFAULT_HEIGHT = 600;
+	private static final int DEFAULT_WIDTH = 600;
 
 	private AnalyzerPanel analyzerPanel;
 	
+	/**
+	 * 2D array to hold the average fly data for each arena that should be analyzed
+	 */
 	private double[][] averageVelocity;
+	
+	/**
+	 * array of colors that each arena will use when drawing their data
+	 */
+	private Color[] colors ={Color.BLUE, Color.red, Color.magenta, Color.cyan, Color.green, Color.YELLOW, Color.orange, Color.pink};
+	
+	/**
+	 * a boolean that should usually be false. true if you want to see large ugly points.
+	 */
+	private boolean drawPoints;
+	
+	private int endFrame;
 	
 	private double frameRate;
 	
-	private double videoLength;
+	private int startFrame;
 	
 	private String title;
 	
-	private String yLabel;
-	
+	private double videoLength;
 	private String xLabel;
-	
-	private Color color;
-	
-	private Color[] colors ={Color.BLUE, Color.red, Color.magenta, Color.cyan, Color.green, Color.YELLOW, Color.orange, Color.pink};
-	
-	
-	private boolean drawPoints;
-	private int startFrame;
-	private int endFrame;
+	private String yLabel;
 
-//	public GraphPanel() {
-//		drawPoints = false;
-//		double tempAverageVelocity[] = { 85, 56, 42, 3, 7, 11, 46, 36 }; // test data! use analyzerPanel.getAverageVelocity 			
-//		averageVelocity = tempAverageVelocity;
-//		frameRate = .10; // this may not be the real frameRate
-//		videoLength = averageVelocity.length * frameRate;
-//		xLabel = "Time in frames";
-//		yLabel = "Average Velocity (in pixels per frame)";
-//		title = "Average Velocity vs Time";
-//		color = Color.BLACK;
-//	}
-
+	/**
+	 * Constructor
+	 * @param analyzerPanel
+	 * @param drawPoints
+	 * @param frameRate
+	 * @param title
+	 * @param yLabel
+	 * @param xLabel
+	 */
 	public GraphPanel(AnalyzerPanel analyzerPanel, boolean drawPoints, double frameRate, String title, String yLabel, String xLabel) {
 		this.analyzerPanel = analyzerPanel;
 		this.drawPoints = drawPoints;
@@ -58,17 +61,10 @@ public class GraphPanel extends JPanel {
 		this.title = title;
 		this.yLabel = yLabel;
 		this.xLabel = xLabel;
-		color = Color.RED;
-		
 	}
 
-	public Dimension getPreferredSize() {
-//		return new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-		return new Dimension((int)(analyzerPanel.getWidth() * (3.0 / 8.0)), (int)(analyzerPanel.getHeight() * 2.0 / 3.0));
-	}
-	
-	public void setDrawPoints(boolean drawPoints) {
-		this.drawPoints = drawPoints;
+	public Dimension getMaximumSize() {
+		return new Dimension(1000, 1000);
 	}
 	
 	/** Returns the minimum size of this panel as a Dimension object */
@@ -77,10 +73,13 @@ public class GraphPanel extends JPanel {
 		return new Dimension((int)(analyzerPanel.getWidth() * (3.0 / 8.0)), (int)(analyzerPanel.getHeight() * 2.0 / 3.0));
 	}
 	
-	public Dimension getMaximumSize() {
-		return new Dimension(1000, 1000);
+	public Dimension getPreferredSize() {
+		return new Dimension((int)(analyzerPanel.getWidth() * (3.0 / 8.0)), (int)(analyzerPanel.getHeight() * 2.0 / 3.0));
 	}
 	
+	/**
+	 * paints the graph in all of its glory
+	 */
 	public void paintComponent(Graphics g) {	
 		if(analyzerPanel.getFlyList().size() <= 0){
 			return;
@@ -202,30 +201,11 @@ if((analyzerPanel.getMovieLoaded() && analyzerPanel.getMovieAnalyzed())
 }
 
 	}
-
-	public void VertDrawString(String string, int x, int y, Graphics2D g2d){		
-		Font f =new Font("SansSarif", Font.PLAIN, 12);
-		Rectangle2D bounds; 
-		g2d.setFont(f);
-		String temp;
-		for(int i= 0; i<=string.length()-1; i++){
-			temp= string.substring(i,i+1);
-			bounds=f.getStringBounds(temp, g2d.getFontRenderContext());
-			g2d.drawString(temp, x, y);
-			x+=bounds.getWidth();
-		}
-
-	}
-
-	public void setLabels(String titleText, String xAxisText, String yAxisText) {
-		title=titleText;
-		xLabel=xAxisText;
-		yLabel=yAxisText;
-	}
-
+	
 	public void saveGraph(File file) {
 		Container c = this;
-		BufferedImage im = new BufferedImage(c.getWidth(), c.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		BufferedImage im = new BufferedImage(c.getWidth(), c.getHeight(),
+				BufferedImage.TYPE_INT_ARGB);
 		c.paint(im.getGraphics());
 		try {
 			ImageIO.write(im, "PNG", file);
@@ -238,5 +218,38 @@ if((analyzerPanel.getMovieLoaded() && analyzerPanel.getMovieAnalyzed())
 	public void setDataRange(int start, int end) {
 		startFrame = start;
 		endFrame = end;
+	}
+
+	public void setDrawPoints(boolean drawPoints) {
+		this.drawPoints = drawPoints;
+	}
+
+	public void setLabels(String titleText, String xAxisText, String yAxisText) {
+		title=titleText;
+		xLabel=xAxisText;
+		yLabel=yAxisText;
+	}
+
+	/**
+	 * draws a string vertically. this special method is required because
+	 * apple reverses the direction of the string and the kerning direction.
+	 * silly apple ruining everything.
+	 * @param string
+	 * @param x
+	 * @param y
+	 * @param g2d
+	 */
+	public void VertDrawString(String string, int x, int y, Graphics2D g2d){		
+		Font f =new Font("SansSarif", Font.PLAIN, 12);
+		Rectangle2D bounds; 
+		g2d.setFont(f);
+		String temp;
+		for(int i= 0; i<=string.length()-1; i++){
+			temp= string.substring(i,i+1);
+			bounds=f.getStringBounds(temp, g2d.getFontRenderContext());
+			g2d.drawString(temp, x, y);
+			x+=bounds.getWidth();
+		}
+
 	}
 }

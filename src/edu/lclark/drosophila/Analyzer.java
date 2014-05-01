@@ -17,168 +17,61 @@ import com.xuggle.mediatool.event.IVideoPictureEvent;
 import com.xuggle.xuggler.Global;
 
 import com.xuggle.xuggler.IContainer;
+
 /**
- * This class does most of the calculations for the program, 
- * including identifying and tracking flies and loading and analyzing movies and images.
+ * This class does most of the calculations for the program, including
+ * identifying and tracking flies and loading and analyzing movies and images.
  * To run the program, run this class.
  */
 public class Analyzer {
 
 	/**
-	 * The minimum number of pixels a dark spot must be to count as a fly.
-	 * Set by the user.
+	 *
 	 */
-	private int sizeThreshold;
+	private class ImageSnapListener extends MediaListenerAdapter {
+
+		private int increment;
+
+		public ImageSnapListener(boolean b) {
+			loadingMovie = b;
+		}
+
+		public void onVideoPicture(IVideoPictureEvent event) {
+			// if uninitialized, back date mLastPtsWrite to get the very first
+			// frame
+			if (loadingMovie) {
+				firstMovieFrame = event.getImage();
+				flydentify(event.getImage(), 0);
+			} else {
+				if (mLastPtsWrite == Global.NO_PTS) {
+					mLastPtsWrite = event.getTimeStamp()
+							- microSecondsBetweenFrames;
+				}
+				// if it's time to write the next frame
+				if (event.getTimeStamp() - mLastPtsWrite >= microSecondsBetweenFrames) {
+					double seconds = ((double) event.getTimeStamp())
+							/ Global.DEFAULT_PTS_PER_SECOND;
+					// frames.add(event.getImage());
+
+					if (increment % sampleRate == 0) {
+						flydentify(event.getImage(), increment / sampleRate);
+						System.out.printf(
+								"at elapsed time of %6.3f seconds wrote: %s\n",
+								seconds, "<imaginary file>");
+						// update last write time
+						mLastPtsWrite += microSecondsBetweenFrames * sampleRate;
+					}
+					increment++;
+				}
+			}
+			temptotalFrames = increment;
+		}
+	}
 
 	/**
 	 * A reference to the GUI.
 	 */
 	private static AnalyzerGui gui;
-
-	/**
-	 * The minimum contrast between fly and background for a dark spot to count as a fly.
-	 * Set by the user.
-	 */
-	private int contrastThreshold = 200;
-
-	public static void main(String[] args) {
-		gui = new AnalyzerGui(new Analyzer());
-		gui.run();
-	}
-
-	/**
-	 * The List of Fly objects in which fly data is stored.
-	 */
-	private List<Fly> flies;
-
-	/**
-	 * Boolean for if the image snap listener should just find the first frame
-	 * of the movie for option setting purposes
-	 */
-	private boolean loadingMovie;
-
-	/**
-	 * The total number of frames in the movie being analyzed. Or, the number of
-	 * images being analyzed.
-	 */
-	private int totalFrames;
-
-	/**
-	 * The number of frames the analyzer has analyzed, and displayed on screen.
-	 * This is currently different than totalFrames, because of the movie analysis bug
-	 * that makes the analyzer skip the last couple of frames of the movie.
-	 */
-	private int temptotalFrames;
-
-	/**
-	 * True if the movie that is loaded has been analyzed, otherwise false.
-	 */
-	private boolean movieAnalyzed;
-
-	/**
-	 * True if the currently loaded file is a movie. Otherwise, it is false.
-	 * <p>
-	 * This is used so that the proper constructor is called for making a new
-	 * Fly at the end of Flydentify.
-	 */
-	private boolean movieLoaded;
-
-	/**
-	 * Stores all of the images being analyzed.
-	 */
-	private File[] images;
-
-	/**
-	 * The name of the movie file that we have loaded
-	 */
-	private File movieFile;
-
-	/**
-	 * The first frame in the movie, for displaying in the GUI
-	 */
-	private BufferedImage firstMovieFrame;
-
-	/**
-	 * The number of seconds between frames in a movie file
-	 */
-	private double secondsBetweenFrames;
-
-	/**
-	 * The number of frames per second in a movie file.
-	 */
-	private double framesPerSecond;
-
-	/**
-	 * The number of microseconds between frames in a movie file
-	 */
-	private long microSecondsBetweenFrames;
-
-	/**
-	 * Time of last frame write
-	 * PTS means ... picture time stamp?
-	 */
-	private long mLastPtsWrite;
-
-	/**
-	 * The List of frames in a movie
-	 */
-	private List<BufferedImage> frames;
-
-	/**
-	 * A value for editing the contrast of the actual image
-	 */
-	private double imageContrast = 1.0;
-
-	/**
-	 * A reference to the regionMaker
-	 */
-	private RegionMaker regionMaker;
-
-	/**
-	 * A reference to the arenaAnalyzer
-	 */
-	private ArenaAnalyzer arenaAnalyzer;
-
-	/**
-	 * The duration of the movie in seconds
-	 */
-	private double duration;
-
-	/**
-	 * The sample rate of the movie, samples every nth frame
-	 * <p>
-	 * For example, a sample rate of 1 samples every frame, of 2 samples every other frame.
-	 */
-	private int sampleRate = 1;
-
-	/**
-	 * The range of acceptable pixel values for size of flies.
-	 */
-	private int pixelRange;
-
-	/**
-	 * The constructor for the Analyzer class, initializes most of the fields.
-	 */
-	public Analyzer() {
-		movieLoaded = false;
-		totalFrames = 0;
-		flies = new LinkedList<Fly>();
-		frames = new ArrayList<BufferedImage>();
-		images = new File[20];
-		regionMaker = new RegionMaker(this);
-		arenaAnalyzer = new ArenaAnalyzer(this);
-	}
-
-	/**
-	 * Passes the top left and bottom right corners of all arenas
-	 * <p>
-	 * Used to draw arenas in the image panel
-	 */
-	public void passDownPoints() {
-		List<Point> tempFirst = regionMaker.getPastfirstpoints();
-		List<Point> tempSecond = regionMaker.getPastsecondpoints();
-		gui.passDownPoints(tempFirst, tempSecond);
-	}
 
 	/**
 	 * this method computes the average velocity of each fly for a list of flies
@@ -201,6 +94,216 @@ public class Analyzer {
 		}
 
 		return avgVel;
+	}
+
+	public static void main(String[] args) {
+		gui = new AnalyzerGui(new Analyzer());
+		gui.run();
+	}
+
+	/**
+	 * A reference to the arenaAnalyzer
+	 */
+	private ArenaAnalyzer arenaAnalyzer;
+
+	/**
+	 * The minimum contrast between fly and background for a dark spot to count
+	 * as a fly. Set by the user.
+	 */
+	private int contrastThreshold = 200;
+
+	/**
+	 * The duration of the movie in seconds
+	 */
+	private double duration;
+
+	/**
+	 * The first frame in the movie, for displaying in the GUI
+	 */
+	private BufferedImage firstMovieFrame;
+
+	/**
+	 * The List of Fly objects in which fly data is stored.
+	 */
+	private List<Fly> flies;
+
+	/**
+	 * The List of frames in a movie
+	 */
+	private List<BufferedImage> frames;
+
+	/**
+	 * The number of frames per second in a movie file.
+	 */
+	private double framesPerSecond;
+
+	/**
+	 * A value for editing the contrast of the actual image
+	 */
+	private double imageContrast = 1.0;
+
+	/**
+	 * Stores all of the images being analyzed.
+	 */
+	private File[] images;
+
+	/**
+	 * Boolean for if the image snap listener should just find the first frame
+	 * of the movie for option setting purposes
+	 */
+	private boolean loadingMovie;
+
+	/**
+	 * The number of microseconds between frames in a movie file
+	 */
+	private long microSecondsBetweenFrames;
+
+	/**
+	 * Time of last frame write PTS means ... picture time stamp?
+	 */
+	private long mLastPtsWrite;
+
+	/**
+	 * True if the movie that is loaded has been analyzed, otherwise false.
+	 */
+	private boolean movieAnalyzed;
+
+	/**
+	 * The name of the movie file that we have loaded
+	 */
+	private File movieFile;
+
+	/**
+	 * True if the currently loaded file is a movie. Otherwise, it is false.
+	 * <p>
+	 * This is used so that the proper constructor is called for making a new
+	 * Fly at the end of Flydentify.
+	 */
+	private boolean movieLoaded;
+
+	/**
+	 * The range of acceptable pixel values for size of flies.
+	 */
+	private int pixelRange;
+
+	/**
+	 * A reference to the regionMaker
+	 */
+	private RegionMaker regionMaker;
+
+	/**
+	 * The sample rate of the movie, samples every nth frame
+	 * <p>
+	 * For example, a sample rate of 1 samples every frame, of 2 samples every
+	 * other frame.
+	 */
+	private int sampleRate = 1;
+
+	/**
+	 * The number of seconds between frames in a movie file
+	 */
+	private double secondsBetweenFrames;
+
+	/**
+	 * The minimum number of pixels a dark spot must be to count as a fly. Set
+	 * by the user.
+	 */
+	private int sizeThreshold;
+
+	/**
+	 * The number of frames the analyzer has analyzed, and displayed on screen.
+	 * This is currently different than totalFrames, because of the movie
+	 * analysis bug that makes the analyzer skip the last couple of frames of
+	 * the movie.
+	 */
+	private int temptotalFrames;
+
+	/**
+	 * The total number of frames in the movie being analyzed. Or, the number of
+	 * images being analyzed.
+	 */
+	private int totalFrames;
+
+	/**
+	 * The constructor for the Analyzer class, initializes most of the fields.
+	 */
+	public Analyzer() {
+		movieLoaded = false;
+		totalFrames = 0;
+		flies = new LinkedList<Fly>();
+		frames = new ArrayList<BufferedImage>();
+		images = new File[20];
+		regionMaker = new RegionMaker(this);
+		arenaAnalyzer = new ArenaAnalyzer(this);
+	}
+
+	/**
+	 * Runs the flydentify method on each frame of the movie that has been
+	 * opened
+	 * 
+	 * @param sampleRate
+	 */
+	public void analyzeMovie(int sampleRate) {
+		if (movieLoaded) {
+			File f = movieFile;
+			clearImages();
+			openMovie(f);
+
+		}
+		this.sampleRate = sampleRate;
+		IMediaReader mediaReader = ToolFactory.makeReader(movieFile
+				.getAbsolutePath());
+
+		// stipulate that we want BufferedImages created in BGR 24bit color
+		// space
+		mediaReader
+				.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
+		totalFrames = getFramesInMovie(movieFile.getAbsolutePath())
+				/ sampleRate;
+		System.err.println("Total Frames is: " + totalFrames);
+		System.err.println("Duration is " + duration);
+		secondsBetweenFrames = duration / totalFrames;
+		System.err
+				.println("Seconds between frames is: " + secondsBetweenFrames);
+		microSecondsBetweenFrames = (long) (Global.DEFAULT_PTS_PER_SECOND * secondsBetweenFrames);
+		System.err.println("micro seconds between frames is: "
+				+ microSecondsBetweenFrames);
+
+		mediaReader.addListener(new ImageSnapListener(false));
+		// read out the contents of the media file and
+		// dispatch events to the attached listener
+		while (mediaReader.readPacket() == null) {
+			// Wait
+		}
+
+		totalFrames = temptotalFrames;
+		movieAnalyzed = true;
+		gui.repaint();
+
+	}
+
+	/**
+	 * Calculates the average velocity of an arena between selected frames
+	 * 
+	 * @param Arena
+	 * @param start
+	 *            first frame of the arena to analyze
+	 * @param end
+	 *            last frame of the arena to analyze
+	 * @return
+	 */
+	public double calcArenaAverageVelocityinFrame(int Arena, int start, int end) {
+		return arenaAnalyzer.AvgVelocityofArena(Arena, start, end);
+	}
+
+	/**
+	 * Clears the arenas.
+	 */
+	public void clearFlyGroups() {
+		for (Fly fly : flies) {
+			fly.setArena(0);
+		}
+		regionMaker.clearData();
 	}
 
 	/**
@@ -235,11 +338,26 @@ public class Analyzer {
 	}
 
 	/**
-	 * Returns the arena assignments form the regionMaker
-	 * @return the list of arena assignments
+	 * Updates the contrast threshold field. This is used to tell how dark a
+	 * spot has to be to be considered a fly. This will also analyze all stored
+	 * image again
+	 * 
+	 * @param input
+	 *            the value which contrast threshold will be set to.
 	 */
-	public List<RegionMaker.PointArena> passDownArenaAssignments() {
-		return regionMaker.getArenaAssignment();
+	public void contrastThresholdUpdate(int input) {
+		if (input > 255) {
+			input = 255;
+		}
+		if (input < 0) {
+			input = 0;
+		}
+		if (input >= 0 && input <= 255) {
+			contrastThreshold = input;
+			if (totalFrames > 0) {
+				updateImages();
+			}
+		}
 	}
 
 	/**
@@ -287,13 +405,12 @@ public class Analyzer {
 						blue = 255;
 					}
 					double avg = red * 0.2989 + green * .587 + blue * .114;
-					//if the color is dark enough
-					if ((int) (Math.round(avg)) <= contrastThreshold) { 
+					// if the color is dark enough
+					if ((int) (Math.round(avg)) <= contrastThreshold) {
 						int totalX = 0;
 						int totalY = 0;
 						int numPixels = 0;
 						// initialize values to find center of mass of the fly.
-						// searchPixel(i, j, searchArray, image);
 						curIdx = 0;
 						stack[curIdx][0] = i;
 						stack[curIdx][1] = j;
@@ -341,13 +458,11 @@ public class Analyzer {
 								&& numPixels <= (sizeThreshold + pixelRange)) {
 							// if the blob is large enough to be a fly, but not
 							// too big
-
 							// create a new temporary fly object
 							double tempLocation[] = new double[2];
 							tempLocation[0] = (double) totalX / numPixels;
 							tempLocation[1] = (double) totalY / numPixels;
 							tempFlies.add(tempLocation);
-							// System.out.println("size: " + numPixels);
 						}
 					} else {
 						// we searched this already!
@@ -356,6 +471,9 @@ public class Analyzer {
 				}
 			}
 		}
+		// code above here identifies flies in a frame
+		// code below here maps flies to flies that have been found in previous
+		// frames
 		if (frameNumber == 0) {
 			// The first frame just creates all found flies.
 			for (double[] d : tempFlies) {
@@ -536,6 +654,15 @@ public class Analyzer {
 	}
 
 	/**
+	 * Returns the first frame of the movie
+	 * 
+	 * @return
+	 */
+	public BufferedImage getFirstFrameFromMovie() {
+		return firstMovieFrame;
+	}
+
+	/**
 	 * Gives the List of Fly objects, which store any information gained from
 	 * analyzed images.
 	 * 
@@ -545,15 +672,50 @@ public class Analyzer {
 	public List<Fly> getFlies() {
 		return flies;
 	}
-	
-	public List<Fly> getFlies(int regionOfInterest){
+
+	/**
+	 * Gets a list of Fly objects in the specified arena
+	 * 
+	 * @param regionOfInterest
+	 *            the arena to get flies from
+	 * @return flies in the arena
+	 */
+	public List<Fly> getFlies(int regionOfInterest) {
 		List<Fly> tempFlies = new LinkedList<Fly>();
 		for (Fly fly : flies) {
-			if(fly.getArena()==regionOfInterest){
+			if (fly.getArena() == regionOfInterest) {
 				tempFlies.add(fly);
 			}
 		}
 		return tempFlies;
+	}
+
+	/**
+	 * Returns the frame rate of the movie
+	 * 
+	 * @return
+	 */
+	public double getFrameRate() {
+		return (microSecondsBetweenFrames * sampleRate) / 1000.0;
+	}
+
+	/**
+	 * Returns the number of frames in a movie, calculated with duration of
+	 * movie and frame rate
+	 * 
+	 * @param filename
+	 * @return the number of frames in a movie
+	 */
+	public int getFramesInMovie(String filename) {
+		IContainer container = IContainer.make();
+		if (container.open(filename, IContainer.Type.READ, null) < 0) {
+			throw new IllegalArgumentException("Could not open file:"
+					+ filename);
+		}
+		duration = container.getDuration() / 1000000.0;
+		framesPerSecond = container.getStream(0).getFrameRate().getDouble();
+		container.close();
+		return (int) (duration * framesPerSecond);
 	}
 
 	/**
@@ -568,6 +730,33 @@ public class Analyzer {
 			return images[index];
 		}
 		return null;
+	}
+
+	/**
+	 * Returns the image contrast
+	 * 
+	 * @return
+	 */
+	public double getImageContrast() {
+		return imageContrast;
+	}
+
+	/**
+	 * Returns whether the movie has been completely analyzed yet
+	 * 
+	 * @return
+	 */
+	public boolean getMovieAnalyzed() {
+		return movieAnalyzed;
+	}
+
+	/**
+	 * Returns whether a movie has been loaded
+	 * 
+	 * @return
+	 */
+	public boolean getMovieLoaded() {
+		return movieLoaded;
 	}
 
 	/**
@@ -614,96 +803,10 @@ public class Analyzer {
 	}
 
 	/**
-	 * Updates the size threshold field. This is used to determine if an object
-	 * identified within an image is large enough to be considered a fly. This
-	 * will also analyze all stored images again.
-	 * 
-	 * @param input
-	 *            the value which size threshold will be set to.
-	 */
-	public void sizeThresholdUpdate(int input) {
-		sizeThreshold = input;
-		if (totalFrames > 0) {
-			updateImages();
-		}
-	}
-
-	/**
-	 * Updates the contrast threshold field. This is used to tell how dark a
-	 * spot has to be to be considered a fly. This will also analyze all stored
-	 * image again
-	 * 
-	 * @param input
-	 *            the value which contrast threshold will be set to.
-	 */
-	public void contrastThresholdUpdate(int input) {
-		if (input > 255) {
-			input = 255;
-		}
-		if (input < 0) {
-			input = 0;
-		}
-		if (input >= 0 && input <= 255) {
-			contrastThreshold = input;
-			if (totalFrames > 0) {
-				updateImages();
-			}
-		}
-	}
-
-	/**
-	 * This runs flydentify on all stored images.
-	 */
-	public void updateImages() {
-		if (movieLoaded) {
-			flydentify(firstMovieFrame, 0);
-		} else {
-			try {
-				for (int i = 0; i < totalFrames; i++) {
-					// TODO this should probably create a new flies List, since
-					// it
-					// is re running flydentify on all images.
-					flies.clear();
-					BufferedImage image = ImageIO.read(images[i]);
-					flydentify(image, i);
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-				System.exit(1);
-			}
-		}
-	}
-
-	/**
-	 * Returns the number of frames in a movie, calculated with duration of movie and frame rate
-	 * @param filename
-	 * @return the number of frames in a movie
-	 */
-	public int getFramesInMovie(String filename) {
-		IContainer container = IContainer.make();
-		if (container.open(filename, IContainer.Type.READ, null) < 0) {
-			throw new IllegalArgumentException("Could not open file:"
-					+ filename);
-		}
-		duration = container.getDuration() / 1000000.0;
-		framesPerSecond = container.getStream(0).getFrameRate().getDouble();
-		container.close();
-		return (int) (duration * framesPerSecond);
-	}
-
-	/**
-	 * Plays a selected movie in a new moviePanel
+	 * Takes a movie file and displays the first image in the GUI.
 	 * 
 	 * @param file
-	 */
-	public void playMovie(File file) {
-		IMediaReader mediaReader = ToolFactory.makeReader(file
-				.getAbsolutePath());
-	}
-
-	/**
-	 * Takes a movie file and displays the first image in the GUI.
-	 * @param file the movie file
+	 *            the movie file
 	 */
 	public void openMovie(File file) {
 		clearImages();
@@ -733,142 +836,76 @@ public class Analyzer {
 		}
 
 		gui.repaint();
-		// gui.showMovie(frames, 100
-		// MICRO_SECONDS_BETWEEN_FRAMES / 1000
-		// );
 	}
 
 	/**
-	 * Runs the flydentify method on each frame of the movie that has been opened
-	 * @param sampleRate
+	 * Returns the arena assignments form the regionMaker
+	 * 
+	 * @return the list of arena assignments
 	 */
-	public void analyzeMovie(int sampleRate) {
-		if (movieLoaded) {
-			File f = movieFile;
-			clearImages();
-			openMovie(f);
+	public List<RegionMaker.PointArena> passDownArenaAssignments() {
+		return regionMaker.getArenaAssignment();
+	}
 
-		}
-		this.sampleRate = sampleRate;
-		IMediaReader mediaReader = ToolFactory.makeReader(movieFile
+	/**
+	 * Passes the image at the specified image index to the GUI
+	 * 
+	 * @param imageIndex
+	 * @return
+	 */
+	public File passdownFile(int imageIndex) {
+		return images[imageIndex];
+	}
+
+	/**
+	 * Passes the top left and bottom right corners of all arenas
+	 * <p>
+	 * Used to draw arenas in the image panel
+	 */
+	public void passDownPoints() {
+		List<Point> tempFirst = regionMaker.getPastfirstpoints();
+		List<Point> tempSecond = regionMaker.getPastsecondpoints();
+		gui.passDownPoints(tempFirst, tempSecond);
+	}
+
+	/**
+	 * Plays a selected movie in a new moviePanel
+	 * 
+	 * @param file
+	 */
+	public void playMovie(File file) {
+		IMediaReader mediaReader = ToolFactory.makeReader(file
 				.getAbsolutePath());
-
-		// stipulate that we want BufferedImages created in BGR 24bit color
-		// space
-		mediaReader
-				.setBufferedImageTypeToGenerate(BufferedImage.TYPE_3BYTE_BGR);
-		totalFrames = getFramesInMovie(movieFile.getAbsolutePath())
-				/ sampleRate;
-		System.err.println("Total Frames is: " + totalFrames);
-		System.err.println("Duration is " + duration);
-		secondsBetweenFrames = duration / totalFrames;
-		System.err.println("Seconds between frames is: "
-				+ secondsBetweenFrames);
-		microSecondsBetweenFrames = (long) (Global.DEFAULT_PTS_PER_SECOND * secondsBetweenFrames);
-		System.err.println("micro seconds between frames is: "
-				+ microSecondsBetweenFrames);
-
-		mediaReader.addListener(new ImageSnapListener(false));
-		// read out the contents of the media file and
-		// dispatch events to the attached listener
-		while (mediaReader.readPacket() == null) {
-			// Wait
-		}
-
-		// gui.showMovie(frames, 100
-		// MICRO_SECONDS_BETWEEN_FRAMES / 1000
-		// );
-
-		totalFrames = temptotalFrames;
-		movieAnalyzed = true;
-		gui.repaint();
-
 	}
 
 	/**
-	 *
+	 * Sets flies in the square between point 1 and point 2 to the given arena
+	 * and frame
+	 * 
+	 * @param point1
+	 * @param point2
+	 * @param Arena
+	 * @param frame
 	 */
-	private class ImageSnapListener extends MediaListenerAdapter {
-
-		private int increment;
-
-		public ImageSnapListener(boolean b) {
-			loadingMovie = b;
-		}
-
-		public void onVideoPicture(IVideoPictureEvent event) {
-			// if uninitialized, back date mLastPtsWrite to get the very first
-			// frame
-			if (loadingMovie) {
-				firstMovieFrame = event.getImage();
-				flydentify(event.getImage(), 0);
-			} else {
-				if (mLastPtsWrite == Global.NO_PTS) {
-					mLastPtsWrite = event.getTimeStamp()
-							- microSecondsBetweenFrames;
-				}
-				// if it's time to write the next frame
-				if (event.getTimeStamp() - mLastPtsWrite >= microSecondsBetweenFrames) {
-					double seconds = ((double) event.getTimeStamp())
-							/ Global.DEFAULT_PTS_PER_SECOND;
-					// frames.add(event.getImage());
-
-					if (increment % sampleRate == 0) {
-						flydentify(event.getImage(), increment / sampleRate);
-						System.out.printf(
-								"at elapsed time of %6.3f seconds wrote: %s\n",
-								seconds, "<imaginary file>");
-						// update last write time
-						mLastPtsWrite += microSecondsBetweenFrames
-								* sampleRate;
-					}
-					increment++;
-				}
-			}
-			temptotalFrames = increment;
-		}
+	public void setFliestoArena(Point point1, Point point2, int Arena, int frame) {
+		regionMaker.setFliesToRegions(point1, point2, Arena, frame);
 	}
 
+	/**
+	 * Sets the image contrast to the given contrast
+	 * 
+	 * @param d
+	 */
 	public void setImageContrast(double d) {
 		imageContrast = d;
 		updateImages();
 	}
 
-	public double getImageContrast() {
-		return imageContrast;
-	}
-
-	public File passdownFile(int imageIndex) {
-		return images[imageIndex];
-	}
-
-	public void setFliestoArena(Point point1, Point point2, int Arena, int frame) {
-		regionMaker.setFliesToRegions(point1, point2, Arena, frame);
-	}
-
-	public void clearFlyGroups() {
-		for (Fly fly : flies) {
-			fly.setArena(0);
-		}
-		regionMaker.clearData();
-	}
-
-	public BufferedImage getFirstFrameFromMovie() {
-		return firstMovieFrame;
-	}
-
-	public boolean getMovieLoaded() {
-		return movieLoaded;
-	}
-
-	public double getFrameRate() {
-		return (microSecondsBetweenFrames * sampleRate) / 1000.0;
-	}
-
-	public double calcArenaAverageVelocityinFrame(int Arena, int start, int end) {
-		return arenaAnalyzer.AvgVelocityofArena(Arena, start, end);
-	}
-
+	/**
+	 * Updates the range of possible fly sizes in pixels
+	 * 
+	 * @param value
+	 */
 	public void sizeRangeUpdate(int value) {
 		pixelRange = value;
 		if (totalFrames > 0) {
@@ -876,8 +913,42 @@ public class Analyzer {
 		}
 	}
 
-	public boolean getMovieAnalyzed() {
-		return movieAnalyzed;
+	/**
+	 * Updates the size threshold field. This is used to determine if an object
+	 * identified within an image is large enough to be considered a fly. This
+	 * will also analyze all stored images again.
+	 * 
+	 * @param input
+	 *            the value which size threshold will be set to.
+	 */
+	public void sizeThresholdUpdate(int input) {
+		sizeThreshold = input;
+		if (totalFrames > 0) {
+			updateImages();
+		}
+	}
+
+	/**
+	 * This runs flydentify on all stored images.
+	 */
+	public void updateImages() {
+		if (movieLoaded) {
+			flydentify(firstMovieFrame, 0);
+		} else {
+			try {
+				for (int i = 0; i < totalFrames; i++) {
+					// TODO this should probably create a new flies List, since
+					// it
+					// is re running flydentify on all images.
+					flies.clear();
+					BufferedImage image = ImageIO.read(images[i]);
+					flydentify(image, i);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.exit(1);
+			}
+		}
 	}
 
 }

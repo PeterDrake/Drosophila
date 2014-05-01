@@ -11,9 +11,9 @@ import javax.swing.*;
 public class AnalyzerPanel extends JPanel {
 
 	/**
-	 * The AnalyzerGui object which this AnalyzerPanel communicates with.
+	 * The Data Panel object which this AnalyzerPanel communicates with.
 	 */
-	private AnalyzerGui gui;
+	private DataTabbs dpanel;
 	
 	/**
 	 * The GraphPanel object which this AnalyzerPanel communicates with.
@@ -21,17 +21,25 @@ public class AnalyzerPanel extends JPanel {
 	private GraphPanel graphPanel;
 
 	/**
+	 * The AnalyzerGui object which this AnalyzerPanel communicates with.
+	 */
+	private AnalyzerGui gui;
+	
+	/**
 	 * The ImagePanel object which this AnalyzerPanel communicates with.
 	 */
 	private ImagePanel ipanel;
 	
-	private int[] regionsOfInterest = new int[1];
 	/**
-	 * The Data Panel object which this AnalyzerPanel communicates with.
+	 * the JDialog that tells the user the movie is loading
 	 */
-	private DataTabbs dpanel;
-
 	private JDialog loadingDialog;
+	
+	/**
+	 * Stores the regions of interest selected
+	 * Used by the GraphPanel
+	 */
+	private int[] regionsOfInterest = new int[1];
 
 	/**
 	 * The constructor for AnalyzerPanel, which adds the button panel and image
@@ -82,10 +90,32 @@ public class AnalyzerPanel extends JPanel {
 		loadingDialog.add(panel);
 	}
 
-	public double[] getAverageVelocity() {
-		return gui.getAverageVelocity();
+	/**
+	 * Delegate method to analyze the movie at the given sample rate
+	 * @param sampleRate
+	 */
+	public void analyzeMovie(int sampleRate) {
+		gui.analyzeMovie(sampleRate);
+		
+	}
 
+	/**
+	 * Delegate method that asks the model for the average velocity of a group of flies in an arena between frames start and end
+	 * @param Arena
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	public double calcAverageVelocityforArena(int Arena, int start, int end){
+			return gui.calcArenaAverageVelocityinFrame(Arena, start, end);
+	}
 
+	/**
+	 * Delegate method to clear fly groups
+	 */
+	public void clearFlyGroups() {
+		gui.clearFlyGroups();
+		
 	}
 
 	/**
@@ -96,13 +126,93 @@ public class AnalyzerPanel extends JPanel {
 		ipanel.clearYourImages();
 	}
 
+	public void contrastThresholdUpdate(int input) {
+		gui.contrastThresholdUpdate(input);
+		
+	}
+
 	/**
 	 * Increments the displayed image index in ImagePanel by 1.
 	 */
 	public void decrementIndex() {
 		ipanel.decrementIndex();
 	}
+	
+	/**
+	 * Displays the popup that tells the user the movie is loading with the given string
+	 * @param s
+	 */
+	public void displayLoadingPopup(String s) {
+		loadingDialog.validate();
+		loadingDialog.setVisible(true);
+		//JOptionPane.showMessageDialog(null, s, "Loading", JOptionPane.INFORMATION_MESSAGE);
+	}
+	
+	/**
+	 * Displays the popup that tells the user an error has occured
+	 * @param s the error message to display
+	 */
+	public void displayMessagePopup(String s) {
+		JOptionPane.showMessageDialog(null, s, "Error", 
+				JOptionPane.INFORMATION_MESSAGE, 
+				new ImageIcon(getClass().getResource("images/DrawFlyTrajectoriesToggle.png")));
+	}
 
+	/**
+	 * Hides the loading dialog
+	 */
+	public void disposeLoadingDialog() {
+		loadingDialog.setVisible(false);
+	}
+
+	/**
+	 * Delegate method to return the average velocity
+	 * @return
+	 */
+	public double[] getAverageVelocity() {
+		return gui.getAverageVelocity();
+	}
+
+	/**
+	 * Delegate method to return the average velocity of specified regions of interest
+	 * @param regionsOfInterest2
+	 * @return
+	 */
+	public double[][] getAverageVelocity(int[] regionsOfInterest2) {
+		return gui.getAverageVelocity(regionsOfInterest2);
+	}
+
+	/** 
+	 * Delegate method to return the average velocity of specified regions of interest
+	 * in the range of frames provided
+	 * @param regionsOfInterest2
+	 * @param startFrame
+	 * @param endFrame
+	 * @return
+	 */
+	public double[][] getAverageVelocity(int[] regionsOfInterest2,
+			int startFrame, int endFrame) {
+		return gui.getAverageVelocity(regionsOfInterest2, startFrame, endFrame);
+	}
+
+	/**
+	 * Delegate method to get data for file
+	 * @return
+	 */
+	public String getDataForFile() {
+		return dpanel.getDataForFile();
+	}
+	
+	/**
+	 * Delegate method to return the first frame from the movie
+	 * @return
+	 */
+	public BufferedImage getFirstFrameFromMovie() {
+		// TODO Auto-generated method stub
+		return gui.getFirstFrameFromMovie();
+	}
+
+	
 	/**
 	 * Gets the List of Fly objects, which contain all gathered data, from the
 	 * Analyzer.
@@ -115,7 +225,56 @@ public class AnalyzerPanel extends JPanel {
 		}
 		return gui.getFlies();
 	}
+	
+	/**
+	 * Delegate method to return frame rate
+	 * @return
+	 */
+	public double getFrameRate() {
+		// TODO Auto-generated method stub
+		return gui.getFrameRate();
+	}
+	
+	/**
+	 * Returns a reference to the GUI
+	 * @return
+	 */
+	public AnalyzerGui getGui() {
+		return gui;
+	}
 
+	/**
+	 * Delegate method to return the image contrast
+	 * @return
+	 */
+	public double getImageContrast() {
+		return gui.getImageContrast();
+	}
+
+	/**
+	 * Delegate method to return if the movie has been analyzed
+	 * @return
+	 */
+	public boolean getMovieAnalyzed(){
+		return gui.getMovieAnalyzed();
+	}
+
+	/**
+	 * Delegate method that returns if the movie has been loaded
+	 * @return
+	 */
+	public boolean getMovieLoaded() {
+		return gui.getMovieLoaded();
+	}
+	
+	/**
+	 * Returns the regions of interest
+	 * @return
+	 */
+	protected int[] getRegionsOfInterest() {
+		return regionsOfInterest;
+	}
+	
 	/**
 	 * Getter for the total number of frames or images which have been processed
 	 * by the Analyzer.
@@ -132,17 +291,14 @@ public class AnalyzerPanel extends JPanel {
 	public void incrementIndex() {
 		ipanel.incrementIndex();
 	}
-	
-	public void displayMessagePopup(String s) {
-		JOptionPane.showMessageDialog(null, s, "Error", 
-				JOptionPane.INFORMATION_MESSAGE, 
-				new ImageIcon(getClass().getResource("images/DrawFlyTrajectoriesToggle.png")));
-	}
-	
-	public void displayLoadingPopup(String s) {
-		loadingDialog.validate();
-		loadingDialog.setVisible(true);
-		//JOptionPane.showMessageDialog(null, s, "Loading", JOptionPane.INFORMATION_MESSAGE);
+
+	/**
+	 * Delegate method that returns the file at the specific index
+	 * @param imageIndex
+	 * @return
+	 */
+	public File passdownFile(int imageIndex) {
+		return gui.passdownFile(imageIndex);
 	}
 
 	/**
@@ -161,6 +317,15 @@ public class AnalyzerPanel extends JPanel {
 	}
 
 	/**
+	 * Delegate method that passes down the points of areas of interest
+	 * @param tempFirst
+	 * @param tempSecond
+	 */
+	public void passDownPoints(List<Point> tempFirst, List<Point> tempSecond ){
+		ipanel.passDownPoints(tempFirst, tempSecond);
+	}
+
+	/**
 	 * Passes a File containing an image to the Analyzer, which will identify
 	 * any flies within the image.
 	 * 
@@ -171,6 +336,38 @@ public class AnalyzerPanel extends JPanel {
 		gui.passImage(file);
 	}
 
+	/**
+	 * Daisy chain method to pass an opened movie file
+	 * @param file
+	 */
+	public void passMovie(File file) {
+		gui.passMovie(file);
+	}
+	
+	/**
+	 * Passes the arena along to the gui
+	 * @param arena
+	 * @param frame
+	 */
+	public void passUpArenaParameters(int arena, int frame){
+		Point point1 = ipanel.getCurrentPoint1();
+		Point point2 = ipanel.getCurrentPoint2();
+		gui.passupArenaParameters(arena, frame, point1, point2);
+	}
+	
+	/**
+	 * Delegate method to save the graph
+	 * @param file
+	 */
+	public void saveGraph(File file) {
+		graphPanel.saveGraph(file);
+	}
+
+	/**
+	 * Sets draw trajectories to draw between given start and end frames
+	 * @param startFrame
+	 * @param endFrame
+	 */
 	public void setDrawTrajectories(int startFrame, int endFrame) {
 		ipanel.setDrawTrajectories(startFrame, endFrame);
 		graphPanel.setDataRange(startFrame - 1, endFrame -1);
@@ -182,28 +379,46 @@ public class AnalyzerPanel extends JPanel {
 	public void setFlydentifiers() {
 		ipanel.setFlydentifiers();
 	}
-
+		
 	/**
-	 * Updates the size threshold in Analyzer. This is used to determine if an
-	 * object identified within an image is large enough to be considered a fly.
-	 * This will also analyze all stored images again.
-	 * 
-	 * @param input
-	 *            the value which size threshold will be set to.
+	 * Delegate method to set image contrast
+	 * @param d
 	 */
-	public void sizeThresholdUpdate(int input) {
-		gui.sizeThresholdUpdate(input);
+	public void setImageContrast(double d) {
+		gui.setImageContrast(d);		
 	}
 	
 	/**
-	 * Daisy chain method to pass an opened movie file
-	 * @param file
+	 * Delegate method to set movie loading boolean
+	 * @param b
 	 */
-	public void passMovie(File file) {
-		gui.passMovie(file);
+	public void setMovieLoading(boolean b) {
+		ipanel.setMovieLoading(b);
+		
+	}
+	
+	/**
+	 * Delegate method that sets if the movie is playing
+	 * @param b
+	 */
+	public void setMoviePlaying(boolean b){
+		ipanel.setMoviePlaying(b);
+	}
+	
+	/**
+	 * Sets the regions of interest array to given size
+	 * @param listModel
+	 */
+	public void setRegionsOfInterest(DefaultListModel<Integer> listModel) {
+		Object[] regions = listModel.toArray();
+		
+		int[] tempArray = new int[regions.length];
+		for (int i = 0; i < regions.length; i++) {
+			tempArray[i]=Integer.parseInt(regions[i].toString());
+		}
+		regionsOfInterest = tempArray;
 	}
 
-	
 	/**
 	 * Shows a loaded movie after clicking the "Open a movie" button. 
 	 * @param frames
@@ -236,132 +451,30 @@ public class AnalyzerPanel extends JPanel {
 			}
 		}
 				).start();
-//		ipanel.setMoviePlaying(false);
-	}
-	
-	public void setMoviePlaying(boolean b){
-		ipanel.setMoviePlaying(b);
-	}
-	
-	public void passDownPoints(List<Point> tempFirst, List<Point> tempSecond ){
-		
-		ipanel.passDownPoints(tempFirst, tempSecond);
 	}
 
-	public void setImageContrast(double d) {
-		gui.setImageContrast(d);		
-	}
-
-	public double getImageContrast() {
-		return gui.getImageContrast();
-	}
-
-	public File passdownFile(int imageIndex) {
-		return gui.passdownFile(imageIndex);
-	}
-	
-	public void contrastThresholdUpdate(int input) {
-		gui.contrastThresholdUpdate(input);
-		
-	}
-	public void passUpArenaParameters(int arena, int frame){
-		Point point1 = ipanel.getCurrentPoint1();
-		Point point2 = ipanel.getCurrentPoint2();
-		gui.passupArenaParameters(arena, frame, point1, point2);
-	}
-
-	public void clearFlyGroups() {
-		gui.clearFlyGroups();
-		
-	}
-
-	public BufferedImage getFirstFrameFromMovie() {
-		// TODO Auto-generated method stub
-		return gui.getFirstFrameFromMovie();
-	}
-
-	public void setMovieLoading(boolean b) {
-		ipanel.setMovieLoading(b);
-		
-	}
-
-	public boolean getMovieLoaded() {
-		// TODO Auto-generated method stub
-		return gui.getMovieLoaded();
-	}
-
-	public void analyzeMovie(int sampleRate) {
-		gui.analyzeMovie(sampleRate);
-		
-	}
-
-	public AnalyzerGui getGui() {
-		return gui;
-	}
-	
-	public void disposeLoadingDialog() {
-		loadingDialog.setVisible(false);
-	}
-
-
-	public double getFrameRate() {
-		// TODO Auto-generated method stub
-		return gui.getFrameRate();
-	}
-
-	public void setLabels(String titleText, String xAxisText, String yAxisText) {
-		graphPanel.setLabels(titleText, xAxisText, yAxisText);
-	}
-
-	public void saveGraph(File file) {
-		graphPanel.saveGraph(file);
-	}
-		
-		
-	public String getDataForFile() {
-		return dpanel.getDataForFile();
-	}
-/**
- * Delegate method that asks the model for the average velocity of a group of flies in an arena between frames start and end
- * @param Arena
- * @param start
- * @param end
- * @return
- */
-	public double calcAverageVelocityforArena(int Arena, int start, int end){
-		return gui.calcArenaAverageVelocityinFrame(Arena, start, end);
-	}
-
-
+	/**
+	 * Delegate method to update the size range
+	 * @param value
+	 */
 	public void sizeRangeUpdate(int value) {
 		gui.sizeRangeUpdate(value);
 	}
 
-	public void setRegionsOfInterest(DefaultListModel<Integer> listModel) {
-		Object[] regions = listModel.toArray();
-		
-		int[] tempArray = new int[regions.length];
-		for (int i = 0; i < regions.length; i++) {
-			tempArray[i]=Integer.parseInt(regions[i].toString());
-		}
-		regionsOfInterest = tempArray;
-	}
-
-	protected int[] getRegionsOfInterest() {
-		return regionsOfInterest;
-	}
-
-	public double[][] getAverageVelocity(int[] regionsOfInterest2) {
-		return gui.getAverageVelocity(regionsOfInterest2);
-	}
-
-	public double[][] getAverageVelocity(int[] regionsOfInterest2,
-			int startFrame, int endFrame) {
-		return gui.getAverageVelocity(regionsOfInterest2, startFrame, endFrame);
-	}
-
 	
-	public boolean getMovieAnalyzed(){
-		return gui.getMovieAnalyzed();
+	/**
+	 * Updates the size threshold in Analyzer. This is used to determine if an
+	 * object identified within an image is large enough to be considered a fly.
+	 * This will also analyze all stored images again.
+	 * 
+	 * @param input
+	 *            the value which size threshold will be set to.
+	 */
+	public void sizeThresholdUpdate(int input) {
+		gui.sizeThresholdUpdate(input);
+	}
+
+	public void setLabels(String text, String text2, String text3) {
+		graphPanel.setLabels(text, text2, text3);
 	}
 }
